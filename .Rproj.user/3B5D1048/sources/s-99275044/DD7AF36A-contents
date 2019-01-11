@@ -1,0 +1,21 @@
+#------------------------------------------------------#
+#### Generate base-case parameters set              ####
+#------------------------------------------------------#
+f.generate_basecase_params <- function(){
+  v.params.basecase <- c(
+    ## Cost and utility inputs 
+    # State rewards
+    c.H   = 2000,  # cost of remaining one cycle healthy 
+    c.S1  = 4000,  # cost of remaining one cycle sick 
+    c.S2  = 15000, # cost of remaining one cycle sicker 
+    c.D   = 0,     # cost of being dead (per cycle)
+    c.Trt = 12000, # cost of treatment (per cycle 
+    
+    u.H   = 1,     # utility when healthy 
+    u.S1  = 0.75,  # utility when sick 
+    u.S2  = 0.5,   # utility when sicker
+    u.D   = 0,     # utility when healthy 
+    u.Trt = 0.95  # utility when being treated
+  )
+  return(v.params.basecase)
+}
