@@ -15,7 +15,7 @@ f.generate_basecase_params <- function(){
 #---------------------------------------------------#
 #### Generate PSA dataset of CEA parameters ####
 #---------------------------------------------------#
-f.generate_psa_params <- function(seed = 7783){
+f.generate_psa_params <- function(seed = 7783){ # User defined
   # load("data/03_calibration_posterior.rData")
   # n.sim <- nrow(m.calib_post_imis)
   set.seed <- seed
@@ -50,15 +50,16 @@ f.generate_psa_params <- function(seed = 7783){
 #---------------------------------------------------#
 #### Calculate cost-effectiveness outcomes ####
 #---------------------------------------------------#
-f.calculate_ce_out <- function(v.params){
+f.calculate_ce_out <- function(v.params){ # User defined
   
   with(as.list(v.params), {
-    # Run STM model at a parameter set
-    l.model.out <- sicksicker_stm(v.params)
+    # Run STM model at a parameter set for each intervention
+    l.model.out.no_trt <- f.decision_model(v.params)
+    l.model.out.trt    <- f.decision_model(v.params)
     
     # Cohort trace by treatment
-    m.M_no_trt <- l.model.out$m.M # No treatment
-    m.M_trt    <- l.model.out$m.M # Treatment
+    m.M_no_trt <- l.model.out.no_trt$m.M # No treatment
+    m.M_trt    <- l.model.out.trt$m.M # Treatment
     
     # Vectors with costs and utilities by treatment
     v.u_no_trt <- c(u.H, u.S1, u.S2, u.D)
@@ -94,12 +95,4 @@ f.calculate_ce_out <- function(v.params){
   }
   )
   
-}
-
-#---------------------------------------------------#
-#### Conduct cost-effectiveness analysis ####
-#---------------------------------------------------#
-f.conduct_cea <- function(m.ce){
-  m.cea <- calculate_icers(m.ce)
-  return(m.cea)
 }

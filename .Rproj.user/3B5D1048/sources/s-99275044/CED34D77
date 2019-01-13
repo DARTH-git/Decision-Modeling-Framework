@@ -7,13 +7,13 @@
     "folds" : "",
     "hash" : "0",
     "id" : "CED34D77",
-    "lastKnownWriteTime" : 1547415295,
-    "last_content_update" : 1547415295995,
+    "lastKnownWriteTime" : 1547422032,
+    "last_content_update" : 1547422032583,
     "path" : "~/GitHub/Decision-Modeling-Framework/R/02_simulation-model.R",
     "project_path" : "R/02_simulation-model.R",
     "properties" : {
-        "cursorPosition" : "10,80",
-        "scrollLine" : "0",
+        "cursorPosition" : "26,29",
+        "scrollLine" : "17",
         "tempName" : "Untitled1"
     },
     "relative_order" : 3,

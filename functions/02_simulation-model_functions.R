@@ -1,4 +1,4 @@
-sicksicker_stm <- function(v.params, ...){
+f.decision_model <- function(v.params){# User defined
   ### Arguments:  
   #     v.params: vector of model parameters 
   #

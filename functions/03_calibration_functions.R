@@ -1,7 +1,7 @@
 #-------------------------------------------------------------------#
 #### Generate model outputs for calibration from a parameter set ####
 #-------------------------------------------------------------------#
-f.calibration_out <- function(v.params.calib){
+f.calibration_out <- function(v.params.calib){ # User defined
   ### Arguments:  
   #     v.params.calib: vector of parameters that need to be calibrated
   #
@@ -14,7 +14,7 @@ f.calibration_out <- function(v.params.calib){
   v.params["hr.S2"]  <- v.params.calib["hr.S2"]
   
   # Run model with updated calibrated parameters
-  l.out.stm <- sicksicker_stm(v.params = v.params, n.t = n.t)
+  l.out.stm <- f.decision_model(v.params = v.params, n.t = n.t)
   
   ####### Epidemiological Output ###########################################
   #### Overall Survival (OS) ####
@@ -36,7 +36,7 @@ f.calibration_out <- function(v.params.calib){
 #-------------------------------------------------------------------#
 #### Goodness of fit function for calibration from a parameter set ####
 #-------------------------------------------------------------------#
-f.gof = function(v.params){
+f.gof = function(v.params){ # User defined
   ###   Run model for parametr set "v.params" ###
   l.model.res <- f.calibration_out(v.params)
   

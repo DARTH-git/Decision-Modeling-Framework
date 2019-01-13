@@ -38,8 +38,8 @@ f.calculate_ce_out(v.params.basecase)
 # m.cea <- calculate_icers(m.ce)
 
 #### 04.5 Plot cost-effectiveness frontier ####
-l.cea.frontier <- getFrontier(m.ce)
-gg.cea.frontier <- plot(l.cea.frontier)
+# l.cea.frontier <- getFrontier(m.ce)
+# gg.cea.frontier <- plot(l.cea.frontier)
 
 #### 04.6 Deterministic sensitivity analysis (DSA) ####
 #### 04.6.1 One-way sensitivity analysis (OWSA) ####
