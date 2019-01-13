@@ -24,4 +24,5 @@ source("functions/02_simulation-model_functions.R")
 
 #### 02.2 Run STM ####
 ### Create list of deterministic model output
-l.out.stm <- sicksicker_stm(v.params = v.params.basecase)
+l.out.stm <- sicksicker_stm(v.params = v.params.init)
+

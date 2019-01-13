@@ -1,9 +1,6 @@
-sicksicker_stm <- function(v.params){
+sicksicker_stm <- function(v.params, ...){
   ### Arguments:  
-  #     v.params: vector of deep-model parameters 
-  #
-  ### Uses external functions:
-  # crc_nhm_tp: Computes a transition probability array from a continuous time model
+  #     v.params: vector of model parameters 
   #
   with(as.list(v.params), {
     #### Age-specific transition probabilities ####

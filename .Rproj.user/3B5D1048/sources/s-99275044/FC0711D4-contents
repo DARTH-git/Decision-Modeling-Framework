@@ -1,8 +1,8 @@
 #------------------------------------------------------#
 #### Generate base-case parameters set              ####
 #------------------------------------------------------#
-f.generate_basecase_params <- function(){
-  v.params.basecase <- c(
+f.generate_init_params <- function(){
+  v.params.init <- c(
     ## Transition probabilities (per cycle)
     p.HS1 = 0.15,  # probability to become sick when healthy
     p.S1H = 0.5,   # probability to become healthy when sick
@@ -25,5 +25,5 @@ f.generate_basecase_params <- function(){
     u.D   = 0,     # utility when healthy 
     u.Trt = 0.95   # utility when being treated
   )
-  return(v.params.basecase)
+  return(v.params.init)
 }

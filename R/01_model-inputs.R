@@ -30,7 +30,6 @@ d.c <- 0.03 # discount rate for costs
 d.e <- 0.03 # discount rate for QALYs
 v.dwc <- 1 / ((1 + d.e) ^ (0:(n.t))) # vector with discount weights for costs
 v.dwe <- 1 / ((1 + d.c) ^ (0:(n.t))) # vector with discount weights for QALYs
-v.names.str <- c("No Treatment", "Treatment") # Vector with the strategy names
 v.s.init <- c(H = 1, S1 = 0, S2 = 0, D = 0) # initial state vector
 
 #### 01.2.2 All-cause age-, sex- and race- (ASR) specific mortality ####
@@ -40,8 +39,8 @@ v.r.asr  <- df.r.asr %>%
   as.matrix()              # vector with mortality rates
 
 #### 01.2.3 Generate initial set of base-case external parameters ####
-v.params.basecase <- f.generate_basecase_params()
+v.params.init <- f.generate_init_params()
 ## Create name of parameters
-v.names.params <- names(v.params.basecase)
+v.names.params <- names(v.params.init)
 ## Save base-case set of parameters
-write.csv(x = v.params.basecase, file = "data/01_basecase-params.csv")
+write.csv(x = v.params.init, file = "data/01_init-params.csv")

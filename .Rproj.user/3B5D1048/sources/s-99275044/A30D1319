@@ -7,13 +7,13 @@
     "folds" : "",
     "hash" : "0",
     "id" : "A30D1319",
-    "lastKnownWriteTime" : 1547170267,
-    "last_content_update" : 1547170267862,
+    "lastKnownWriteTime" : 1547417657,
+    "last_content_update" : 1547417657555,
     "path" : "~/GitHub/Decision-Modeling-Framework/R/01_model-inputs.R",
     "project_path" : "R/01_model-inputs.R",
     "properties" : {
-        "cursorPosition" : "24,29",
-        "scrollLine" : "14"
+        "cursorPosition" : "32,0",
+        "scrollLine" : "30"
     },
     "relative_order" : 2,
     "source_on_save" : false,
