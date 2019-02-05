@@ -1,7 +1,8 @@
 ################################################################################ 
-# This script conducts the uncertianty analysis of a hypothetical treatment    #
-# for the simulated cohort of the Sick-Sicker state-transition model (STM) to  #
-# create a probabilistic sensitivity analysis (PSA) dataset                    #
+# This script conducts the uncertainty analysis the cost-effectiveness analysis#
+# of a hypothetical treatment for the simulated cohort of the Sick-Sicker      #
+# state-transition model (STM) to create a probabilistic sensitivity analysis  #
+# (PSA) dataset                                                                #
 #                                                                              # 
 # Depends on:                                                                  #
 #   01_model-inputs.R                                                          #
@@ -11,7 +12,9 @@
 # Author: Fernando Alarid-Escudero                                             # 
 # E-mail: fernando.alarid@cide.edu                                             # 
 ################################################################################
-
+# The structure of this code is according to the DARTH framework               #
+# https://github.com/DARTH-git/Decision-Modeling-Framework                     #
+################################################################################
 # rm(list = ls()) # to clean the workspace
 
 #### 05b.1 Load packages and functions ####
@@ -66,3 +69,10 @@ for(i in 1:n.sim){ # i <- 1
 
 #### 05b.5 Save PSA matrices ####
 save(m.psa.input, m.c, m.e, file = "data/05b_psa-dataset.RData")
+
+#### 05b.6 Create output graphs ####
+#### 05b.6.1 Cost-effectiveness plane ####
+
+#### 05b.6.2 Cost-effectiveness acceptability curves (CEACs) and frontier (CEAF) ####
+
+#### 05b.6.3 Expected Loss Curves (ELCs) ####

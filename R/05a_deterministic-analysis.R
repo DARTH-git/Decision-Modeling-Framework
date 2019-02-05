@@ -9,7 +9,9 @@
 # Author: Fernando Alarid-Escudero                                             # 
 # E-mail: fernando.alarid@cide.edu                                             # 
 ################################################################################
-
+# The structure of this code is according to the DARTH framework               #
+# https://github.com/DARTH-git/Decision-Modeling-Framework                     #
+################################################################################
 # rm(list = ls()) # to clean the workspace
 
 #### 05a.1 Load packages and functions ####
