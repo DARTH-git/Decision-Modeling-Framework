@@ -8,8 +8,10 @@
 #                                                                              # 
 # Author: Fernando Alarid-Escudero                                             # 
 # E-mail: fernando.alarid@cide.edu                                             # 
-################################################################################
-
+################################################################################ 
+# The structure of this code is according to the DARTH framework               #
+# https://github.com/DARTH-git/Decision-Modeling-Framework                     #
+################################################################################ 
 # rm(list = ls()) # to clean the workspace
 
 #### 04.1 Load packages and functions ####
@@ -37,4 +39,14 @@ f.calculate_ce_out(v.params.basecase)
 
 #### 04.5 Plot cost-effectiveness frontier ####
 # l.cea.frontier <- getFrontier(m.ce)
+<<<<<<< HEAD:R/04_calculate-outcomes.R
 # gg.cea.frontier <- plot(l.cea.frontier)
+=======
+# gg.cea.frontier <- plot(l.cea.frontier)
+
+#### 04.6 Deterministic sensitivity analysis (DSA) ####
+#### 04.6.1 One-way sensitivity analysis (OWSA) ####
+#### 04.6.2 Two-way sensitivity analysis (TWSA) ####
+
+#### 04.7 Probabilistic sensitivity analysis (PSA) ####
+>>>>>>> 8f14d39134fcc99a59579368132c205ed6f04c56:R/04_cost-effectiveness-analysis.R
