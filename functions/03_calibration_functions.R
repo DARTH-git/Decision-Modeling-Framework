@@ -14,7 +14,7 @@ f.calibration_out <- function(v.params.calib){ # User defined
   v.params["hr.S2"]  <- v.params.calib["hr.S2"]
   
   # Run model with updated calibrated parameters
-  l.out.stm <- f.decision_model(v.params = v.params, n.t = n.t)
+  l.out.stm <- f.decision_model(v.params = v.params)
   
   ####### Epidemiological Output ###########################################
   #### Overall Survival (OS) ####

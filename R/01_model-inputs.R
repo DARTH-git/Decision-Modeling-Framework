@@ -44,3 +44,5 @@ v.params.init <- f.generate_init_params()
 v.names.params <- names(v.params.init)
 ## Save base-case set of parameters
 write.csv(x = v.params.init, file = "data/01_init-params.csv")
+
+#### 01.3 Estimated parameters ####

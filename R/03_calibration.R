@@ -71,9 +71,9 @@ n.init <- 100
 v.param.names <- c("p.S1S2", "hr.S1", "hr.S2")
 n.param       <- length(v.param.names)
 
-# range on input search space
-lb <- c(p.S1S2 = 0.01, hr.S1 = 1.0, hr.S2 = 5)  # lower bound
-ub <- c(p.S1S2 = 0.50, hr.S1 = 4.5, hr.S2 = 15) # upper bound
+# vector with range on input search space
+v.lb <- c(p.S1S2 = 0.01, hr.S1 = 1.0, hr.S2 = 5)  # lower bound
+v.ub <- c(p.S1S2 = 0.50, hr.S1 = 4.5, hr.S2 = 15) # upper bound
 
 # number of calibration targets
 v.target.names <- c("Surv", "Prev", "PropSick")
@@ -87,8 +87,8 @@ m.lhs.unit <- randomLHS(n.init, n.param)
 m.params.init <- matrix(nrow = n.init, ncol = n.param)
 for (i in 1:n.param){
   m.params.init[, i] = qunif(m.lhs.unit[, i],
-                            min = lb[i],
-                            max = ub[i])
+                            min = v.lb[i],
+                            max = v.ub[i])
 }
 colnames(m.params.init) <- v.param.names
 
@@ -119,9 +119,9 @@ m.calib.res[1:10, ]
 scatterplot3d(x = m.calib.res[1:10, 1],
               y = m.calib.res[1:10, 2],
               z = m.calib.res[1:10, 3],
-              xlim = c(lb[1], ub[1]), 
-              ylim = c(lb[2], ub[2]), 
-              zlim = c(lb[3], ub[3]),
+              xlim = c(v.lb[1], v.ub[1]), 
+              ylim = c(v.lb[2], v.ub[2]), 
+              zlim = c(v.lb[3], v.ub[3]),
               xlab = v.param.names[1], 
               ylab = v.param.names[2], 
               zlab = v.param.names[3])

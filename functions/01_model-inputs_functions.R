@@ -2,7 +2,7 @@
 #### Generate base-case parameters set              ####
 #------------------------------------------------------#
 f.generate_init_params <- function(){ # User defined
-  v.params.init <- c(
+  v.params.init <- data.frame(
     ## External
     # Costs
     c.H   = 2000,  # cost of remaining one cycle healthy 
