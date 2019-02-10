@@ -42,10 +42,8 @@ v.r.asr  <- df.r.asr %>%
   as.matrix()              # vector with mortality rates
 
 #### 01.2.3 Generate initial set of base-case external parameters ####
-v.params.init <- f.generate_init_params()
+df.params.init <- f.define_init_params()
 ## Create name of parameters
-v.names.params <- names(v.params.init)
-## Save base-case set of parameters
-write.csv(x = v.params.init, file = "data/01_init-params.csv")
+df.names.params <- names(df.params.init)
 
 #### 01.3 Estimated parameters ####
