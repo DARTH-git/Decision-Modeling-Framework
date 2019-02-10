@@ -1,17 +1,16 @@
 ---
-title: "Sick-Sicker case study for CE16 NIHES"
-author: "Eline Krijkamp"
-date: "7-2-2019"
+title: "Sick-Sicker case study"
+author: "DARTH workgroup"
+date: '`r Sys.Date()`'
 output: 
   pdf_document: default
     #fig_caption: yes
   word_document:
-    reference_docx: color_template_NIHES.docx
-    toc: yes  # table of content
+    reference_docx: DARTH_template.docx
+    toc: yes     # table of content
     toc_depth: 1 # depth of the table of content
   html_document: default
-#css: styles.css
-bibliography: citations.bib
+bibliography: references.bib
 ---
 
 ```{r setup, include=FALSE}
@@ -25,20 +24,90 @@ library(tensorA) # to use tensor algebra
 
 knitr::opts_chunk$set(echo = TRUE)
 
+#opts_chunk$set(echo = FALSE, cache=FALSE)
+#read_chunk("../R/01_model-inputs-external_functions.R")
+
+
 #doc.type <- knitr::opts_knit$get('rmarkdown.pandoc.to')
 age     <- 25         # age at baseline
 max.age <- 55         # maximum age of follow up
 n.t <- max.age - age # time horizon, number of cycles
 ```
 
-## Case-study: Sick-Sicker ##
-A hypothetical disease affects individuals with an average age of 25 years and results in increased mortality, increased treatment costs and reduced quality of life. The disease has two levels; affected individuals initially become sick but can subsequently progress and become sicker. Two alternative strategies exist for this hypothetical disease: a no-treatment and a treatment strategy. Under the treatment strategy, individuals who become sick or progress and become sicker receive treatment and continue doing so until they recover or die. The cost of the treatment is additional to the cost of being sick or sicker for one year. The treatment improves quality of life for those individuals who are sick but has no effect on the quality of life of those who are sicker. You are asked to evaluate the cost-effectiveness of the treatment assuming a willingness to pay of $80000. 
+
+```{r load myData, include=FALSE}
+# 01 Model inputs data
+read.csv("../data/01_all-cause-mortality-USA-2015.csv")
+read.csv("../data/01_basecase-params.csv")
+read.csv("../data/01_init-params.csv")
+source("../functions/01_model-inputs_functions.R")
+
+# 02 Model implementation
+
+# 03 Model calibration data
+load("../data/03_calibration-targets.RData")
+load("../data/03_nm-best-set.RData")
+
+# 04 Sensitivity analysis data
+load("../data/05b_psa-dataset.RData")
+``` 
+
+In this document we showcase the framework via a fully functional decision model. In this case-study we perform a cost-effectiveness analysis (CEA) using a previously published 4-state model called the Sick-Sicker model.[@Enns2015] The model is used to quantify the expected costs and quality-adjusted life years (QALYs) for individuals with a hypothetical disease with two different stages, "Sick" and "Sicker". We calibrate the model using three targets, survival, prevalence and the proportion who are "Sick" among all those afflicted "Sick + Sicker". We then evaluate the cost-effectiveness of a hypothetical treatment that increases quality of life (QoL) in one of the disease states.[@Krijkamp2018] We identify the uncertainity around our decision based on the CEA using sensitivity analysis. Finaly, we perform a value of information (VoI) analysis to see if it is worth investing in extra research projects to liminate the uncertainty around our decision. 
+
+## The Sick-Sicker model 
+In the Sick-Sicker model, we simulate a hypothetical cohort of 25-year-old individuals over a lifetime (or reaching age 110 years old) that all start in the "Healthy" health state (denoted "H"). That is, the total number of cycles, $n_t$ represented with `n.t` is `r n.t`. Healthy individuals are at risk of developing the illness, at which point they would transition to the first stage of the disease (the "Sick" health state, denoted "S1"). Individuals that become sick incur a one-time utility decrement of 0.01 (`du.HS1`, disutility of transitioning from H to S1) and a one-time cost of \$1,000 (`ic.HS1`) that reflect the acute impacts of developing the illness. Sick individuals are at risk of further progressing to a more severe stage (the "Sicker" health state, denoted "S2"), which in the time-homogenous model is constant and in the time-dependent model is a function of the duration of being in the Sick state. There is a chance that individuals in the Sick state eventually recover and return back to the Healthy state. However, once an individual reaches the Sicker health state, they cannot recover; that is, the probability of transitioning to the Sick or Healthy health states from the Sicker health state is zero. Individuals in the Healthy state face background mortality that could be either constant or age-specific (i.e., time-dependent). Sick and Sicker individuals face an increased mortality in the form of a hazard ratio (HR) of 3 and 10 times, respectively, on the background mortality rate. Sick and Sicker individuals also experience increased health care costs and reduced QoL compared to healthy individuals. Once simulated individuals die, they transition to the "Dead" health state (denoted "D"), where they remain. When an individual dies, they incur a one-time cost of $2,000 (`ic.D`) that reflects the acute care that might be received immediately preceding death. The state-transition diagram of the Sick-Sicker model is shown in Figure \@ref(fig:STD-Sick-Sicker). The evolution of the cohort is simulated in one-year discrete-time cycles. Both costs and QALYs are discounted at an annual rate of 3%.
+
+
+
+A hypothetical disease affects individuals with an average age of 25 years and results in increased mortality, increased treatment costs and reduced quality of life. The disease has two levels; affected individuals initially become sick but can subsequently progress and become sicker. Two alternative strategies exist for this hypothetical disease: a no-treatment and a treatment strategy. Under the treatment strategy, individuals who become sick or progress and become sicker receive treatment and continue doing so until they recover or die. The cost of the treatment is additional to the cost of being sick or sicker for one year. The treatment improves quality of life for those individuals who are sick but has no effect on the quality of life of those who are sicker. You are asked to evaluate the cost-effectiveness of the treatment assuming a willingness to pay of $80000.
 
 To model this disease, we will rely on a state-transition cohort model, called the Sick-Sicker model, first described by Enns et al. The Sick-Sicker model consists of four health states: healthy (H), two disease states sick (S1) and sicker (S2) and dead (D) (Figure 1). All individuals start in the healthy state. Over time, healthy individuals may develop the disease and can progress to S1. Individuals in S1 can recover (return to state H), progress further to S2 or die. Individuals in S2 cannot recover (i.e. cannot transition to either S1 or H). Individuals in H are assumed to have a fixed mortality rate and individuals in S1 and S2 have an increased mortality rate compared to healthy individuals. These rates are used to calculate the probabilities to die when in S1 and S2. 
 
 
 
-![Sick-Sicker](Sick-Sicker figure.png)
+![Sick-Sicker](../figs/Sick-Sicker figure.png)
+
+
+
+###01 Define model inputs 
+The input for the Sick-Sicker model is informed by external data saved in a couple of csv files. 
+```{r eval = FALSE}
+# 01 Model inputs data
+read.csv("../data/01_all-cause-mortality-USA-2015.csv")
+df.basecase_params <- read.csv("../data/01_basecase-params.csv")
+df.init_params <- read.csv("../data/01_init-params.csv")
+``` 
+
+
+
+The 01_Model-inputs_function.R generates the base-case parameter set including these external and calibrated values.
+
+
+
+The 01_model-inputs.R file calls this function including the base-case parameters. In addition, this file is loading the age-, sex- and race- (ASR) specific mortality rates derived from the Human Mortality database and includes the general setup specifying  among others the time horizon, prevalence of the different health states at the start of the model and discount rates. 
+
+
+
+###02 Model implementation 
+
+###03 Model calibration 
+The Sick-Sicker model results need to be calibrated against data containing information about survival, the prevalence of both sick and sicker and the proportion who are sick among those afflicted (sick and sicker). This data is stored in the 03_calibration-tarted.RData. The function to calibrate the model are stored in the 03_calibration_functions.R file stored in the functions folder. This file also contains a Goodness of fit function for calibration form a parameter set. The calibration function makes sure of the Nelder-Mead method.
+
+###04 Analysis 
+####04a Validation 
+####04b Deterministic analysis 
+```{r, eval = FALSE}
+load("../data/03_calibration-targets.RData")
+load("../data/03_nm-best-set.RData")
+``` 
+
+
+####04c Deterministic analysis 
+```{r eval=FALSE}
+load("../data/05b_psa-dataset.RData")
+```
+
+
 
 
 
@@ -59,7 +128,7 @@ Table: Description of parameters with their R name and value.
 |   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Shape ($\gamma$)              | `g`         |  1.10         |
 | Annual mortality                   |             |               |
 | - All-cause mortality (H to D)     | `p.HD`      |  0.002 or age-specific |
-| - Hazard ratio of death in S1 vs H | `hr.S1`     |  3            |
+| - Hazard ratio of death in S1 vs H | `hr.S1`     |  r hr.S1`            |
 | - Hazard ratio of death in S2 vs H | `hr.S2`     |  10           |
 | Annual costs                       |             |               |
 | - Healthy individuals              | `c.H`       |  $2,000       |
@@ -130,13 +199,13 @@ p.S2D  <- 1 - exp(log(1 - p.HD) * hr.S2) # probability of dying in Sicker
 ```
 
 
-#### 01 Load packages ####
+#### 01 Load packages 
 No packages are needed to run this case example 
 
-#### 02 Load Functions ####
+#### 02 Load Functions 
 We don't make use of functions for this case exampl.e 
 
-#### 03 Input Model Parameters ####
+#### 03 Input Model Parameters 
 The imput parameters of the Sick-Sicker model are specified below. 
 ```{r}
 Strategies <- c("No Treatment", "Treatment")  # strategy names 
@@ -179,7 +248,7 @@ v.dwe <- v.dwc <- 1 / ((1 + d.r) ^ (0:n.t))  # discount weight
 # (equal discounting is assumed for costs and effects)
 ```
 
-#### 04 Model initialization ####
+#### 04 Model initialization
 ```{r}
 # create transition probability matrices for both treatment and no treatment
 m.P_no_trt <- m.P_trt <- matrix(NA, nrow = n.s, ncol = n.s, 
@@ -237,70 +306,8 @@ head(m.M_trt)
 ```
 
 
-#### 06 Model output ####
-#### 06.1 plot model dynamics ####
 
-```{r, eval = TRUE, echo = FALSE }
-matplot(0:n.t, m.M_no_trt, type = 'l', 
-        ylab = "Probability of state occupancy",
-        xlab = "Cycle",
-        main = "Markov Trace")              # create a plot of the Markov trace
-legend("topright", v.n, col = 1:n.s, lty = 1:n.s, bty = "n")  # add legend 
-```
 
-#### 06.2 apply costs and rewards ####
-```{r}
-# create vectors of utility and costs for each state
-v.u_trt    <- c(u.H, u.Trt, u.S2, u.D)
-v.u_no_trt <- c(u.H,  u.S1, u.S2, u.D)
-
-v.c_trt    <- c(c.H, c.S1 + c.Trt, c.S2 + c.Trt, c.D)
-v.c_no_trt <- c(c.H, c.S1,         c.S2,         c.D)
-
-# estimate mean QALYs and costs
-v.E_no_trt <- m.M_no_trt %*% v.u_no_trt
-v.E_trt    <- m.M_trt    %*% v.u_trt
-
-v.C_no_trt <- m.M_no_trt %*% v.c_no_trt
-v.C_trt    <- m.M_trt    %*% v.c_trt
-
-### discount costs and QALYs
-te_no_trt <- t(v.E_no_trt) %*% v.dwe  # 1x31 %*% 31x1 -> 1x1
-te_trt    <- t(v.E_trt)    %*% v.dwe
-
-tc_no_trt <- t(v.C_no_trt) %*% v.dwc
-tc_trt    <- t(v.C_trt)    %*% v.dwc
-```
-
-#### 06.3 cost effectiveness analysis ####
-```{r}
-# calculate lifelong per patient discounted cost and QALYs.
-DC          <- tc_trt - tc_no_trt      # calculate the difference in discounted costs between the two strategies 
-names(DC)   <- "Incremental costs"
-DE          <- te_trt - te_no_trt      # calculate the difference in discounted effects between the two strategies 
-names(DE)   <- "QALYs gained"
-ICER        <- DC / DE                 # calculate the ICER
-names(ICER) <- "ICER" 
-results     <- c(DC, DE, ICER)         # combine the results 
-
-# create full incremental cost-effectiveness analysis table 
-C <- round(c(tc_no_trt, tc_trt), 2)  # bind and round the total costs of the two strategies
-E <- round(c(te_no_trt, te_trt), 2)  # bind and round the total effects of the two strategies
-
-DC   <- c("", as.character(round(DC, 2)))   # round the delta of the costs (No Treatment is reference)
-DE   <- c("", as.character(round(DE, 2)))   # round the delta of the effects (No Treatment is reference)
-ICER <- c("", as.character(round(ICER, 2))) # round the ICER 
-
-table_Markov_SickSicker <- cbind(Strategies, C, E, DC, DE, ICER)     # combine all data in a table
-table_Markov_SickSicker <- as.data.frame(table_Markov_SickSicker)    # create a data frame                                       
-```
-
-### Final results
-The final results of the cost-effectiveness of the Sick-Sicker model are shown below. 
-```{r, echo = FALSE,  resutls = 'asis'}
-kable(table_Markov_SickSicker)
-```
-The treatment strategy is more expensive but gives us more QALYs. This results in an ICER of `r ICER[2]`. Assuming a willness to pay of $80000 we don't consider this treatment strategy cost-effective.
 
 ### References 
 
