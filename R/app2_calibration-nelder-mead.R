@@ -141,9 +141,10 @@ df.calib.best.summ <- data.frame(
 df.calib.best.summ
 
 #### 03.4.2 Store best parameter set from NM calibration ####
-save(v.params.calib.best, file = "data/03_nm-best-set.RData")
+save(v.params.calib.best, file = "data/app2_nm-best-set.RData")
 
 #### 03.5 Internal validation: Model-predicted ouput at best set vs. targets ####
+load(file = "data/app2_nm-best-set.RData")
 l.out.calib <- f.calibration_out(m.calib.res[1, ])
 
 # TARGET 1: Survival ("Surv")

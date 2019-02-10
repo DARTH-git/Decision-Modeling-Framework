@@ -39,3 +39,4 @@ SickSicker.targets <- f.sicksicker_micsim(v.params = df.true.params,
 
 #### App.3 Save targets ####
 save(SickSicker.targets, file = "data/app1_calibration-targets.RData")
+save(SickSicker.targets, file = "data/03_calibration-targets.RData")

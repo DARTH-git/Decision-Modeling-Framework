@@ -1,11 +1,12 @@
 ################################################################################ 
 # This script calibrates the Sick-Sicker state-transition model (STM) to       #
-# epidemiological targets                                                      #
+# epidemiological targets using a Bayesian approach with the Incremental       #
+# Mixture Iportance Samping (IMIS) algorithm                                   #
 #                                                                              # 
 # Depends on:                                                                  #
 #   01_model-inputs.R                                                          #
 #   02_simulation-model_functions.R                                            #
-#   02_calibration_functions.R                                                 #
+#   03_calibration_functions.R                                                 #
 #                                                                              # 
 # Author: Fernando Alarid-Escudero                                             # 
 # E-mail: fernando.alarid@cide.edu                                             # 
@@ -19,6 +20,9 @@
 #### 03.1.1 Load packages and functions ####
 # Calibration functionality
 library(lhs) # latin hypercube sampling
+library(IMIS)
+library(matrixStats)
+library(modeest) # to estimate mode
 
 # Visualization
 library(plotrix)       # plots with lower and upper error bands
@@ -33,8 +37,7 @@ source("functions/02_simulation-model_functions.R")
 source("functions/03_calibration_functions.R")
 
 #### 03.1.4 Load calibration targets ####
-# load("data/03_calibration-targets.RData")
-load("data/app1_calibration-targets.RData")
+load("data/03_calibration-targets.RData")
 
 #### 03.2 Visualize targets ####
 # TARGET 1: Survival ("Surv")
@@ -67,8 +70,8 @@ f.calibration_out(v.params.calib = v.params.calib)
 # Specify seed (for reproducible sequence of random numbers)
 set.seed(072218)
 
-# number of initial starting points
-n.init <- 100
+# number of random samples
+n.resamp <- 1000
 
 # names and number of input parameters to be calibrated
 v.param.names <- c("p.S1S2", "hr.S1", "hr.S2")
@@ -82,105 +85,77 @@ v.ub <- c(p.S1S2 = 0.50, hr.S1 = 4.5, hr.S2 = 15) # upper bound
 v.target.names <- c("Surv", "Prev", "PropSick")
 n.target       <- length(v.target.names)
 
-#### 03.3.2 Sample multiple random starting values for Nelder-Mead ####
-# Sample unit Latin Hypercube
-m.lhs.unit <- randomLHS(n.init, n.param)
+#### 03.3.2 Run IMIS algorithm ####
+l.fit.imis <- IMIS(B = 1000, # the incremental sample size at each iteration of IMIS
+                   B.re = n.resamp, # the desired posterior sample size
+                   number_k = 10, # the maximum number of iterations in IMIS
+                   D = 0)
+# obtain posterior
+m.calib.post <- l.fit.imis$resample
 
-# Rescale to min/max of each parameter
-m.params.init <- matrix(nrow = n.init, ncol = n.param)
-for (i in 1:n.param){
-  m.params.init[, i] = qunif(m.lhs.unit[, i],
-                            min = v.lb[i],
-                            max = v.ub[i])
-}
-colnames(m.params.init) <- v.param.names
 
-# Visualize sample of starting points
-psych::pairs.panels(m.params.init)
+#### 03.4 Exploring posterior distribution ####
+#### 03.4.1 Summary statitics of posterior distribution ####
+# Compute posterior mean
+v.calib.post.mean <- colMeans(m.calib.post)
 
-#### 03.3.3 Run Nelder-Mead for each starting point ####
-m.calib.res <- matrix(nrow = n.init, ncol = n.param + 1)
-colnames(m.calib.res) = c(v.param.names, "Overall_fit")
+# Compute posterior median and 95% credible interval
+m.calib.post.95cr <- colQuantiles(m.calib.post, probs = c(0.025, 0.5, 0.975))
 
-for (j in 1:n.init){
-  # Run NM
-  fit.nm <- optim(m.params.init[j, ], f.gof, 
-                  control = list(fnscale = -1, # fnscale = -1 switches from minimization to maximization
-                                 maxit = 1000), 
-                  hessian = T)
-  # Store caibrated parameters and GOF value at last NM iteration
-  m.calib.res[j, ] <- c(fit.nm$par, fit.nm$value)
-}
+# Compute posterior mode
+v.calib.post.mode <- apply(m.calib.post, 2, 
+                           function(x) as.numeric(mlv(x)[1]))
 
-#### 03.4 Exploring best-fitting input sets ####
-# Arrange parameter sets in order of fit
-m.calib.res <- m.calib.res[order(-m.calib.res[, "Overall_fit"]),]
+# Compute posterior values for draw
+v.calib.post <- exp(f.log_post(m.calib.post))
 
-# Examine the top 10 best-fitting sets
-m.calib.res[1:10, ]
-# Plot the top 10 (top 10%)
-scatterplot3d(x = m.calib.res[1:10, 1],
-              y = m.calib.res[1:10, 2],
-              z = m.calib.res[1:10, 3],
-              xlim = c(v.lb[1], v.ub[1]), 
-              ylim = c(v.lb[2], v.ub[2]), 
-              zlim = c(v.lb[3], v.ub[3]),
-              xlab = v.param.names[1], 
-              ylab = v.param.names[2], 
-              zlab = v.param.names[3])
+# Compute maximum-a-posteriori (MAP)
+v.calib.post.map <- m.calib.post[which.max(v.calib.post), ]
 
-#### 03.4.1 Best parameter set from NM calibration ####
-v.params.calib.best <- m.calib.res[1, -4]
-### Confidence interval of best pameter set
-df.calib.best.summ <- data.frame(
+# Summary statistics
+df.posterior.summ <- data.frame(
   Parameter = v.param.names,
-  `Best set` = v.params.calib.best, 
-  LB = v.params.calib.best - 2*sqrt(diag(solve(-fit.nm$hessian))), 
-  UB = v.params.calib.best + 2*sqrt(diag(solve(-fit.nm$hessian))), 
+  Mean      = v.calib.post.mean,
+  m.calib.post.95cr,
+  Mode      = v.calib.post.mode,
+  MAP       = v.calib.post.map,
   check.names = FALSE)
-df.calib.best.summ
+df.posterior.summ
 
-#### 03.4.2 Store best parameter set from NM calibration ####
-save(v.params.calib.best, file = "data/03_nm-best-set.RData")
+#### 03.4.2 Visualization of posterior distribution ####
+# rescale posterior to plot density of plots
+v.calib.alpha <- scales::rescale(v.calib.post)
 
-#### 03.5 Internal validation: Model-predicted ouput at best set vs. targets ####
-l.out.calib <- f.calibration_out(m.calib.res[1, ])
+# Plot the 1000 draws from the posterior
+png("figs/03_posterior-distribution-joint.png", 
+    width = 8, height = 6, units = 'in', res = 300)
+  s3d <- scatterplot3d(x = m.calib.post[, 1],
+                       y = m.calib.post[, 2],
+                       z = m.calib.post[, 3],
+                       color = scales::alpha("black", v.calib.alpha),
+                       xlim = c(v.lb[1], v.ub[1]), 
+                       ylim = c(v.lb[2], v.ub[2]), 
+                       zlim = c(v.lb[3], v.ub[3]),
+                       xlab = v.param.names[1], 
+                       ylab = v.param.names[2], 
+                       zlab = v.param.names[3])
+  # add center of Gaussian components
+  s3d$points3d(l.fit.imis$center, col = "red", pch = 8)
+  # add legend
+  legend(s3d$xyz.convert(0.05, 1.0, 5), 
+         col= c("black", "red"), 
+         bg="white", pch = c(1, 8), yjust=0, 
+         legend = c("Posterior sample", "Center of Gaussian components"), 
+         cex = 1.1)
+dev.off()
 
-# TARGET 1: Survival ("Surv")
-plotrix::plotCI(x = SickSicker.targets$Surv$Time, y = SickSicker.targets$Surv$value, 
-                ui = SickSicker.targets$Surv$ub,
-                li = SickSicker.targets$Surv$lb,
-                ylim = c(0, 1), 
-                xlab = "Time", ylab = "Pr(Alive)")
-points(x = SickSicker.targets$Surv$Time, 
-       y = l.out.calib$Surv, 
-       pch = 8, col = "red")
-legend("bottomright", 
-       legend = c("Target", "Model-predicted output"),
-       col = c("black", "red"), pch = c(1, 8))
+# Plot the 1000 draws from the posterior with marginal histograms
+png("figs/03_posterior-distribution-marginal.png", 
+    width = 8, height = 6, units = 'in', res = 300)
+  pairs.panels(m.calib.post)
+dev.off()
 
-# TARGET 2: Prevalence ("Prev")
-plotrix::plotCI(x = SickSicker.targets$Prev$Time, y = SickSicker.targets$Prev$value, 
-                ui = SickSicker.targets$Prev$ub,
-                li = SickSicker.targets$Prev$lb,
-                ylim = c(0, 1), 
-                xlab = "Time", ylab = "Pr(Sick+Sicker)")
-points(x = SickSicker.targets$Prev$Time, 
-       y = l.out.calib$Prev, 
-       pch = 8, col = "red")
-legend("bottomright", 
-       legend = c("Target", "Model-predicted output"),
-       col = c("black", "red"), pch = c(1, 8))
-
-# TARGET 3: Proportion who are Sick ("PropSick"), among all those afflicted (Sick+Sicker)
-plotrix::plotCI(x = SickSicker.targets$PropSick$Time, y = SickSicker.targets$PropSick$value, 
-                ui = SickSicker.targets$PropSick$ub,
-                li = SickSicker.targets$PropSick$lb,
-                ylim = c(0, 1), 
-                xlab = "Time", ylab = "Pr(Sick | Sick+Sicker)")
-points(x = SickSicker.targets$PropSick$Time, 
-       y = l.out.calib$PropSick, 
-       pch = 8, col = "red")
-legend("bottomleft", 
-       legend = c("Target", "Model-predicted output"),
-       col = c("black", "red"), pch = c(1, 8))
+#### 03.5 Store posterior and MAP from IMIS calibration ####
+save(m.calib.post,
+     v.calib.post.map,
+     file = "data/03_imis-output.RData")
