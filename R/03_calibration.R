@@ -54,12 +54,12 @@ plotrix::plotCI(x = SickSicker.targets$Prev$Time, y = SickSicker.targets$Prev$va
                 ylim = c(0, 1), 
                 xlab = "Time", ylab = "Pr(Sick+Sicker)")
 
-# TARGET 3: Proportion who are Sick ("PropSick"), among all those afflicted (Sick+Sicker)
+# TARGET 3: Proportion who are Sicker ("PropSicker"), among all those afflicted (Sick+Sicker)
 plotrix::plotCI(x = SickSicker.targets$PropSick$Time, y = SickSicker.targets$PropSick$value, 
                 ui = SickSicker.targets$PropSick$ub,
                 li = SickSicker.targets$PropSick$lb,
                 ylim = c(0, 1), 
-                xlab = "Time", ylab = "Pr(Sick | Sick+Sicker)")
+                xlab = "Time", ylab = "Pr(Sicker | Sick+Sicker)")
 
 #### 03.3 Run calibration algorithms ####
 # Check that it works
