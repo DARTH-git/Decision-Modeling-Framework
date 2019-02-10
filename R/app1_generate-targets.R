@@ -32,9 +32,10 @@ n.i <- 500
 ## Time frame to generate targets
 n.t.targets <- 30
 #### App.2.2 Run microsimulation model to generate target ####
-l.out.targets <- f.sicksicker_micsim(v.params = df.true.params, 
+SickSicker.targets <- f.sicksicker_micsim(v.params = df.true.params, 
                               n.i = n.i, n.t = n.t.targets, v.n = v.n, 
-                              seed = 20190209)
+                              plot.targets = TRUE,
+                              seed = 20190210)
 
 #### App.3 Save targets ####
-save(l.out.targets, file = "data/app1_calibration-targets.RData")
+save(SickSicker.targets, file = "data/app1_calibration-targets.RData")

@@ -191,7 +191,7 @@ f.sicksicker_micsim <- function(v.params, n.i, n.t, v.n,
     ### SURVIVAL Target
     df.survival <- data.frame(Target = "Survival",
                               Time = 0:n.t,
-                              Num = c(v.n.atrisk),
+                              Num = v.n.atrisk,
                               Pop = n.i)
     ## Compute SE and 95% CI
     df.survival <- df.survival %>% 

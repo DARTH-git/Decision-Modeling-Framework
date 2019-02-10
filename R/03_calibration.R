@@ -33,7 +33,8 @@ source("functions/02_simulation-model_functions.R")
 source("functions/03_calibration_functions.R")
 
 #### 03.1.4 Load calibration targets ####
-load("data/03_calibration-targets.RData")
+# load("data/03_calibration-targets.RData")
+load("data/app1_calibration-targets.RData")
 
 #### 03.2 Visualize targets ####
 # TARGET 1: Survival ("Surv")
@@ -128,8 +129,18 @@ scatterplot3d(x = m.calib.res[1:10, 1],
               ylab = v.param.names[2], 
               zlab = v.param.names[3])
 
-#### 03.4.1 Store best parameter set from NM calibration ####
+#### 03.4.1 Best parameter set from NM calibration ####
 v.params.calib.best <- m.calib.res[1, -4]
+### Confidence interval of best pameter set
+df.calib.best.summ <- data.frame(
+  Parameter = v.param.names,
+  `Best set` = v.params.calib.best, 
+  LB = v.params.calib.best - 2*sqrt(diag(solve(-fit.nm$hessian))), 
+  UB = v.params.calib.best + 2*sqrt(diag(solve(-fit.nm$hessian))), 
+  check.names = FALSE)
+df.calib.best.summ
+
+#### 03.4.2 Store best parameter set from NM calibration ####
 save(v.params.calib.best, file = "data/03_nm-best-set.RData")
 
 #### 03.5 Internal validation: Model-predicted ouput at best set vs. targets ####
@@ -173,4 +184,3 @@ points(x = SickSicker.targets$PropSick$Time,
 legend("bottomleft", 
        legend = c("Target", "Model-predicted output"),
        col = c("black", "red"), pch = c(1, 8))
-

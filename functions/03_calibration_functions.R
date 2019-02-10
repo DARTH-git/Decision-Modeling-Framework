@@ -6,7 +6,7 @@ f.calibration_out <- function(v.params.calib){ # User defined
   #     v.params.calib: vector of parameters that need to be calibrated
   #
   # Create temporary variable with base-case model parameters
-  v.params <- v.params.init
+  v.params <- df.params.init
   # Substitute values of calibrated parameters in base-case with 
   # calibrated values
   v.params["p.S1S2"] <- v.params.calib["p.S1S2"]
@@ -24,12 +24,12 @@ f.calibration_out <- function(v.params.calib){ # User defined
   v.prev <- rowSums(l.out.stm$m.M[, c("S1", "S2")])/v.os
   
   #### Proportion of sick in S1 state #####
-  v.prop.S1 <- l.out.stm$m.M[, "S1"] / v.prev
+  v.prop.S2 <- l.out.stm$m.M[, "S2"] / rowSums(l.out.stm$m.M[, c("S1", "S2")])
   
   ####### Return Output ###########################################
-  l.out <- list(Surv = v.os[2:31],
-              Prev = v.prev[2:31],
-              PropSick = v.prop.S1[c(11, 21, 31)])
+  l.out <- list(Surv = v.os[c(11, 21, 31)],
+              Prev = v.prev[c(11, 21, 31)],
+              PropSicker = v.prop.S2[c(11, 21, 31)])
   return(l.out)
 }
 
