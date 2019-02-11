@@ -14,6 +14,14 @@ bibliography: references.bib
 ---
 
 ```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+#doc.type <- knitr::opts_knit$get('rmarkdown.pandoc.to')
+#opts_chunk$set(echo = FALSE, cache=FALSE)
+```
+
+
+```{r load_packages, include=FALSE}
 library(knitr)
 library(kableExtra) # https://haozhu233.github.io/kableExtra/awesome_table_in_html.html
 library(dplyr)
@@ -21,115 +29,109 @@ library(reshape2)
 library(ggplot2)
 library(scales) # for dollar signs and commas
 library(tensorA) # to use tensor algebra
-
-knitr::opts_chunk$set(echo = TRUE)
-
-#opts_chunk$set(echo = FALSE, cache=FALSE)
-#read_chunk("../R/01_model-inputs-external_functions.R")
-
-
-#doc.type <- knitr::opts_knit$get('rmarkdown.pandoc.to')
-age     <- 25         # age at baseline
-max.age <- 55         # maximum age of follow up
-n.t <- max.age - age # time horizon, number of cycles
 ```
 
 
-```{r load myData, include=FALSE}
-# 01 Model inputs data
-read.csv("../data/01_all-cause-mortality-USA-2015.csv")
-read.csv("../data/01_basecase-params.csv")
-read.csv("../data/01_init-params.csv")
+```{r read chunks, include = FALSE}
+# For some reason I can't manage reading these files so I copied it ot hte markdown for now but we need to see how we can source the files. 
+#source("../R/01_model-inputs.R")
+#source("../R/02_simulation-model.R")
+#source("../R/03_calibration.R")
+#source("../R/04_calculate-outcomes.R")
+#source("../R/05a_deterministic-analysis.R")
+#source("../R/05b_uncertainty-analysis.R")
+#source("../R/06_value-of-information.R")
+```
+
+
+```{r,  echo = FALSE}
+################################################################################ 
+# This script generates all the required input parameters for the cohort       #
+# implementation of the Sick-Sicker state-transition model (STM)               #
+#                                                                              # 
+# Depends on:                                                                  #
+#   01_model-inputs-external_functions.R                                       #
+#                                                                              # 
+# Authors: Fernando Alarid-Escudero                                            # 
+# E-mail: fernando.alarid@cide.edu                                             # 
+################################################################################ 
+# The structure of this code is according to the DARTH framework               #
+# https://github.com/DARTH-git/Decision-Modeling-Framework                     #
+################################################################################ 
+
+# rm(list = ls()) # to clean the workspace
+
+#### 01.1 Load packages and functions ####
+#### 01.1.1 Load packages and functions ####
+library(dplyr) # For data manipulation
+
+#### 01.1.2 Load functions ####
 source("../functions/01_model-inputs_functions.R")
 
-# 02 Model implementation
+#### 01.2 External parameters ####
+#### 01.2.1 General setup ####
+n.age.init  <- 25  # age of starting cohort
+n.t         <- 75  # time horizon, number of cycles
+v.age.names <- n.age.init:(n.age.init + n.t - 1) # vector with age names
+v.n <- c("H", "S1", "S2", "D") # vector with the 4 health states of the model:
+                               # Healthy (H), Sick (S1), Sicker (S2), Dead (D)
+n.states <- length(v.n) # number of health states 
+d.c <- 0.03 # discount rate for costs 
+d.e <- 0.03 # discount rate for QALYs
+v.dwc <- 1 / ((1 + d.e) ^ (0:(n.t))) # vector with discount weights for costs
+v.dwe <- 1 / ((1 + d.c) ^ (0:(n.t))) # vector with discount weights for QALYs
+v.s.init <- c(H = 1, S1 = 0, S2 = 0, D = 0) # initial state vector
 
-# 03 Model calibration data
-load("../data/03_calibration-targets.RData")
-load("../data/03_nm-best-set.RData")
+#### 01.2.2 All-cause age-, sex- and race- (ASR) specific mortality ####
+df.r.asr <- read.csv("../data/01_all-cause-mortality-USA-2015.csv")
+v.r.asr  <- df.r.asr %>%
+  dplyr::select(Total) %>%
+  as.matrix()              # vector with mortality rates
 
-# 04 Sensitivity analysis data
-load("../data/05b_psa-dataset.RData")
-``` 
+#### 01.2.3 Generate initial set of base-case external parameters ####
+v.params.init <- f.generate_init_params()
+## Create name of parameters
+v.names.params <- names(v.params.init)
+## Save base-case set of parameters
+write.csv(x = v.params.init, file = "../data/01_init-params.csv")
 
-In this document we showcase the framework via a fully functional decision model. In this case-study we perform a cost-effectiveness analysis (CEA) using a previously published 4-state model called the Sick-Sicker model.[@Enns2015] The model is used to quantify the expected costs and quality-adjusted life years (QALYs) for individuals with a hypothetical disease with two different stages, "Sick" and "Sicker". We calibrate the model using three targets, survival, prevalence and the proportion who are "Sick" among all those afflicted "Sick + Sicker". We then evaluate the cost-effectiveness of a hypothetical treatment that increases quality of life (QoL) in one of the disease states.[@Krijkamp2018] We identify the uncertainity around our decision based on the CEA using sensitivity analysis. Finaly, we perform a value of information (VoI) analysis to see if it is worth investing in extra research projects to liminate the uncertainty around our decision. 
+#### 01.3 Estimated parameters ####
+
+```
+
+
+In this document we showcase the framework via a fully functional decision model. In this case-study we perform a cost-effectiveness analysis (CEA) using a previously published 4-state model called the Sick-Sicker model.[@Enns2015] The model is used to quantify the expected costs and quality-adjusted life years (QALYs) for individuals with a hypothetical disease with two different stages, "Sick" and "Sicker". We calibrate the model using three targets, survival, prevalence and the proportion who are "Sick" among all those afflicted "Sick + Sicker". We then evaluate the cost-effectiveness of a hypothetical treatment that increases quality of life (QoL) in one of the disease states.[@Krijkamp2018] We identify the uncertainity around our decision based on the CEA using sensitivity analysis. Finaly, we perform a value of information (VoI) analysis to see if it is worth investing in extra research projects with the aim to eliminate the uncertainty around our decision. 
 
 ## The Sick-Sicker model 
-In the Sick-Sicker model, we simulate a hypothetical cohort of 25-year-old individuals over a lifetime (or reaching age 110 years old) that all start in the "Healthy" health state (denoted "H"). That is, the total number of cycles, $n_t$ represented with `n.t` is `r n.t`. Healthy individuals are at risk of developing the illness, at which point they would transition to the first stage of the disease (the "Sick" health state, denoted "S1"). Individuals that become sick incur a one-time utility decrement of 0.01 (`du.HS1`, disutility of transitioning from H to S1) and a one-time cost of \$1,000 (`ic.HS1`) that reflect the acute impacts of developing the illness. Sick individuals are at risk of further progressing to a more severe stage (the "Sicker" health state, denoted "S2"), which in the time-homogenous model is constant and in the time-dependent model is a function of the duration of being in the Sick state. There is a chance that individuals in the Sick state eventually recover and return back to the Healthy state. However, once an individual reaches the Sicker health state, they cannot recover; that is, the probability of transitioning to the Sick or Healthy health states from the Sicker health state is zero. Individuals in the Healthy state face background mortality that could be either constant or age-specific (i.e., time-dependent). Sick and Sicker individuals face an increased mortality in the form of a hazard ratio (HR) of 3 and 10 times, respectively, on the background mortality rate. Sick and Sicker individuals also experience increased health care costs and reduced QoL compared to healthy individuals. Once simulated individuals die, they transition to the "Dead" health state (denoted "D"), where they remain. When an individual dies, they incur a one-time cost of $2,000 (`ic.D`) that reflects the acute care that might be received immediately preceding death. The state-transition diagram of the Sick-Sicker model is shown in Figure \@ref(fig:STD-Sick-Sicker). The evolution of the cohort is simulated in one-year discrete-time cycles. Both costs and QALYs are discounted at an annual rate of 3%.
+In the Sick-Sicker model, we simulate a hypothetical cohort of `r n.age.init`-year-old individuals over a lifetime (or reaching age `r n.age.init + n.t` years old) using `r n.t` anual cycles, represented with `n.t`. The cohort start in the "Healthy" health state (denoted "H"). Healthy individuals are at risk of developing the illness, at which point they would transition to the first stage of the disease (the "Sick" health state, denoted "S1"). Individuals that become sick incur a one-time utility decrement of `r v.params.init$du.HS1` (`du.HS1`, disutility of transitioning from H to S1) and a one-time cost of \$`r v.params.init$ic.HS1` (`ic.HS1`) that reflect the acute impacts of developing the illness. Sick individuals are at risk of further progressing to a more severe stage (the "Sicker" health state, denoted "S2"), which is constant in this case example. There is a chance that individuals in the Sick state eventually recover and return back to the Healthy state. However, once an individual reaches the Sicker health state, they cannot recover; that is, the probability of transitioning to the Sick or Healthy health states from the Sicker health state is zero. Individuals in the Healthy state face background mortality that is age-specific (i.e., time-dependent). Sick and Sicker individuals face an increased mortality in the form of a hazard rate ratio (HR) of 3 and 10 times, respectively, on the background mortality rate. Sick and Sicker individuals also experience increased health care costs and reduced QoL compared to healthy individuals. Once simulated individuals die, they transition to the "Dead" health state (denoted "D"), where they remain. When an individual dies, they incur a one-time cost of \$`r v.params.init$ic.D` (`ic.D`) that reflects the acute care that might be received immediately preceding death. The state-transition diagram of the Sick-Sicker model is shown in Figure \ref{fig:STM Sick-Sicker}. The evolution of the cohort is simulated in one-year discrete-time cycles. Both costs and QALYs are discounted at an annual rate of `r d.e`%.
 
 
+![Sick-Sicker \label{fig:STM Sick-Sicker}](../figs/Sick-Sicker figure.png)
 
-A hypothetical disease affects individuals with an average age of 25 years and results in increased mortality, increased treatment costs and reduced quality of life. The disease has two levels; affected individuals initially become sick but can subsequently progress and become sicker. Two alternative strategies exist for this hypothetical disease: a no-treatment and a treatment strategy. Under the treatment strategy, individuals who become sick or progress and become sicker receive treatment and continue doing so until they recover or die. The cost of the treatment is additional to the cost of being sick or sicker for one year. The treatment improves quality of life for those individuals who are sick but has no effect on the quality of life of those who are sicker. You are asked to evaluate the cost-effectiveness of the treatment assuming a willingness to pay of $80000.
+A hypothetical disease affects individuals with an average age of `r n.age.init` years and results in increased mortality, increased treatment costs and reduced quality of life. The disease has two levels; affected individuals initially become sick but can subsequently progress and become sicker. Two alternative strategies exist for this hypothetical disease: a no-treatment and a treatment strategy. Under the treatment strategy, individuals who become sick or progress and become sicker receive treatment and continue doing so until they recover or die. The cost of the treatment is additional to the cost of being sick or sicker for one year. The treatment improves quality of life for those individuals who are sick but has no effect on the quality of life of those who are sicker. You are asked to evaluate the cost-effectiveness of the treatment assuming a willingness to pay of \$80000.
 
-To model this disease, we will rely on a state-transition cohort model, called the Sick-Sicker model, first described by Enns et al. The Sick-Sicker model consists of four health states: healthy (H), two disease states sick (S1) and sicker (S2) and dead (D) (Figure 1). All individuals start in the healthy state. Over time, healthy individuals may develop the disease and can progress to S1. Individuals in S1 can recover (return to state H), progress further to S2 or die. Individuals in S2 cannot recover (i.e. cannot transition to either S1 or H). Individuals in H are assumed to have a fixed mortality rate and individuals in S1 and S2 have an increased mortality rate compared to healthy individuals. These rates are used to calculate the probabilities to die when in S1 and S2. 
-
-
-
-![Sick-Sicker](../figs/Sick-Sicker figure.png)
-
+To model this disease, we will rely on a state-transition cohort model, called the Sick-Sicker model, first described by Enns et al. The Sick-Sicker model consists of four health states: healthy (H), two disease states sick (S1) and sicker (S2) and dead (D) (Figure \ref{fig:STM Sick-Sicker}). All individuals start in the healthy state. Over time, healthy individuals may develop the disease and can progress to S1. Individuals in S1 can recover (return to state H), progress further to S2 or die. Individuals in S2 cannot recover (i.e. cannot transition to either S1 or H). Individuals in H are assumed to have a fixed mortality rate and individuals in S1 and S2 have an increased mortality rate compared to healthy individuals. These rates are used to calculate the probabilities to die when in S1 and S2. 
 
 
 ###01 Define model inputs 
-The input for the Sick-Sicker model is informed by external data saved in a couple of csv files. 
-```{r eval = FALSE}
-# 01 Model inputs data
-read.csv("../data/01_all-cause-mortality-USA-2015.csv")
-df.basecase_params <- read.csv("../data/01_basecase-params.csv")
-df.init_params <- read.csv("../data/01_init-params.csv")
-``` 
+The input for the Sick-Sicker model is informed by external data. All model parameter values and R variable names, for both the general set up and the external data, are presented in Table \ref{tab:parameters}. This tabel is informed via the files `01_Model-inputs_function.R`, that generates the base-case parameter set including these external values from the `01_basecase-params.csv` dataset and the `01_model-inputs.R`. The age specific mortality rated are derived from the Human Mortality data base and include the all cause mortality ratae fro the USA population based on 2015 data. This information is stored in the `01_all-cause-mortality-USA-2015.csv` file. 
 
 
-
-The 01_Model-inputs_function.R generates the base-case parameter set including these external and calibrated values.
-
-
-
-The 01_model-inputs.R file calls this function including the base-case parameters. In addition, this file is loading the age-, sex- and race- (ASR) specific mortality rates derived from the Human Mortality database and includes the general setup specifying  among others the time horizon, prevalence of the different health states at the start of the model and discount rates. 
-
-
-
-###02 Model implementation 
-
-###03 Model calibration 
-The Sick-Sicker model results need to be calibrated against data containing information about survival, the prevalence of both sick and sicker and the proportion who are sick among those afflicted (sick and sicker). This data is stored in the 03_calibration-tarted.RData. The function to calibrate the model are stored in the 03_calibration_functions.R file stored in the functions folder. This file also contains a Goodness of fit function for calibration form a parameter set. The calibration function makes sure of the Nelder-Mead method.
-
-###04 Analysis 
-####04a Validation 
-####04b Deterministic analysis 
-```{r, eval = FALSE}
-load("../data/03_calibration-targets.RData")
-load("../data/03_nm-best-set.RData")
-``` 
-
-
-####04c Deterministic analysis 
-```{r eval=FALSE}
-load("../data/05b_psa-dataset.RData")
-```
-
-
-
-
-
-Table: Description of parameters with their R name and value.
+Table: \label{tab:parameters} Description of parameters with their R name and value.
 
 |           **Parameter**            |  **R name** |   **Value**   |
 |:-----------------------------------|:-----------:|:-------------:|
-| Time horizon ($n_t$)               | `n.t`       | ``r n.t`` years |
+| Time horizon ($n_t$)               | `n.t`       | `r n.t` years |
 | Names of health states ($n$)       | `v.n`       | H, S1, S2, D  |
 | Annual discount rate (costs/QALYs) | `d.c`/`d.e` |  3%           |
 | Annual transition probabilities    |             |               |
-| - Disease onset (H to S1)          | `p.HS1`     |  0.15         |
-| - Recovery (S1 to H)               | `p.S1H`     |  0.5          |
-| - Disease progression (S1 to S2)  in the time-homogenous model   | `p.S1S2`    |  0.105        |
-| - Time-dependent disease progression (S1 to S2) | `p.S1S2.tunnels` | |
-|   &nbsp;&nbsp;&nbsp;&nbsp;Weibull parameters |         |               |
-|   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Scale ($\lambda$)             | `l`         |  0.08         |
-|   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Shape ($\gamma$)              | `g`         |  1.10         |
+| - Disease onset (H to S1)          | `p.HS1`     |  `r v.params.init$p.HS1`         |
+| - Recovery (S1 to H)               | `p.S1H`     |  `r v.params.init$p.S1H`          |
+| - Disease progression (S1 to S2)  in the time-homogenous model   | `p.S1S2`    |  `r v.params.init$p.S1S2`        |
 | Annual mortality                   |             |               |
-| - All-cause mortality (H to D)     | `p.HD`      |  0.002 or age-specific |
-| - Hazard ratio of death in S1 vs H | `hr.S1`     |  r hr.S1`            |
-| - Hazard ratio of death in S2 vs H | `hr.S2`     |  10           |
+| - All-cause mortality (H to D)     | `p.HD`      |  age-specific |
+| - Hazard ratio of death in S1 vs H | `hr.S1`     |  `r v.params.init$hr.S1`            |
+| - Hazard ratio of death in S2 vs H | `hr.S2`     |  `r v.params.init$hr.S1`           |
 | Annual costs                       |             |               |
 | - Healthy individuals              | `c.H`       |  $2,000       |
 | - Sick individuals in S1           | `c.S1`      |  $4,000       |
@@ -150,164 +152,73 @@ Table: Description of parameters with their R name and value.
 |   when transitioning to S1         |             |               |
 | - Cost of dying                    | `ic.D`      |  $2,000       |
 
-Below, we show how to input the parameters in `R`. For the most up to date code, please visit [GitHub](https://github.com/DARTH-git/). We use the prefixes "`m.`" or "`v.`" to represent a matrix or a vector, respectively, consistent with our previous tutorial.[@Krijkamp2018] 
-
-```{r Model-Params, eval=TRUE}
-## General setup
-age     <- 25         # age at baseline
-max.age <- 55         # maximum age of follow up
-n.t <- max.age - age # time horizon, number of cycles
-v.n <- c("H", "S1", "S2", "D") # the 4 health states of the model:
-                               # Healthy (H), Sick (S1), Sicker (S2), Dead (D)
-n.s <- length(v.n) # number of health states 
-d.c <- d.e <- 0.03 # equal discount of costs and QALYs by 3%
-v.names.str <- c("Usual care", "New treatment") # store the strategy names
-
-## Transition probabilities (per cycle)
-p.HD    <- 0.002 # constant probability of dying when Healthy (all-cause mortality)
-p.HS1   <- 0.15  # probability to become Sick when Healthy
-p.S1H   <- 0.5   # probability to become Healthy when Sick
-p.S1S2  <- 0.105 # probability to become Sicker when Sick
-hr.S1   <- 3     # hazard ratio of death in Sick vs Healthy
-hr.S2   <- 10    # hazard ratio of death in Sicker vs Healthy 
-
-## Cost and utility inputs 
-# State rewards
-c.H   <- 2000  # cost of remaining one cycle Healthy 
-c.S1  <- 4000  # cost of remaining one cycle Sick 
-c.S2  <- 15000 # cost of remaining one cycle Sicker 
-c.D   <- 0     # cost of being dead (per cycle)
-c.Trt <- 12000 # cost of treatment (per cycle) 
-
-u.H   <- 1     # utility when Healthy 
-u.S1  <- 0.75  # utility when Sick 
-u.S2  <- 0.5   # utility when Sicker
-u.D   <- 0     # utility when Sealthy 
-u.Trt <- 0.95  # utility when being treated
-
-# Transition rewards
-du.HS1 <- 0.01  # disutility when transitioning from Healthy to Sick
-ic.HS1 <- 1000  # increase in cost when transitioning from Healthy to Sick
-ic.D   <- 2000  # increase in cost when dying
-```
-
-To compute the mortality risks from the Sick and Sicker states, we transform `p.HD` to a rate assuming a constant exponential rate, $-log(1 - p.HD)$, multiply it by the hazard ratios `hr.S1` and `hr.S2`, respectively, and then convert them back to a probability $p=-e^{-rt}$. See the R code below for more details on the calculations.
-
-```{r Sick-Sicker-Params, eval=TRUE}
-p.S1D  <- 1 - exp(log(1 - p.HD) * hr.S1) # probability of dying in Sick
-p.S2D  <- 1 - exp(log(1 - p.HD) * hr.S2) # probability of dying in Sicker
-```
 
 
-#### 01 Load packages 
-No packages are needed to run this case example 
-
-#### 02 Load Functions 
-We don't make use of functions for this case exampl.e 
-
-#### 03 Input Model Parameters 
-The imput parameters of the Sick-Sicker model are specified below. 
+###02 Model implementation 
 ```{r}
-Strategies <- c("No Treatment", "Treatment")  # strategy names 
-age  <- 25                                    # age at baseline
-n.t  <- 30                                    # time horizon, number of cycles
-max.age <- age + n.t                          # maximum age of follow up
-v.n  <- c("H", "S1", "S2", "D")               # the 4 states of the model: Healthy (H), Sick (S1), Sicker (S2), Dead (D)
-n.s  <- length(v.n)                           # number of health states 
-d.r  <- 0.03                                  # 3% discount for costs and QALYs
+################################################################################ 
+# This script runs the cohort implementation of the Sick-Sicker                #
+# state-transition model (STM)                                                 #
+#                                                                              # 
+# Depends on:                                                                  #
+#   01_model-inputs.R                                                          #
+#   02_simulation-model_functions.R                                            #
+#                                                                              # 
+# Author: Fernando Alarid-Escudero                                             # 
+# E-mail: fernando.alarid@cide.edu                                             # 
+################################################################################ 
+# The structure of this code is according to the DARTH framework               #
+# https://github.com/DARTH-git/Decision-Modeling-Framework                     #
+################################################################################ 
 
-# Transition probabilities (per cycle)
-p.HS1   <- 0.15          	  # probability to become sick when healthy
-p.S1H   <- 0.5           	  # probability to become healthy when sick
-p.S1S2  <- 0.105         	  # probability to become sicker when sick
-p.HD    <- 0.005            # probability to die when healthy
+# rm(list = ls()) # to clean the workspace
 
-rr.S1   <- 3             	  # rate ratio of death in sick vs healthy
-rr.S2   <- 10            	  # rate ratio of death in sicker vs healthy 
-r.HD    <- - log(1 - p.HD)  # rate of death in healthy
-r.S1D   <- rr.S1 * r.HD  	  # rate of death in sick
-r.S2D   <- rr.S2 * r.HD  	  # rate of death in sicker
-p.S1D   <- 1 - exp(- r.S1D) # probability to die in sick
-p.S2D   <- 1 - exp(- r.S2D) # probability to die in sicker
+#### 02.1 Load packages and functions ####
+#### 02.1.1 Load packages and functions ####
+library(dplyr) # For data manipulation
 
-# Cost inputs   
-c.H     <- 2000             # cost of remaining one cycle in the healthy state
-c.S1    <- 4000             # cost of remaining one cycle in the sick state
-c.S2    <- 15000            # cost of remaining one cycle in the sicker state
-c.Trt   <- 12000            # cost of treatment(per cycle)
-c.D     <- 0                # cost of being in the death state
-  
-# Utility inputs  
-u.H     <- 1                # utility when healthy
-u.S1    <- 0.75             # utility when sick
-u.S2    <- 0.5              # utility when sicker
-u.D     <- 0                # utility when dead
-u.Trt   <- 0.95             # utility when being treated
+#### 02.1.2 Load inputs ####
+#source("../R/01_model-inputs.R")
 
-v.dwe <- v.dwc <- 1 / ((1 + d.r) ^ (0:n.t))  # discount weight 
-# (equal discounting is assumed for costs and effects)
-```
+#### 02.1.3 Load functions ####
+source("../functions/02_simulation-model_functions.R")
 
-#### 04 Model initialization
-```{r}
-# create transition probability matrices for both treatment and no treatment
-m.P_no_trt <- m.P_trt <- matrix(NA, nrow = n.s, ncol = n.s, 
-                                byrow = TRUE, dimnames = list(v.n, v.n))
+#### 02.2 Run STM ####
+### Create list of model output
+l.out.stm <- f.decision_model(v.params = v.params.init)
+l.out.stm
 
-# fill in the transition probability matrix
-### from H
-m.P_no_trt["H", "H"]  <- 1 - (p.HS1 + p.HD)
-m.P_no_trt["H", "S1"] <- p.HS1
-m.P_no_trt["H", "S2"] <- 0
-m.P_no_trt["H", "D"]  <- p.HD
-
-### from S1
-m.P_no_trt["S1", "H"]  <- p.S1H
-m.P_no_trt["S1", "S1"] <- 1 - (p.S1H + p.S1S2 + p.S1D)
-m.P_no_trt["S1", "S2"] <- p.S1S2
-m.P_no_trt["S1", "D"]  <- p.S1D
-
-### from S2
-m.P_no_trt["S2", "H"]  <- 0
-m.P_no_trt["S2", "S1"] <- 0
-m.P_no_trt["S2", "S2"] <- 1 - p.S2D
-m.P_no_trt["S2", "D"]  <- p.S2D 
-
-### from D
-m.P_no_trt["D", "H"]   <- 0 
-m.P_no_trt["D", "S1"]  <- 0
-m.P_no_trt["D", "S2"]  <- 0 
-m.P_no_trt["D", "D"]   <- 1
-
-# the two transition probability matrices are the same
-m.P_trt <- m.P_no_trt
-
-# create the markov trace 
-# matrix M is capturing the proportion of the cohort in each state at each cycle
-m.M_no_trt <- m.M_trt <- matrix(NA, nrow = n.t + 1, ncol = n.s,
-                                dimnames = list(paste("cycle", 0:n.t, sep = " "), v.n))
-
-# The cohort starts as healthy
-m.M_no_trt[1, ] <- m.M_trt[1, ] <- c(1, 0, 0, 0) # initiate the Markov trace 
-head(m.M_no_trt)
-```
-
-Here you can see that only the first cycle of the Markov trace is filled. In the next section we will 
-
-#### 05 Process of the model ####
-```{r}
-for (t in 1:n.t){
-  ######### using transition matrices ###########
-  # calculate the proportion of the cohort in each state at time t
-  m.M_no_trt[t + 1, ] <- t(m.M_no_trt[t, ]) %*% m.P_no_trt
-     m.M_trt[t + 1, ] <- t(m.M_trt[t, ])    %*% m.P_trt
-} # close the loop
-head(m.M_trt)
 ```
 
 
+
+```{r, eval = TRUE, echo = TRUE}
+l.out.stm$a.P[, , 1:3] # transition probability matrix for the first three cycles
+```
+
+
+
+```{r, eval = TRUE, echo = TRUE}
+head(l.out.stm$m.M)  # 
+tail(l.out.stm$m.M)
+```
+
+
+
+
+###03 Model calibration 
+The Sick-Sicker model results need to be calibrated against data containing information about survival, the prevalence of both sick and sicker and the proportion who are sick among those afflicted (sick and sicker). This data is stored in the 03_calibration-tarted.RData. The function to calibrate the model are stored in the 03_calibration_functions.R file stored in the functions folder. This file also contains a Goodness of fit function for calibration form a parameter set. The calibration function makes sure of the Nelder-Mead method.
+
+###04 Analysis 
+####04a Validation 
+####04b Deterministic analysis 
+
+
+####04c Deterministic analysis 
 
 
 
 ### References 
+
+
 

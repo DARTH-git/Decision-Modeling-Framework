@@ -43,7 +43,7 @@ f.decision_model <- function(v.params){# User defined
     for(t in 1:n.t){
       m.M[t + 1, ] <- m.M[t, ] %*% a.P[, , t]
     }
-    return(list(m.M = m.M))
+    return(list(m.M = m.M, a.P = a.P))
   }
   )
 }
