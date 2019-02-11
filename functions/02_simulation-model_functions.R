@@ -14,7 +14,7 @@ f.decision_model <- function(v.params){# User defined
     #### Create age-specific transition matrices ####
     # Initialize array
     a.P <- array(0, dim = c(n.states, n.states, n.t),
-                 dimnames = list(v.n, v.n, 0:(n.t-1)))
+                 dimnames = list(v.n, v.n, 0:(n.t - 1)))
     # Fill in array
     # From H
     a.P["H", "H", ]  <- 1 - (p.HS1 + p.HDage)

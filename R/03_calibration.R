@@ -107,7 +107,7 @@ for (j in 1:n.init){
                   control = list(fnscale = -1, # fnscale = -1 switches from minimization to maximization
                                  maxit = 1000), 
                   hessian = T)
-  # Store caibrated parameters and GOF value at last NM iteration
+  # Store calibrated parameters and GOF value at last NM iteration
   m.calib.res[j, ] <- c(fit.nm$par, fit.nm$value)
 }
 
@@ -118,19 +118,20 @@ m.calib.res <- m.calib.res[order(-m.calib.res[, "Overall_fit"]),]
 # Examine the top 10 best-fitting sets
 m.calib.res[1:10, ]
 # Plot the top 10 (top 10%)
-scatterplot3d(x = m.calib.res[1:10, 1],
-              y = m.calib.res[1:10, 2],
-              z = m.calib.res[1:10, 3],
-              xlim = c(v.lb[1], v.ub[1]), 
-              ylim = c(v.lb[2], v.ub[2]), 
-              zlim = c(v.lb[3], v.ub[3]),
-              xlab = v.param.names[1], 
-              ylab = v.param.names[2], 
-              zlab = v.param.names[3])
-
+#scatterplot3d(x = m.calib.res[1:10, 1],
+#              y = m.calib.res[1:10, 2],
+#              z = m.calib.res[1:10, 3],
+#              xlim = c(v.lb[1], v.ub[1]), 
+#              ylim = c(v.lb[2], v.ub[2]), 
+#              zlim = c(v.lb[3], v.ub[3]),
+#              xlab = v.param.names[1], 
+#              ylab = v.param.names[2], 
+#              zlab = v.param.names[3])
+#
 #### 03.4.1 Store best parameter set from NM calibration ####
 v.params.calib.best <- m.calib.res[1, -4]
 save(v.params.calib.best, file = "data/03_nm-best-set.RData")
+
 
 #### 03.5 Internal validation: Model-predicted ouput at best set vs. targets ####
 l.out.calib <- f.calibration_out(m.calib.res[1, ])
