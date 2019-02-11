@@ -3,11 +3,11 @@ title: "Sick-Sicker case study"
 author: "DARTH workgroup"
 date: '`r Sys.Date()`'
 output: 
-  pdf_document: default
-    #fig_caption: yes
   word_document:
     toc: yes     # table of content
     toc_depth: 1 # depth of the table of content
+  pdf_document: default
+    #fig_caption: yes
   html_document: default
 bibliography: references.bib
 ---
@@ -32,7 +32,7 @@ library(tensorA) # to use tensor algebra
 
 
 ```{r read chunks, include = FALSE}
-# For some reason I can't manage reading these files so I copied it ot hte markdown for now but we need to see how we can source the files. 
+# For some reason I can't manage reading these files so I copied it to the markdown for now but we need to see how we can source the files. 
 #source("../R/01_model-inputs.R")
 #source("../R/02_simulation-model.R")
 #source("../R/03_calibration.R")
@@ -99,10 +99,10 @@ write.csv(x = v.params.init, file = "../data/01_init-params.csv")
 ```
 
 
-In this document we showcase the framework via a fully functional decision model. In this case-study we perform a cost-effectiveness analysis (CEA) using a previously published 4-state model called the Sick-Sicker model.[@Enns2015] The model is used to quantify the expected costs and quality-adjusted life years (QALYs) for individuals with a hypothetical disease with two different stages, "Sick" and "Sicker". We calibrate the model using three targets, survival, prevalence and the proportion who are "Sick" among all those afflicted "Sick + Sicker". We then evaluate the cost-effectiveness of a hypothetical treatment that increases quality of life (QoL) in one of the disease states.[@Krijkamp2018] We identify the uncertainity around our decision based on the CEA using sensitivity analysis. Finaly, we perform a value of information (VoI) analysis to see if it is worth investing in extra research projects with the aim to eliminate the uncertainty around our decision. 
+In this document we showcase the framework via a fully functional decision model. In this case-study we perform a cost-effectiveness analysis (CEA) using a previously published 4-state model called the Sick-Sicker model.[@Enns2015] The model is used to quantify the expected costs and quality-adjusted life years (QALYs) for individuals with a hypothetical disease with two different stages, "Sick" and "Sicker". We calibrate the model using three targets, survival, prevalence and the proportion who are "Sick" among all those afflicted "Sick + Sicker". We then evaluate the cost-effectiveness of a hypothetical treatment that increases quality of life (QoL) in one of the disease states.[@Krijkamp2018] We identify the uncertainty around our decision based on the CEA using sensitivity analysis. Finally, we perform a value of information (VoI) analysis to see if it is worth investing in extra research projects with the aim to eliminate the uncertainty around our decision. 
 
 ## The Sick-Sicker model 
-In the Sick-Sicker model, we simulate a hypothetical cohort of `r n.age.init`-year-old individuals over a lifetime (or reaching age `r n.age.init + n.t` years old) using `r n.t` anual cycles, represented with `n.t`. The cohort start in the "Healthy" health state (denoted "H"). Healthy individuals are at risk of developing the illness, at which point they would transition to the first stage of the disease (the "Sick" health state, denoted "S1"). Individuals that become sick incur a one-time utility decrement of `r v.params.init$du.HS1` (`du.HS1`, disutility of transitioning from H to S1) and a one-time cost of \$`r v.params.init$ic.HS1` (`ic.HS1`) that reflect the acute impacts of developing the illness. Sick individuals are at risk of further progressing to a more severe stage (the "Sicker" health state, denoted "S2"), which is constant in this case example. There is a chance that individuals in the Sick state eventually recover and return back to the Healthy state. However, once an individual reaches the Sicker health state, they cannot recover; that is, the probability of transitioning to the Sick or Healthy health states from the Sicker health state is zero. Individuals in the Healthy state face background mortality that is age-specific (i.e., time-dependent). Sick and Sicker individuals face an increased mortality in the form of a hazard rate ratio (HR) of 3 and 10 times, respectively, on the background mortality rate. Sick and Sicker individuals also experience increased health care costs and reduced QoL compared to healthy individuals. Once simulated individuals die, they transition to the "Dead" health state (denoted "D"), where they remain. When an individual dies, they incur a one-time cost of \$`r v.params.init$ic.D` (`ic.D`) that reflects the acute care that might be received immediately preceding death. The state-transition diagram of the Sick-Sicker model is shown in Figure \ref{fig:STM Sick-Sicker}. The evolution of the cohort is simulated in one-year discrete-time cycles. Both costs and QALYs are discounted at an annual rate of `r d.e`%.
+In the Sick-Sicker model, we simulate a hypothetical cohort of `r n.age.init`-year-old individuals over a lifetime (or reaching age `r n.age.init + n.t` years old) using `r n.t` annual cycles, represented with `n.t`. The cohort start in the "Healthy" health state (denoted "H"). Healthy individuals are at risk of developing the illness, at which point they would transition to the first stage of the disease (the "Sick" health state, denoted "S1"). Sick individuals are at risk of further progressing to a more severe stage (the "Sicker" health state, denoted "S2"), which is constant in this case example. There is a chance that individuals in the Sick state eventually recover and return back to the Healthy state. However, once an individual reaches the Sicker health state, they cannot recover; that is, the probability of transitioning to the Sick or Healthy health states from the Sicker health state is zero. Individuals in the Healthy state face background mortality that is age-specific (i.e., time-dependent). Sick and Sicker individuals face an increased mortality in the form of a hazard rate ratio (HR) of 3 and 10 times, respectively, on the background mortality rate. Sick and Sicker individuals also experience increased health care costs and reduced QoL compared to healthy individuals. Once simulated individuals die, they transition to the "Dead" health state (denoted "D"), where they remain. When an individual dies, they incur a one-time cost of \$`r v.params.init$ic.D` (`ic.D`) that reflects the acute care that might be received immediately preceding death. The state-transition diagram of the Sick-Sicker model is shown in Figure \ref{fig:STM Sick-Sicker}. The evolution of the cohort is simulated in one-year discrete-time cycles. Both costs and QALYs are discounted at an annual rate of `r d.e`%.
 
 
 ![Sick-Sicker \label{fig:STM Sick-Sicker}](../figs/Sick-Sicker figure.png)
@@ -113,7 +113,7 @@ To model this disease, we will rely on a state-transition cohort model, called t
 
 
 ###01 Define model inputs 
-The input for the Sick-Sicker model is informed by external data. All model parameter values and R variable names, for both the general set up and the external data, are presented in Table \ref{tab:parameters}. This tabel is informed via the files `01_Model-inputs_function.R`, that generates the base-case parameter set including these external values from the `01_basecase-params.csv` dataset and the `01_model-inputs.R`. The age specific mortality rated are derived from the Human Mortality data base and include the all cause mortality ratae fro the USA population based on 2015 data. This information is stored in the `01_all-cause-mortality-USA-2015.csv` file. 
+The input for the Sick-Sicker model is informed by external data. All model parameter values and R variable names, for both the general set up and the external data, are presented in Table \ref{tab:parameters}. This table is informed via the files `01_Model-inputs_function.R`, that generates the base-case parameter set including these external values from the `01_basecase-params.csv` dataset and the `01_model-inputs.R`. The age specific mortality rated are derived from the Human Mortality data base and include the all-cause mortality rate for the USA population based on 2015 data. This information is stored in the `01_all-cause-mortality-USA-2015.csv` file. 
 
 
 Table: \label{tab:parameters} Description of parameters with their R name and value.
@@ -144,13 +144,6 @@ Table: \label{tab:parameters} Description of parameters with their R name and va
 | - Dead individuals                 | `u.D`       |  0.00         |
 | Intervention effect                |             |               |
 | - Utility for treated individuals in S1 | `u.Trt` |  0.95        |
-| Transition rewards                 |             |               |
-| - Utility decrement of healthy individuals | `du.HS1`|  0.01       |
-|   when transitioning to S1         |             |               |
-| - Cost of healthy individuals      | `ic.HS1` |  $1,000       |
-|   when transitioning to S1         |             |               |
-| - Cost of dying                    | `ic.D`      |  $2,000       |
-
 
 
 ###02 Model implementation 
@@ -219,7 +212,7 @@ ggplot(melt(l.out.stm$m.M), aes(x = Var1, y = value, color = Var2, linetype = Va
 ###03 Model calibration 
 We calibrated the Sick-Sicker model using a Bayesian approach using the incremental mixture importance sampling (IMIS) algorithm [Teele2006], which has been used to calibrate health policy models [Raftery2010, @Menzies2017, Rutter2018]. Bayesian methods allow us to quantify the uncertainty in the calibrated parameters even in the presence of non-identifiability [@Alarid-Escudero2018b]. We assumed a normal likelihood and uniform priors. For a more detailed description of IMIS for Bayesian calibration, different likelihood functions and prior distributions, we refer the reader to the tutorial for Bayesian calibration by Menzies et al. [@Menzies2017]. For illustration purposes, we also calibrated the Sick-Sicker model with the Nelder-Mead algorithm [@Nelder1965], which was initialized at 100 different starting points sampled from the prior distributions of the calibrated parameters. This calibration exercise can be found in the file `app2_calibration-nelder-mead.R`.
 
-We have external data for the calibration of three parameters from the Sick-Sicker model. This data, stored in the `03_calibration-tarted.RData` file, contains information about survival, the disease prevalence and the proportion who are sick among those afflicted (sick and sicker). The `03_calibration_functions.R` file contains two functions for the calibration proces. One to generate model outputs for calibraion from a parameters set called `f.calibration_out` and a Goodness of fit function for calibration from a parameter set called `f.gof`.
+We have external data for the calibration of three parameters from the Sick-Sicker model. This data, stored in the `03_calibration-tarted.RData` file, contains information about survival, the disease prevalence and the proportion who are sick among those afflicted (sick and sicker). The `03_calibration_functions.R` file contains two functions for the calibration process. One to generate model outputs for calibration from a parameters set called `f.calibration_out` and a Goodness of fit function for calibration from a parameter set called `f.gof`.
 
 ```{r, eval = TRUE, echo = FALSE, warning = FALSE, message = FALSE}
 ################################################################################ 
@@ -362,10 +355,10 @@ v.params.calib.best <- m.calib.res[1, -4]
 #save(v.params.calib.best, file = "data/03_nm-best-set.RData")
 ```
 
-The last part of the calibration includes initernal validation of the values predicted by the model using the best set of parameters and our targets. 
+The last part of the calibration includes internal validation of the values predicted by the model using the best set of parameters and our targets. 
 
 ```{r, eval = TRUE, echo = FALSE, warning = FALSE, message = FALSE}
-#### 03.5 Internal validation: Model-predicted ouput at best set vs. targets ####
+#### 03.5 Internal validation: Model-predicted outputat best set vs. targets ####
 l.out.calib <- f.calibration_out(m.calib.res[1, ])
 
 # TARGET 1: Survival ("Surv")
@@ -408,35 +401,111 @@ legend("bottomleft",
        col = c("black", "red"), pch = c(1, 8))
 ```
 
-The figures show that our best-set of parameters is quite good, since the model-redicted output is very close ot our targets. 
+The figures show that our best-set of parameters is quite good for the first two paramters since the model-predicted output is quite close to our targets. Our calibrated parameters are not very good in reaching the target values for the proportion of those who are sick among those who are afflicted. 
 
 ###04 Calculate model outcome
-```{r}
+```{r, eval = TRUE, echo = FALSE, warning = FALSE, message = FALSE}
+################################################################################ 
+# This script runs the cost-effectiveness analysis of a hypothetical treatment #
+# for the simulated cohort of the Sick-Sicker state-transition model (STM)     #
+#                                                                              # 
+# Depends on:                                                                  #
+#   01_model-inputs.R                                                          #
+#   02_simulation-model_functions.R                                            #
+#                                                                              # 
+# Author: Fernando Alarid-Escudero                                             # 
+# E-mail: fernando.alarid@cide.edu                                             # 
+################################################################################ 
+# The structure of this code is according to the DARTH framework               #
+# https://github.com/DARTH-git/Decision-Modeling-Framework                     #
+################################################################################ 
+# rm(list = ls()) # to clean the workspace
 
+#### 04.1 Load packages and functions ####
+#### 04.1.1 Load packages ####
+
+#### 04.1.2 Load inputs ####
+#source("../R/01_model-inputs.R")
+
+#### 04.1.3 Load functions ####
+#source("../functions/02_simulation-model_functions.R")
+source("../functions/04_calculate-outcomes_functions.R")
+
+#### 04.2 Cost-effectiveness analysis parameters ####
+## Strategy names
+v.names.str <- c("No Treatment", "Treatment")  
+## Number of strategies
+n.str <- length(v.names.str)
+v.params.basecase <- f.generate_basecase_params()
+```
+In this section we evaluate the model outcomes by combining the previous three sections. Each health state in the model is associated with a specific utility and a cost (Table \ref{tab:parameters}). We are asked to perform a cost-effectiveness analysis of a hypothetical treatment. This treatment is given to all patients in both Sick and Sicker and is associated with specific costs, see Table \ref{tab:parameters}. The cost of the treatment is additional to the cost of being sick or sicker for one year. The treatment improves QoL for those individuals who are sick but has no effect on the quality of life of those who are sicker [@Krijkamp2018]. 
+
+Via the `04_calculate-outcomes_functions.R` basecase values of the calibrated parameters are replaced with calibrated values from the `03_nm-best-set.RData` 
+data. This new set of parameters is used to run the model to produce a cohort trace for the CEA. The `04_calculate-outcomes_functions.R` files also generates the function `f.calculate_ce_out`, which is the core part of the model for the generation of cost-effectiveness results. Running this gives us the following cost and effectiveness outcomes. 
+```{r, eval = TRUE, echo = FALSE}
+#### 04.3 Compute cost-effectiveness outcomes ####
+f.calculate_ce_out(v.params.basecase)
 ```
 
+This data is used to perform a CEA comparing the treatment strategy with the no treatment strategy.
+```{r, eval = TRUE, echo = FALSE}
+ce.out <- f.calculate_ce_out(v.params.basecase)
 
-The generated cost-effectiveness inputs, decision model implementation data and calibrated parameters from the Sick-Sicker model are combined in this part. The `04_functions` file creates a base-case parameter set used to inform the transition probability matrix for the CEA analysis from the calibrated parameters. The `f.calculate_ce_out` is the core part of the model and generates the CE outcome. 
+# calculate lifelong per patient discounted cost and QALYs.
+DC          <- ce.out[2, "Cost"] - ce.out[1, "Cost"]      # calculate the difference in discounted costs between the two strategies 
+names(DC)   <- "Incremental costs"
+DE          <- ce.out[2, "Effect"] - ce.out[1, "Effect"]      # calculate the difference in discounted effects between the two strategies 
+names(DE)   <- "QALYs gained"
+ICER        <- DC / DE                 # calculate the ICER
+names(ICER) <- "ICER" 
+results     <- c(DC, DE, ICER)         # combine the results 
 
-Each health state in the model is associated with a specific utility and a cost. The cost of the treatment is additional to the cost of being sick or sicker for one year. The treatment improves quality of life for those individuals who are sick but has no effect on the quality of life of those who are sicker. 
+# create full incremental cost-effectiveness analysis table 
+C <- round(c(ce.out[1, "Cost"], ce.out[2, "Cost"]), 2)  # bind and round the total costs of the two strategies
+E <- round(c(ce.out[1, "Effect"], ce.out[2, "Effect"]), 2)   # bind and round the total effects of the two strategies
 
- 
-The interventions differ from each other in costs and rewards. The utility of the health states decreased with severity of the state. 
-The interventions differ from each other in cose. Treatment increases cost and is reducing qualo
-Unless the transition probabilities, the cost and effectiveness are 
+DC   <- c("", as.character(round(DC, 2)))   # round the delta of the costs (No Treatment is reference)
+DE   <- c("", as.character(round(DE, 2)))   # round the delta of the effects (No Treatment is reference)
+ICER <- c("", as.character(round(ICER, 2))) # round the ICER 
 
-increased treatment costs and reduced quality of life.
+table_ce <- cbind(v.names.str, C, E, DC, DE, ICER)     # combine all data in a table
+table_ce <- as.data.frame(table_ce)    # create a data frame 
+table_ce                                              # print the table    
+write.table(table_ce, "table_ce.txt")  # export the results to a .txt file 
+```
 
-
-Running the model to generate output is a very important part of the modeling process. This part of the process however, is code wise very simple. This file is informed by the generated inputs and decision model implementation. The function used is the function for an iterative loop for time, the total number of cycles the model needs to run, multiplies the transition probability matrix for the current cycle with the allocation of the cohort at that cycle. This multiplication calculated how the cohort is allocated among the health state at the next cycle. So this iterative process fills the Markov trace. Since the transition probabilities differ between the treatment strategy and the no treatment strategy within the iterative process this calculation is done for both the strategies.  
+Given our willingness-to-pay of \$80000, we conclude that the treatment strategy is not cost effective. 
 
 ### Sensitivity analysis 
-To quantify the uncertainty of our decision based on the cost-effectiveness analysis of the Sick-Sicker model both deterministic and probabilistic sensitivity analysis are performed. We start with the deterministic analysis performed using the `05a_deterministic-analysis.R` file followed bu the uncertainity analysis code in `05b_uncertainty-analsyis.R`. 
+To quantify the uncertainty of our decision based on the cost-effectiveness analysis of the Sick-Sicker model both deterministic and probabilistic sensitivity analysis are performed. We start with the deterministic analysis performed using the `05a_deterministic-analysis.R` file followed by the uncertainty analysis code in `05b_uncertainty-analsyis.R`. 
 
 ####05a Deterministic analysis of Decision analysis / cost-effectiveness analysis 
-The deterministic sensitivity analysis of the Sick-Sicker model consists of a one-way sensitivity analysis looking at the effect of the utility value used for Sicker (S2) on the QALY, the outcome of interest. 
+The deterministic sensitivity analysis of the Sick-Sicker model consists of a one-way sensitivity analysis looking at the effect of the utility value used for Sicker (S2) on the QALY, the outcome of interest. In the `05a_deterministic-analysis_function.R` file we create the functions for a one-way sensitivity analysis `owsa.plot.det`, a two-way sensitivity analysis `twsa.plot.det` and the code to create tornado plots `TornadoPlot`. 
+
+We are interested in the effect of the parameters `p.HS1`, `u.S2` and `c.Trt` on the QALYs. The results are summarixed in Figure \ref{fig:Tornado}.
+![Tornado Plot \label{fig:Tornado}](../figs/Markov-SickSicker-Tornado.png)
 
 ####05b Uncertainty analyses of  Decision analysis / cost-effectiveness analysis
+A single function, called `f.generate_psa_params`, is created via the `05b_uncertainty-analysis_function.R` file that is able top generate a PSA dataset of CEA parameters. 
+
+Table: \label{tab:parameters PSA} Description of parameters with their R name and value.
+
+|           **Parameter**         |  **R name** |   **Distribtion**   |
+|:--------------------------------|:-----------:|:-------------:|
+| Annual transition probabilities |           |               |
+| - Disease onset (H to S1)       | `p.HS1`     |  `beta(30, 170)`        |
+| - Recovery (S1 to H)            | `p.S1H`     |  `beta(60, 60)`         |
+| Annual costs                    |             |               |
+| - Healthy individuals           | `c.H`       |  `gamma(shape = 100, scale = 20)`        |
+| - Sick individuals in S1        | `c.S1`      |  `gamma(shape = 177.8, scale = 22.5)`       |
+| - Sick individuals in S2        | `c.S2`      |  `gamma(shape = 225, scale = 66.7)`     |
+| - Additional costs of sick individuals treated in S1 or S2           | `c.Trt`     |  `gamma(shape = 73.5, scale = 163.3)`      |
+| Utility weights                 |             |               |
+| - Healthy individuals           | `u.H`       |`truncnorm(mean = 1, sd = 0.01, b = 1)`         |
+| - Sick individuals in S1        | `u.S1`      |`truncnorm(mean = 0.75, sd = 0.02, b = 1)`         |
+| - Sick individuals in S2        | `u.S2`      |`truncnorm(mean = 0.50, sd = 0.03, b = 1)`         |
+| Intervention effect             |             |               |
+| - Utility for treated individuals in S1 | `u.Trt` |`truncnorm(mean = 0.95, sd = 0.02, b = 1)`        |
 
 
 ###06 Value of information

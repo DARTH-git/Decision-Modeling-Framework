@@ -111,5 +111,5 @@ TornadoPlot(Parms = v.names.params.tor,
             titleName = "Tornado Plot", 
             outcomeName = "Quality-Adjusted Life Expectancy",
             ylab = "Years") 
-# ggsave("figs/Markov-SickSicker-Tornado.png", width = 8, height = 6)
+ggsave("figs/Markov-SickSicker-Tornado.png", width = 8, height = 6)
 # Different values for c.Trt do not have an effect on the QALE

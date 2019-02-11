@@ -3,7 +3,7 @@
 #------------------------------------------------------#
 f.generate_basecase_params <- function(){
   # Load calibrated parameters
-  load("data/03_nm-best-set.RData")
+  load("../data/03_nm-best-set.RData")
   # Load initial parameters
   v.params.basecase <- f.generate_init_params()
   # Replace calibrated parameters with calibrated values

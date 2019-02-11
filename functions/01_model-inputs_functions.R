@@ -19,10 +19,6 @@ f.generate_init_params <- function(){ # User defined
     # Transition probabilities (per cycle)
     p.HS1 = 0.15,  # probability to become sick when healthy
     p.S1H = 0.5,   # probability to become healthy when sick
-    # Transition rewards 
-    du.HS1 = 0.01, # one-time utility decrement when becoming sick 
-    ic.HS1 = 1000, # one-time cost when becoming sick
-    ic.D   = 200,  # cost when dying
     ## Estimated parameters (values are place holders)
     # Cost of S1
     
