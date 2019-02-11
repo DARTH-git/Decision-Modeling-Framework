@@ -27,8 +27,9 @@ source("R/01_model-inputs.R")
 
 #### 05b.1.3 Load functions ####
 source("functions/02_simulation-model_functions.R")
-source("functions/04_calculate-outcomes_functions.R")
+source("functions/05a_deterministic-analysis_functions.R")
 source("functions/05b_uncertainty-analysis_functions.R")
+
 #### 05a.2 Cost-effectiveness analysis parameters ####
 ## Strategy names
 v.names.str <- c("No Treatment", "Treatment")  
@@ -62,7 +63,7 @@ for(i in 1:n.sim){ # i <- 1
   m.c[i, ] <- df.out.temp$Cost
   m.e[i, ] <- df.out.temp$Effect
   # Display simulation progress
-  if(i/(n.sim/10) == round(i/(n.sim/10),0)) { # display progress every 10%
+  if(i/(n.sim/10) == round(i/(n.sim/10),0)) {
     cat('\r', paste(i/n.sim * 100, "% done", sep = " "))
   }
 }
@@ -71,7 +72,10 @@ for(i in 1:n.sim){ # i <- 1
 save(m.psa.input, m.c, m.e, file = "data/05b_psa-dataset.RData")
 
 #### 05b.6 Create output graphs ####
-#### 05b.6.1 Cost-effectiveness plane ####
+### Vector with willingness-to-pay (WTP) thresholds
+v.wtp <- seq(0, 200000, by = 10000)
+
+#### 05b.6.1 Cost-effectiveness scatter plot ####
 
 #### 05b.6.2 Cost-effectiveness acceptability curves (CEACs) and frontier (CEAF) ####
 
