@@ -22,7 +22,7 @@ source("R/01_model-inputs.R")
 
 #### 05a.1.3 Load functions ####
 source("functions/02_simulation-model_functions.R")
-source("functions/04_calculate-outcomes_functions.R")
+source("functions/05a_deterministic-analysis_functions.R")
 
 #### 05a.2 Cost-effectiveness analysis parameters ####
 ## Strategy names
@@ -33,7 +33,9 @@ n.str <- length(v.names.str)
 v.params.basecase <- f.generate_basecase_params()
 
 #### 05a.3 Compute cost-effectiveness outcomes ####
-df.out.ce <- f.calculate_ce_out(v.params.basecase)
+df.out.ce <- f.calculate_ce_out(v.params = v.params.basecase, 
+                                n.wtp = 150000)
+df.out.ce
 
 #### 05a.4 Conduct cost-effectiveness analysis ####
 # m.cea <- calculate_icers(m.ce)
@@ -45,32 +47,59 @@ df.out.ce <- f.calculate_ce_out(v.params.basecase)
 #### 05a.6 Deterministic sensitivity analysis (DSA) ####
 #### 05a.6.1 One-way sensitivity analysis (OWSA) ####
 # create a range of low, basecase and high for the one-way sensitivity parameter
-v.u.S2_range <- seq(0.40, 0.70, length.out = 50)
+v.c.Trt_range <- seq(6000, 13000, length.out = 50)
 # Generate matrix of inputs for decision tree
-m.owsa.input <- cbind(u.S2 = v.u.S2_range, 
-                      v.params.basecase[-which(names(v.params.basecase) == "u.S2")])
-# Initialize matrix to store outputs from OWSA CEA of decision tree
-m.out.owsa.qale <- matrix(0, 
-                        nrow = nrow(m.owsa.input), 
-                        ncol = n.str)
+m.owsa.input <- cbind(c.Trt = v.c.Trt_range, 
+                      v.params.basecase[-which(names(v.params.basecase) == "c.Trt")])
+# Initialize matrix to store outputs from a OWSA of the CEA
+m.out.owsa <- matrix(0, 
+                     nrow = nrow(m.owsa.input), 
+                     ncol = n.str)
 # Run model and capture LE
 for (i in 1:nrow(m.owsa.input)){ # i <- 1
-  m.out.owsa.qale[i, ] <- f.calculate_ce_out(m.owsa.input[i, ])$Effect
+  m.out.owsa[i, ] <- f.calculate_ce_out(m.owsa.input[i, ])$NMB
 }
 
 # Plot OWSA 
-paramName <- "u.S2"
-outcomeName <- "Quality-adjusted life expectancy (QALE)"
+paramName <- "c.Trt ($)"
+outcomeName <- "Net Monetary Benefit (NMB)"
 ## ggplot
-owsa.plot.det(param = v.c.Trt_range, 
-              outcomes = m.out.owsa.qale, 
+owsa.plot.det(param = v.c.Trt_range, #v.u.S2_range, 
+              outcomes = m.out.owsa, 
               paramName = paramName, 
               strategyNames = v.names.str, 
               outcomeName = outcomeName) +
-  scale_y_continuous("Years")
-ggsave("figs/05b_OWSA_uS2.png", width = 8, height = 6)
+  scale_x_continuous(labels = comma) +
+  scale_y_continuous("Thousand $", labels = function(x) comma(x/1000))
+ggsave("figs/05b_owsa-cTrt.png", width = 8, height = 6)
 
 #### 05a.6.2 Two-way sensitivity analysis (TWSA) ####
+## Generate full factorial combinations between two different parameters
+v.p.HS1_range <- seq(0.01, 0.40, length.out = 50)
+v.c.Trt_range <- seq(6000, 13000, length.out = 50)
+df.twsa.params <- expand.grid(p.HS1 = v.p.HS1_range, 
+                              c.Trt = v.c.Trt_range)
+## Generate matrix of inputs for decision tree
+m.twsa.input <- cbind(df.twsa.params, 
+                      v.params.basecase[-which(names(v.params.basecase) %in% c("c.Trt", "p.HS1"))])
+                      
+## Initialize matrix to store outputs from CEA of decision tree
+m.out.twsa <- matrix(0, 
+                     nrow = nrow(m.twsa.input), 
+                     ncol = n.str)
+## Run model and capture NMB
+for (i in 1:nrow(m.twsa.input)){ # i <- 1
+  m.out.twsa[i, ] <- f.calculate_ce_out(m.twsa.input[i, ])$NMB
+}
+
+# Plot TWSA
+outcomeName <- "Net Monetary Benefit"
+twsa.plot.det(params = df.twsa.params, 
+              outcomes = m.out.twsa, 
+              strategyNames = v.names.str, 
+              outcomeName = outcomeName) +
+  scale_y_continuous(labels = dollar)
+ggsave("figs/05b_twsa-cTrt-pHS1.png", width = 8, height = 6)
 
 #### 05a.6.3 Tornado plot ####
 v.p.HS1_range <- c(BaseCase = v.params.basecase$p.HS1, Low = 0.10, High = 0.20)
@@ -94,22 +123,21 @@ names(l.tor.out) <- v.names.params.tor
 ## Run multiple OWSA, one for each parameter
 for (i in 1:length(l.tor.in)){ # i <- 1
   l.tor.out[[i]] <- t(apply(l.tor.in[[i]], 1, 
-                            function(x) {f.calculate_ce_out(x)[2, "Effect"]}))
+                            function(x) {f.calculate_ce_out(x)[2, "NMB"]}))
 }
 
 ## Data structure: ymean	ymin	ymax
-m.out.tor.qale <- matrix(unlist(l.tor.out), 
-                       nrow = length(l.tor.in), 
-                       ncol = 3, 
-                       byrow = TRUE,
-                       dimnames = list(v.names.params.tor, c("basecase", "low", "high"	)))
-m.out.tor.qale
+m.out.tor <- matrix(unlist(l.tor.out), 
+                    nrow = length(l.tor.in), 
+                    ncol = 3, 
+                    byrow = TRUE,
+                    dimnames = list(v.names.params.tor, c("basecase", "low", "high"	)))
+m.out.tor
 
-#### 08.4.1 Plot Tornado ####
+# Plot Tornado
 TornadoPlot(Parms = v.names.params.tor, 
             Outcomes = m.out.tor.qale, 
             titleName = "Tornado Plot", 
-            outcomeName = "Quality-Adjusted Life Expectancy",
-            ylab = "Years") 
-# ggsave("figs/Markov-SickSicker-Tornado.png", width = 8, height = 6)
-# Different values for c.Trt do not have an effect on the QALE
+            outcomeName = "Net Monetary Benefit",
+            ylab = "Thousand $") 
+ggsave("figs/05b_tornado.png", width = 8, height = 6)
