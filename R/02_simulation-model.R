@@ -27,5 +27,5 @@ source("functions/02_simulation-model_functions.R")
 
 #### 02.2 Run STM ####
 ### Create list of model output
-l.out.stm <- f.decision_model(v.params = v.params.init)
+l.out.stm <- f.decision_model(v.params = df.params.init)
 l.out.stm
