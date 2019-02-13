@@ -24,7 +24,7 @@ source("functions/01_model-inputs_functions.R")
 #### 01.2 External parameters ####
 #### 01.2.1 General setup ####
 n.age.init  <- 25  # age of starting cohort
-n.t         <- 75  # time horizon, number of cycles
+n.t         <- 65  # time horizon, number of cycles
 v.age.names <- n.age.init:(n.age.init + n.t - 1) # vector with age names
 v.n <- c("H", "S1", "S2", "D") # vector with the 4 health states of the model:
                                # Healthy (H), Sick (S1), Sicker (S2), Dead (D)

@@ -22,6 +22,11 @@
 # PSA functionality
 library(truncnorm) # truncated normal distribution
 
+library(devtools)
+install_github("DARTH-git/dampack", 
+               auth_token = "47d12d4a6fe44f4b70f1519f7036d725990a443a")
+library(dampack)
+
 #### 05b.1.2 Load inputs ####
 source("R/01_model-inputs.R")
 
