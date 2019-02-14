@@ -1,7 +1,0 @@
-source("./R/01_model-inputs.R")
-source("./R/02_simulation-model.R")
-source("./R/03_calibration.R")
-source("./R/04_calculate-outcomes.R")
-source("./R/05a_deterministic-analysis.R")
-source("./R/05b_uncertainty-analysis.R")
-source("./R/06_value-of-information.R")
