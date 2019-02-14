@@ -24,7 +24,7 @@ source("functions/01_model-inputs_functions.R")
 #### 01.2 External parameters ####
 #### 01.2.1 General setup ####
 n.age.init  <- 25  # age of starting cohort
-n.t         <- 75  # time horizon, number of cycles
+n.t         <- 65  # time horizon, number of cycles
 v.age.names <- n.age.init:(n.age.init + n.t - 1) # vector with age names
 v.n <- c("H", "S1", "S2", "D") # vector with the 4 health states of the model:
                                # Healthy (H), Sick (S1), Sicker (S2), Dead (D)
@@ -42,10 +42,8 @@ v.r.asr  <- df.r.asr %>%
   as.matrix()              # vector with mortality rates
 
 #### 01.2.3 Generate initial set of base-case external parameters ####
-v.params.init <- f.generate_init_params()
+df.params.init <- f.define_init_params()
 ## Create name of parameters
-v.names.params <- names(v.params.init)
-## Save base-case set of parameters
-write.csv(x = v.params.init, file = "data/01_init-params.csv")
+df.names.params <- names(df.params.init)
 
 #### 01.3 Estimated parameters ####

@@ -13,3 +13,8 @@
 # The structure of this code is according to the DARTH framework               #
 # https://github.com/DARTH-git/Decision-Modeling-Framework                     #
 ################################################################################
+
+#### 06.1 Load packages, functions and data ####
+#### 06.1.1 Load packages ####
+#### 06.1.2 Load functions ####
+#### 06.1.3 Load PSA dataset ####

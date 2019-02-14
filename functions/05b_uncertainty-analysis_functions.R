@@ -3,19 +3,15 @@
 #---------------------------------------------------#
 f.generate_psa_params <- function(seed = 7783, n.sim){ # User defined
   # Load calibrated parameters
-  # load("data/03_calibration_posterior.rData")
-  # n.sim <- nrow(m.calib_post_imis)
-  load("data/03_nm-best-set.RData") # Temporary!
+  load("data/03_imis-output.rData")
+  n.sim <- nrow(m.calib.post)
   set.seed <- seed
   df.psa.params <- data.frame(
     ### Calibrated parameters
-    # p.S1S2 = 0.105, # probability to become sicker when sick
-    # hr.S1  = 3,     # hazard ratio of death in S1 vs healthy
-    # hr.S2  = 10,    # hazard ratio of death in S2 vs healthy 
-    # m.calib_post_imis,
-    p.S1S2 = v.params.calib.best["p.S1S2"],# probability to become sicker when sick
-    hr.S1  = v.params.calib.best["hr.S1"], # hazard ratio of death in S1 vs healthy
-    hr.S2  = v.params.calib.best["hr.S2"], # hazard ratio of death in S2 vs healthy
+    m.calib.post,
+    # p.S1S2 = v.calib.post.map["p.S1S2"],# probability to become sicker when sick
+    # hr.S1  = v.calib.post.map["hr.S1"], # hazard ratio of death in S1 vs healthy
+    # hr.S2  = v.calib.post.map["hr.S2"], # hazard ratio of death in S2 vs healthy
     
     ## Transition probabilities (per cycle)
     p.HS1   = rbeta(n.sim, 30, 170),        # probability to become sick when healthy
