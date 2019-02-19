@@ -16,6 +16,7 @@
 
 #### 05a.1 Load packages and functions ####
 #### 05a.1.1 Load packages ####
+library(dampack)
 
 #### 05a.1.2 Load inputs ####
 source("R/01_model-inputs.R")
@@ -38,7 +39,9 @@ df.out.ce <- f.calculate_ce_out(v.params = v.params.basecase,
 df.out.ce
 
 #### 05a.4 Conduct cost-effectiveness analysis ####
-# m.cea <- calculate_icers(m.ce)
+m.cea <- calculate_icers(cost = df.out.ce$Cost, 
+                         effect = df.out.ce$Effect, 
+                         strategies = v.names.str)
 
 #### 05a.5 Plot cost-effectiveness frontier ####
 # l.cea.frontier <- getFrontier(m.ce)
