@@ -68,33 +68,6 @@ f.calculate_ce_out <- function(v.params, n.wtp = 100000){ # User defined
 }
 
 #-----------------------------------------------#
-### Function for plotting One-way SA Diagrams ###
-#-----------------------------------------------#
-owsa.plot.det <- function(param, outcomes,
-                          paramName,
-                          strategyNames, 
-                          outcomeName = "Outcome"){
-  ## Load required packages
-  library(ggplot2)
-  library(reshape2)
-  library(scales)
-  
-  owsa.df <- data.frame(outcomes)
-  colnames(owsa.df) <- strategyNames
-  owsa.df$param <- param
-  
-  owsa.gg <- ggplot(data = melt(owsa.df, id.vars = "param", 
-                                variable.name = "Strategy"), 
-                    aes(x = param, y = value, color = Strategy)) +
-    geom_line() +
-    xlab(paramName) +
-    ggtitle("One-way sensitivity analysis", subtitle = outcomeName)+
-    theme_bw(base_size = 14) +
-    theme(legend.position = "bottom")
-  return(owsa.gg)
-}
-
-#-----------------------------------------------#
 ### Function for plotting two-way SA Diagrams ###
 #-----------------------------------------------#
 twsa.plot.det <- function(params, outcomes, strategyNames, outcomeName = "Outcome", mx = T){

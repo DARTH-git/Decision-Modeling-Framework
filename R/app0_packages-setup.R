@@ -28,6 +28,9 @@ if (!require(psych)) {
 if (!require(scatterplot3d)) {
   install.packages("scatterplot3d")
 }
+if (!require(reshape2)) {
+  install.packages("reshape2")
+}
 if (!require(devtools)) {
   install.packages("devtools")
 }

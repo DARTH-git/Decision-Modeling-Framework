@@ -38,17 +38,26 @@ df.out.ce <- f.calculate_ce_out(v.params = v.params.basecase,
                                 n.wtp = 150000)
 df.out.ce
 
-#### 05a.4 Conduct cost-effectiveness analysis ####
-m.cea <- calculate_icers(cost = df.out.ce$Cost, 
-                         effect = df.out.ce$Effect, 
-                         strategies = v.names.str)
+#### 05a.4 Conduct CEA with deterministic output ####
+### Calculate incremental cost-effectiveness ratios (ICERs)
+df.cea.det <- calculate_icers(cost = df.out.ce$Cost, 
+                              effect = df.out.ce$Effect, 
+                              strategies = v.names.str)
 
 #### 05a.5 Plot cost-effectiveness frontier ####
-# l.cea.frontier <- getFrontier(m.ce)
-# gg.cea.frontier <- plot(l.cea.frontier)
+plot(df.cea.det)
 
 #### 05a.6 Deterministic sensitivity analysis (DSA) ####
 #### 05a.6.1 One-way sensitivity analysis (OWSA) ####
+df.owsa.cTrt <- owsa_det(param = "c.Trt",    # parameter name
+                         n.min = 6000,       # min value
+                         n.max = 1300,       # max value
+                         n.length.out = 100, # number of values
+                         FUN = f.calculate_ce_out, # Function to compute outputs 
+                         v.params.basecase = v.params.basecase, # Vector with base-case parameters
+                         output = "Cost"      # Output to do the OWSA on
+                         )
+plot(df.owsa.cTrt)
 # create a range of low, basecase and high for the one-way sensitivity parameter
 v.c.Trt_range <- seq(6000, 13000, length.out = 50)
 # Generate matrix of inputs for decision tree
