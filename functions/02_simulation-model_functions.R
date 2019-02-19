@@ -1,8 +1,11 @@
-f.decision_model <- function(v.params){# User defined
+#--------------------------------------------------------------------#
+#### create the transition probability array and cohort trace     ####
+#--------------------------------------------------------------------#
+f.decision_model <- function(df.params){# User defined
   ### Arguments:  
-  #     v.params: vector of model parameters 
-  #
-  with(as.list(v.params), {
+  #     df.params: dataframe of model parameters 
+  # 
+  with(as.list(df.params), {
     #### Age-specific transition probabilities ####
     # Mortality for healthy individuals
     p.HDage  <- 1 - exp(-v.r.asr[(n.age.init + 1) + 0:(n.t - 1)])        
@@ -14,7 +17,7 @@ f.decision_model <- function(v.params){# User defined
     #### Create age-specific transition probability matrices in an array ####
     # Initialize array
     a.P <- array(0, dim = c(n.states, n.states, n.t),
-                 dimnames = list(v.n, v.n, 0:(n.t-1)))
+                 dimnames = list(v.n, v.n, 0:(n.t - 1)))
     # Fill in array
     # From H
     a.P["H", "H", ]  <- 1 - (p.HS1 + p.HDage)
@@ -41,7 +44,8 @@ f.decision_model <- function(v.params){# User defined
       v.cycles.notval <- dimnames(a.P)[[3]][m.indices.notvalid[, 3]]
       
       df.notvalid <- data.frame(`Transition probabilities not valid:` = 
-                                  matrix(paste0(paste(v.rows.notval, v.cols.notval, sep = "->"),
+                                  matrix(paste0(paste(v.rows.notval, 
+                                                      v.cols.notval, sep = "->"),
                                                 "; at cycle ",
                                                 v.cycles.notval), ncol = 1), 
                                 check.names = FALSE)
@@ -54,7 +58,7 @@ f.decision_model <- function(v.params){# User defined
     # Check if transition probability array is valid
     valid <- apply(a.P, 3, function(x) all.equal(sum(rowSums(x)), n.states))
     if (!isTRUE(all.equal(as.numeric(sum(valid)), as.numeric(n.t)))) {
-      stop("This is not a valid transition Matrix")
+      stop("This is not a valid transition matrix")
     }
     
     #### Compute cohort trace matrix and tranistion array for age-dependent STM ####

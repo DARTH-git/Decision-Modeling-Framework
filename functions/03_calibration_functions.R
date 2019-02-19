@@ -21,15 +21,15 @@ f.calibration_out <- function(v.params.calib){ # User defined
   v.os <- 1 - l.out.stm$m.M[, "D"]
   
   #### Disease prevalence #####
-  v.prev <- rowSums(l.out.stm$m.M[, c("S1", "S2")])/v.os
+  v.prev <- rowSums(l.out.stm$m.M[, c("S1", "S2")]) / v.os
   
-  #### Proportion of sick in S1 state #####
+  #### Proportion of sick (S1) in sick states (S1 + S2) #####
   v.prop.S2 <- l.out.stm$m.M[, "S2"] / rowSums(l.out.stm$m.M[, c("S1", "S2")])
   
   ####### Return Output ###########################################
-  l.out <- list(Surv = v.os[c(11, 21, 31)],
-              Prev = v.prev[c(11, 21, 31)],
-              PropSicker = v.prop.S2[c(11, 21, 31)])
+  l.out <- list(Surv       = v.os     [c(11, 21, 31)],
+                Prev       = v.prev   [c(11, 21, 31)],
+                PropSicker = v.prop.S2[c(11, 21, 31)])
   return(l.out)
 }
 
