@@ -21,7 +21,7 @@
 #### 05b.1.1 Load packages ####
 # PSA functionality
 library(truncnorm) # truncated normal distribution
-library(dampack)
+library(dampack)   # decision-analytic modeling visualization tool
 
 #### 05b.1.2 Load inputs ####
 source("R/01_model-inputs.R")
@@ -68,9 +68,15 @@ for(i in 1:n.sim){ # i <- 1
     cat('\r', paste(i/n.sim * 100, "% done", sep = " "))
   }
 }
+### Creae PSA object for dampack
+l.psa <- make_psa_obj(cost = m.c, 
+                      effectiveness = m.e, 
+                      parameters = m.psa.input, 
+                      strategies = v.names.str)
 
 #### 05b.5 Save PSA matrices ####
 save(m.psa.input, m.c, m.e, v.names.str, n.str,
+     l.psa,
      file = "data/05b_psa-dataset.RData")
 
 #### 05b.6 Create uncertainty analysis graphs ####
@@ -78,10 +84,7 @@ load(file = "data/05b_psa-dataset.RData")
 
 ### Vector with willingness-to-pay (WTP) thresholds
 v.wtp <- seq(0, 200000, by = 10000)
-l.psa <- make_psa_obj(cost = m.c, 
-                      effectiveness = m.e, 
-                      parameters = m.psa.input, 
-                      strategies = v.names.str)
+
 #### 05b.6.1 Cost-effectiveness scatter plot ####
 plot(l.psa)
 ggsave("figs/05b_cea-plane-scatter.png", width = 8, height = 6)
