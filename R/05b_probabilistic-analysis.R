@@ -1,13 +1,12 @@
 ################################################################################ 
-# This script conducts the uncertainty analysis the cost-effectiveness analysis#
-# of a hypothetical treatment for the simulated cohort of the Sick-Sicker      #
-# state-transition model (STM) to create a probabilistic sensitivity analysis  #
-# (PSA) dataset                                                                #
+# This script conducts the probabilistic sencitivity analysis (PSA) of the     #
+# cost-effectiveness analysis of a hypothetical treatment for the simulated    #
+# cohort of the Sick-Sicker state-transition model (STM) to create PSA dataset #
 #                                                                              # 
 # Depends on:                                                                  #
 #   01_model-inputs.R                                                          #
 #   02_simulation-model_functions.R                                            #
-#   05b_uncertainty-analysis_functions.R                                       #
+#   05b_probabilistic-analysis_functions.R                                     #
 #                                                                              # 
 # Author: Fernando Alarid-Escudero                                             # 
 # E-mail: fernando.alarid@cide.edu                                             # 
@@ -29,7 +28,7 @@ source("R/01_model-inputs.R")
 #### 05b.1.3 Load functions ####
 source("functions/02_simulation-model_functions.R")
 source("functions/05a_deterministic-analysis_functions.R")
-source("functions/05b_uncertainty-analysis_functions.R")
+source("functions/05b_probabilistic-analysis_functions.R")
 
 #### 05a.2 Cost-effectiveness analysis parameters ####
 ## Strategy names
@@ -37,7 +36,7 @@ v.names.str <- c("No Treatment", "Treatment")
 ## Number of strategies
 n.str <- length(v.names.str)
 
-#### 05b.3 Setup uncertainty analysis ####
+#### 05b.3 Setup probabilistic analysis ####
 ### Number of simulations
 n.sim <- 1000
 
@@ -56,7 +55,7 @@ m.e <- matrix(0,
               ncol = n.str)
 colnames(m.e) <- v.names.str
 
-#### 05b.4 Conduct uncertainty analysis ####
+#### 05b.4 Conduct probabilistic sensitivity analysis ####
 # Run decision model on each parameter set of PSA input dataset to produce
 # PSA outputs for cost and effects
 for(i in 1:n.sim){ # i <- 1
@@ -79,7 +78,7 @@ save(m.psa.input, m.c, m.e, v.names.str, n.str,
      l.psa,
      file = "data/05b_psa-dataset.RData")
 
-#### 05b.6 Create uncertainty analysis graphs ####
+#### 05b.6 Create probabilistic analysis graphs ####
 load(file = "data/05b_psa-dataset.RData")
 
 ### Vector with willingness-to-pay (WTP) thresholds
