@@ -20,7 +20,8 @@
 #' @param ... Further arguments to FUN (not used)
 #' @keywords owsa
 #' @return A dataframe with the results of the sensitivity analysis. Can be 
-#' visualized with \code{plot.owsa}, and \code{owsa_tornado}
+#' visualized with \code{plot.owsa}, \code{owsa_opt_strat} and 
+#' \code{owsa_tornado} from \code{dampack}
 #' @section Details:
 #' FUN must return a dataframe where the first column are the strategy names
 #' and the rest of teh columns must be outcomes.
