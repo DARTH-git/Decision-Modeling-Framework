@@ -17,13 +17,13 @@ f.decision_model <- function(v.params){# User defined
                  dimnames = list(v.n, v.n, 0:(n.t-1)))
     # Fill in array
     # From H
-    a.P["H", "H", ]  <- 1 - (p.HS1 + p.HDage)
-    a.P["H", "S1", ] <- p.HS1
+    a.P["H", "H", ]  <- (1-p.HDage) * (1 - p.HS1)
+    a.P["H", "S1", ] <- (1-p.HDage) * p.HS1
     a.P["H", "D", ]  <- p.HDage
     # From S1
-    a.P["S1", "H", ]  <- p.S1H
-    a.P["S1", "S1", ] <- 1 - (p.S1H + p.S1S2 + p.S1Dage)
-    a.P["S1", "S2", ] <- p.S1S2
+    a.P["S1", "H", ]  <- (1-p.S1Dage) * p.S1H
+    a.P["S1", "S1", ] <- (1-p.S1Dage) * (1 - (p.S1S2 + p.S1H))
+    a.P["S1", "S2", ] <- (1-p.S1Dage) * p.S1S2
     a.P["S1", "D", ]  <- p.S1Dage
     # From S2
     a.P["S2", "S2", ] <- 1 - p.S2Dage

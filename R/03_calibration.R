@@ -93,7 +93,6 @@ l.fit.imis <- IMIS(B = 1000, # the incremental sample size at each iteration of 
 # obtain posterior
 m.calib.post <- l.fit.imis$resample
 
-
 #### 03.4 Exploring posterior distribution ####
 #### 03.4.1 Summary statitics of posterior distribution ####
 # Compute posterior mean

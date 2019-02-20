@@ -45,6 +45,7 @@ df.out.ce
 df.cea.det <- calculate_icers(cost = df.out.ce$Cost, 
                               effect = df.out.ce$Effect, 
                               strategies = v.names.str)
+df.cea.det
 
 #### 05a.5 Plot cost-effectiveness frontier ####
 plot(df.cea.det)
@@ -54,7 +55,7 @@ ggsave("figs/05a_cea-frontier.png", width = 8, height = 6)
 #### 05a.6.1 One-way sensitivity analysis (OWSA) ####
 owsa.nmb <- owsa_det(parms = c("c.Trt", "p.HS1", "u.S1", "u.Trt"), # parameter names
                      ranges = list("c.Trt" = c(6000, 13000),
-                                   "p.HS1" = c(0.01, 0.40),
+                                   "p.HS1" = c(0.01, 0.50),
                                    "u.S1"  = c(0.75, 0.95),
                                    "u.Trt" = c(0.75, 0.95)),
                      nsamps = 100, # number of values  

@@ -30,6 +30,7 @@ source("R/01_model-inputs.R")
 #### 04.1.3 Load functions ####
 source("functions/02_simulation-model_functions.R")
 source("functions/03_calibration_functions.R")
+source("functions/04_validation-functions.R")
 
 #### 04.1.4 Load targets and calibrated parameters ####
 load("data/03_calibration-targets.RData")

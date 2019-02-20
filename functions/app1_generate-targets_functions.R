@@ -45,19 +45,39 @@ f.sicksicker_tp <- function(v.params){
                  dimnames = list(v.n, v.n, 0:(n.t-1)))
     # Fill in array
     # From H
-    a.P["H", "H", ]  <- 1 - (p.HS1 + p.HDage)
-    a.P["H", "S1", ] <- p.HS1
+    a.P["H", "H", ]  <- (1-p.HDage) * (1 - p.HS1)
+    a.P["H", "S1", ] <- (1-p.HDage) * p.HS1
     a.P["H", "D", ]  <- p.HDage
     # From S1
-    a.P["S1", "H", ]  <- p.S1H
-    a.P["S1", "S1", ] <- 1 - (p.S1H + p.S1S2 + p.S1Dage)
-    a.P["S1", "S2", ] <- p.S1S2
+    a.P["S1", "H", ]  <- (1-p.S1Dage) * p.S1H
+    a.P["S1", "S1", ] <- (1-p.S1Dage) * (1 - (p.S1S2 + p.S1H))
+    a.P["S1", "S2", ] <- (1-p.S1Dage) * p.S1S2
     a.P["S1", "D", ]  <- p.S1Dage
     # From S2
     a.P["S2", "S2", ] <- 1 - p.S2Dage
     a.P["S2", "D", ]  <- p.S2Dage
     # From D
     a.P["D", "D", ] <- 1
+    
+    # Check if transition probabilities are valid (i.e., in [0, 1])
+    m.indices.notvalid <- arrayInd(which(a.P < 0 | a.P > 1), 
+                                   dim(a.P))
+    try(
+      if(dim(m.indices.notvalid)[1] != 0){
+        v.rows.notval   <- rownames(a.P)[m.indices.notvalid[, 1]]
+        v.cols.notval   <- colnames(a.P)[m.indices.notvalid[, 2]]
+        v.cycles.notval <- dimnames(a.P)[[3]][m.indices.notvalid[, 3]]
+        
+        df.notvalid <- data.frame(`Transition probabilities not valid:` = 
+                                    matrix(paste0(paste(v.rows.notval, v.cols.notval, sep = "->"),
+                                                  "; at cycle ",
+                                                  v.cycles.notval), ncol = 1), 
+                                  check.names = FALSE)
+        message("Not valid transition probabilities")
+        # print(df.notvalid)
+        stop(print(df.notvalid), call. = FALSE)
+      }
+    )
     
     ### Check if Transition Probability array is valid
     valid <- apply(a.P, 3, function(x) all.equal(sum(rowSums(x)), n.states))
