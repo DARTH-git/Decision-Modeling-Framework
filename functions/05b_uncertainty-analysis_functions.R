@@ -6,7 +6,6 @@ f.generate_psa_params <- function(seed = 7783, n.sim){ # User defined
   load("data/03_imis-output.rData")
   n.sim <- nrow(m.calib.post)
   set.seed <- seed
-  
   df.psa.params <- data.frame(
     ### Calibrated parameters
     m.calib.post,

@@ -93,7 +93,6 @@ l.fit.imis <- IMIS(B = 1000, # the incremental sample size at each iteration of 
 # obtain posterior
 m.calib.post <- l.fit.imis$resample
 
-
 #### 03.4 Exploring posterior distribution ####
 #### 03.4.1 Summary statitics of posterior distribution ####
 # Compute posterior mean
@@ -144,7 +143,7 @@ png("figs/03_posterior-distribution-joint.png",
   # add legend
   legend(s3d$xyz.convert(0.05, 1.0, 5), 
          col= c("black", "red"), 
-         bg="white", pch = c(1, 8), yjust = 0, 
+         bg="white", pch = c(1, 8), yjust=0, 
          legend = c("Posterior sample", "Center of Gaussian components"), 
          cex = 1.1)
 dev.off()
