@@ -16,12 +16,14 @@
 
 #### 05a.1 Load packages and functions ####
 #### 05a.1.1 Load packages ####
+library(reshape2)
 library(dampack)
 
 #### 05a.1.2 Load inputs ####
 source("R/01_model-inputs.R")
 
 #### 05a.1.3 Load functions ####
+source("functions/00_general_functions.R")
 source("functions/02_simulation-model_functions.R")
 source("functions/05a_deterministic-analysis_functions.R")
 
@@ -49,41 +51,30 @@ plot(df.cea.det)
 
 #### 05a.6 Deterministic sensitivity analysis (DSA) ####
 #### 05a.6.1 One-way sensitivity analysis (OWSA) ####
-df.owsa.cTrt <- owsa_det(param = "c.Trt",    # parameter name
-                         n.min = 6000,       # min value
-                         n.max = 1300,       # max value
-                         n.length.out = 100, # number of values
-                         FUN = f.calculate_ce_out, # Function to compute outputs 
-                         v.params.basecase = v.params.basecase, # Vector with base-case parameters
-                         output = "Cost"      # Output to do the OWSA on
-                         )
-plot(df.owsa.cTrt)
-# create a range of low, basecase and high for the one-way sensitivity parameter
-v.c.Trt_range <- seq(6000, 13000, length.out = 50)
-# Generate matrix of inputs for decision tree
-m.owsa.input <- cbind(c.Trt = v.c.Trt_range, 
-                      v.params.basecase[-which(names(v.params.basecase) == "c.Trt")])
-# Initialize matrix to store outputs from a OWSA of the CEA
-m.out.owsa <- matrix(0, 
-                     nrow = nrow(m.owsa.input), 
-                     ncol = n.str)
-# Run model and capture LE
-for (i in 1:nrow(m.owsa.input)){ # i <- 1
-  m.out.owsa[i, ] <- f.calculate_ce_out(m.owsa.input[i, ])$NMB
-}
+owsa.nmb <- owsa_det(parms = c("c.Trt", "p.HS1", "u.S1", "u.Trt"), # parameter names
+                     ranges = list("c.Trt" = c(6000, 13000),
+                                   "p.HS1" = c(0.01, 0.40),
+                                   "u.S1"  = c(0.75, 0.95),
+                                   "u.Trt" = c(0.75, 0.95)),
+                     nsamps = 100, # number of values  
+                     FUN = f.calculate_ce_out, # Function to compute outputs 
+                     params.basecase = v.params.basecase, # Vector with base-case parameters
+                     outcome = "NMB",      # Output to do the OWSA on
+                     strategies = v.names.str, # Names of strategies
+                     n.wtp = 150000        # Extra argument to pass to FUN
+                     )
+plot(owsa.nmb, txtsize = 16, n_x_ticks = 5, 
+     facet_scales = "free") +
+  theme(legend.position = "bottom")
+ggsave("figs/05b_owsa-nmb.png", width = 10, height = 6)
 
-# Plot OWSA 
-paramName <- "c.Trt ($)"
-outcomeName <- "Net Monetary Benefit (NMB)"
-## ggplot
-owsa.plot.det(param = v.c.Trt_range, #v.u.S2_range, 
-              outcomes = m.out.owsa, 
-              paramName = paramName, 
-              strategyNames = v.names.str, 
-              outcomeName = outcomeName) +
-  scale_x_continuous(labels = comma) +
-  scale_y_continuous("Thousand $", labels = function(x) comma(x/1000))
-ggsave("figs/05b_owsa-cTrt.png", width = 8, height = 6)
+#### 05a.6.1 Optimal strategy with OWSA ####
+owsa_opt_strat(owsa = owsa.nmb)
+ggsave("figs/05b_optimal-owsa-nmb.png", width = 8, height = 6)
+
+#### 05a.6.3 Tornado plot ####
+owsa_tornado(owsa = owsa.nmb, strategy = "Treatment")
+ggsave("figs/05b_tornado-Treatment-nmb.png", width = 8, height = 6)
 
 #### 05a.6.2 Two-way sensitivity analysis (TWSA) ####
 ## Generate full factorial combinations between two different parameters
