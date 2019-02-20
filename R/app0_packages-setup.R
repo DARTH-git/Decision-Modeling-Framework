@@ -35,5 +35,5 @@ if (!require(devtools)) {
   install.packages("devtools")
 }
 if (!require(dampack)) {
-  install_github(repo = "DARTH-git/dampack") # Install package from GitHub
+  devtools::install_github(repo = "DARTH-git/dampack") # Install package from GitHub
 }

@@ -48,6 +48,7 @@ df.cea.det <- calculate_icers(cost = df.out.ce$Cost,
 
 #### 05a.5 Plot cost-effectiveness frontier ####
 plot(df.cea.det)
+ggsave("figs/05a_cea-frontier.png", width = 8, height = 6)
 
 #### 05a.6 Deterministic sensitivity analysis (DSA) ####
 #### 05a.6.1 One-way sensitivity analysis (OWSA) ####
@@ -66,81 +67,27 @@ owsa.nmb <- owsa_det(parms = c("c.Trt", "p.HS1", "u.S1", "u.Trt"), # parameter n
 plot(owsa.nmb, txtsize = 16, n_x_ticks = 5, 
      facet_scales = "free") +
   theme(legend.position = "bottom")
-ggsave("figs/05b_owsa-nmb.png", width = 10, height = 6)
+ggsave("figs/05a_owsa-nmb.png", width = 10, height = 6)
 
 #### 05a.6.1 Optimal strategy with OWSA ####
 owsa_opt_strat(owsa = owsa.nmb)
-ggsave("figs/05b_optimal-owsa-nmb.png", width = 8, height = 6)
+ggsave("figs/05a_optimal-owsa-nmb.png", width = 8, height = 6)
 
 #### 05a.6.3 Tornado plot ####
 owsa_tornado(owsa = owsa.nmb, strategy = "Treatment")
-ggsave("figs/05b_tornado-Treatment-nmb.png", width = 8, height = 6)
+ggsave("figs/05a_tornado-Treatment-nmb.png", width = 8, height = 6)
 
 #### 05a.6.2 Two-way sensitivity analysis (TWSA) ####
-## Generate full factorial combinations between two different parameters
-v.p.HS1_range <- seq(0.01, 0.40, length.out = 50)
-v.c.Trt_range <- seq(6000, 13000, length.out = 50)
-df.twsa.params <- expand.grid(p.HS1 = v.p.HS1_range, 
-                              c.Trt = v.c.Trt_range)
-## Generate matrix of inputs for decision tree
-m.twsa.input <- cbind(df.twsa.params, 
-                      v.params.basecase[-which(names(v.params.basecase) %in% c("c.Trt", "p.HS1"))])
-                      
-## Initialize matrix to store outputs from CEA of decision tree
-m.out.twsa <- matrix(0, 
-                     nrow = nrow(m.twsa.input), 
-                     ncol = n.str)
-## Run model and capture NMB
-for (i in 1:nrow(m.twsa.input)){ # i <- 1
-  m.out.twsa[i, ] <- f.calculate_ce_out(m.twsa.input[i, ])$NMB
-}
-
-# Plot TWSA
-outcomeName <- "Net Monetary Benefit"
-twsa.plot.det(params = df.twsa.params, 
-              outcomes = m.out.twsa, 
-              strategyNames = v.names.str, 
-              outcomeName = outcomeName) +
-  scale_y_continuous(labels = dollar)
-ggsave("figs/05b_twsa-cTrt-pHS1.png", width = 8, height = 6)
-
-#### 05a.6.3 Tornado plot ####
-v.p.HS1_range <- c(BaseCase = v.params.basecase$p.HS1, Low = 0.10, High = 0.20)
-v.c.Trt_range <- c(BaseCase = v.params.basecase$c.Trt, Low = 6000, High = 18000)
-v.u.S2_range  <- c(BaseCase = v.params.basecase$u.S2,  Low = 0.40, High = 0.70)
-
-## Parameter names 
-v.names.params.tor <- c("p.HS1", "c.Trt", "u.S2")
-
-## List of inputs
-l.tor.in <- vector("list", length(v.names.params.tor))
-names(l.tor.in) <- v.names.params.tor
-l.tor.in$p.HS1 <- cbind(p.HS1 = v.p.HS1_range, v.params.basecase[-which(names(v.params.basecase) == "p.HS1")])
-l.tor.in$c.Trt <- cbind(c.Trt = v.c.Trt_range, v.params.basecase[-which(names(v.params.basecase) == "c.Trt")])
-l.tor.in$u.S2  <- cbind(u.S2 = v.u.S2_range,   v.params.basecase[-which(names(v.params.basecase) == "u.S2")])
-
-## List of outputs
-l.tor.out <- vector("list", length(l.tor.in))
-names(l.tor.out) <- v.names.params.tor
-
-## Run multiple OWSA, one for each parameter
-for (i in 1:length(l.tor.in)){ # i <- 1
-  l.tor.out[[i]] <- t(apply(l.tor.in[[i]], 1, 
-                            function(x) {f.calculate_ce_out(x)[2, "NMB"]}))
-}
-
-## Data structure: ymean	ymin	ymax
-m.out.tor <- matrix(unlist(l.tor.out), 
-                    nrow = length(l.tor.in), 
-                    ncol = 3, 
-                    byrow = TRUE,
-                    dimnames = list(v.names.params.tor, c("basecase", "low", "high"	)))
-m.out.tor
-
-# Plot Tornado
-TornadoPlot(Parms = v.names.params.tor, 
-            Outcomes = m.out.tor.qale, 
-            titleName = "Tornado Plot", 
-            outcomeName = "Net Monetary Benefit",
-            ylab = "Thousand $") 
-ggsave("figs/05b_tornado.png", width = 8, height = 6)
+twsa.nmb <- twsa_det(parm1 = "u.S1",  # parameter 1 name
+                     parm2 = "u.Trt", # parameter 2 name
+                     ranges = list("u.S1"  = c(0.70, 0.80),
+                                   "u.Trt" = c(0.90, 1.00)),
+                     nsamps = 40, # number of values  
+                     FUN = f.calculate_ce_out, # Function to compute outputs 
+                     params.basecase = v.params.basecase, # Vector with base-case parameters
+                     outcome = "NMB",      # Output to do the OWSA on
+                     strategies = v.names.str, # Names of strategies
+                     n.wtp = 150000        # Extra argument to pass to FUN
+)
+plot(twsa.nmb)
+ggsave("figs/05a_twsa-uS1-uTrt-nmb.png", width = 8, height = 6)
