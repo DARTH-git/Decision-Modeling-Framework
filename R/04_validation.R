@@ -55,34 +55,43 @@ for(i in 1:n.samp){ # i = 1
   m.out.prop[i, ] <- l.out.post$PropSicker
   cat('\r', paste(round(i/n.samp * 100), "% done", sep = " ")) # display progress
 }
+
 # Create data frames with model predicted outputs
 df.out.surv <- data.frame(Type = "Model", 
                           Target = "Survival",
                           m.out.surv, 
                           check.names = FALSE)
+
 df.out.prev <- data.frame(Type = "Model", 
                           Target = "Prevalence",
                           m.out.prev, 
                           check.names = FALSE)
+
 df.out.prop <- data.frame(Type = "Model", 
                           Target = "Proportion of Sicker",
                           m.out.prop, 
                           check.names = FALSE)
+
 # Transform data frames to long format
 df.out.surv.lng <- reshape2::melt(df.out.surv, 
                      id.vars = c("Type", "Target"), 
                      variable.name = "Time")
+
 df.out.prev.lng <- reshape2::melt(df.out.prev, 
                         id.vars = c("Type", "Target"), 
                         variable.name = "Time")
+
 df.out.prop.lng <- reshape2::melt(df.out.prop, 
                         id.vars = c("Type", "Target"), 
                         variable.name = "Time")
+
 # Compute posterior model-predicted 95% CI
 df.out.surv.sum <- f.data_summary(df.out.surv.lng, varname = "value",
                              groupnames = c("Type", "Target", "Time"))
+
 df.out.prev.sum <- f.data_summary(df.out.prev.lng, varname = "value",
                                 groupnames = c("Type", "Target", "Time"))
+
 df.out.prop.sum <- f.data_summary(df.out.prop.lng, varname = "value",
                                 groupnames = c("Type", "Target", "Time"))
 
@@ -93,6 +102,7 @@ l.out.calib.map <- f.calibration_out(v.calib.post.map)
 # TARGET 1: Survival ("Surv")
 png("figs/04_posterior-vs-targets-survival.png", 
     width = 8, height = 6, units = 'in', res = 300)
+
 plotrix::plotCI(x = SickSicker.targets$Surv$Time, y = SickSicker.targets$Surv$value, 
                 ui = SickSicker.targets$Surv$ub,
                 li = SickSicker.targets$Surv$lb,

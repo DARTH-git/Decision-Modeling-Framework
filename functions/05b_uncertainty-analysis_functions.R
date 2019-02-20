@@ -1,5 +1,5 @@
 #---------------------------------------------------#
-#### Generate PSA dataset of CEA parameters ####
+#### Generate PSA dataset of CEA parameters      ####
 #---------------------------------------------------#
 f.generate_psa_params <- function(seed = 7783, n.sim){ # User defined
   # Load calibrated parameters

@@ -126,8 +126,8 @@ owsa_det <- function(parms, ranges, nsamps = 100, params.basecase, FUN, outcome,
 #' FUN must return a dataframe where the first column are the strategy names
 #' and the rest of teh columns must be outcomes.
 #'
-twsa_det <- function(parm1, parm2, ranges, nsamps = 40, params.basecase, FUN, outcome, 
-                     strategies = NULL, ...){
+twsa_det <- function(parm1, parm2, ranges, nsamps = 40, params.basecase, FUN, 
+                     outcome, strategies = NULL, ...){
   
   if(sum(c(parm1, parm2) %in% names(params.basecase)) != 2){
     stop("parm1 and parm2 should be in names of params.basecase")

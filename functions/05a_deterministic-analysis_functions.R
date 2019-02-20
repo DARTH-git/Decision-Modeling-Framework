@@ -17,8 +17,11 @@ f.generate_basecase_params <- function(){
 #### Calculate cost-effectiveness outcomes ####
 #---------------------------------------------#
 f.calculate_ce_out <- function(v.params, n.wtp = 100000){ # User defined
+# Arguments
   # v.params: vector of parameters to run the simluation model on
   # n.wtp: Willingness-to-pay threshold to compute net benefits
+# Returns
+  # m.ce: a matrix with discounted costs, effectiveness and NMB 
   with(as.list(v.params), {
     # Run STM model at a parameter set for each intervention
     l.model.out.no_trt <- f.decision_model(v.params)
@@ -70,7 +73,7 @@ f.calculate_ce_out <- function(v.params, n.wtp = 100000){ # User defined
 #-----------------------------------------------#
 ### Function for plotting two-way SA Diagrams ###
 #-----------------------------------------------#
-twsa.plot.det <- function(params, outcomes, strategyNames, outcomeName = "Outcome", mx = T){
+twsa.plot.det <- function(params, outcomes, strategyNames, outcomeName = "Outcome", mx = TRUE){
   ## Load required packages
   library(ggplot2)
   library(reshape2)
