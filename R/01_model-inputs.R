@@ -23,14 +23,14 @@ source("functions/01_model-inputs_functions.R")
 
 #### 01.2 External parameters ####
 #### 01.2.1 General setup ####
-n.age.init  <- 25  # age of starting cohort
-n.t         <- 75  # time horizon, number of cycles
+n.age.init  <- 25                    # age of starting cohort
+n.t         <- 75                    # time horizon, number of cycles
 v.age.names <- n.age.init:(n.age.init + n.t - 1) # vector with age names
-v.n <- c("H", "S1", "S2", "D") # vector with the 4 health states of the model:
-                               # Healthy (H), Sick (S1), Sicker (S2), Dead (D)
-n.states <- length(v.n) # number of health states 
-d.c <- 0.03 # discount rate for costs 
-d.e <- 0.03 # discount rate for QALYs
+v.n <- c("H", "S1", "S2", "D")       # vector with the 4 health states of the model:
+                                     # Healthy (H), Sick (S1), Sicker (S2), Dead (D)
+n.states <- length(v.n)              # number of health states 
+d.c <- 0.03                          # discount rate for costs 
+d.e <- 0.03                          # discount rate for QALYs
 v.dwc <- 1 / ((1 + d.e) ^ (0:(n.t))) # vector with discount weights for costs
 v.dwe <- 1 / ((1 + d.c) ^ (0:(n.t))) # vector with discount weights for QALYs
 v.s.init <- c(H = 1, S1 = 0, S2 = 0, D = 0) # initial state vector

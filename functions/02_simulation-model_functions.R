@@ -1,7 +1,12 @@
-f.decision_model <- function(v.params){# User defined
+f.decision_model <- function(v.params){ # User defined
+  ### Definition:
+  ##   Decision model implementation function
   ### Arguments:  
-  #     v.params: vector of model parameters 
-  #
+  ##   v.params: vector of model parameters 
+  ### Returns:
+  ##   a.P: Transition probability array
+  ##   m.M: Matrix cohort trace
+  ##
   with(as.list(v.params), {
     #### Age-specific transition probabilities ####
     # Mortality for healthy individuals

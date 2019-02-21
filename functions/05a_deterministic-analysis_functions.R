@@ -1,7 +1,14 @@
 #------------------------------------------------------#
 #### Generate base-case set of CEA Parameters       ####
 #------------------------------------------------------#
-f.generate_basecase_params <- function(){
+f.generate_basecase_params <- function(){ # User defined
+  ### Definition:
+  ##  Generates base-case parameters for decision model
+  ### Arguments:  
+  ##   NULL
+  ### Returns:
+  ##   v.params.basecase: Vector with base-case parameters for decision model
+  ##
   # Load calibrated parameters
   load("data/03_imis-output.RData")
   # Load initial parameters
@@ -26,7 +33,7 @@ f.calculate_ce_out <- function(v.params, n.wtp = 100000){ # User defined
     
     # Cohort trace by treatment
     m.M_no_trt <- l.model.out.no_trt$m.M # No treatment
-    m.M_trt    <- l.model.out.trt$m.M # Treatment
+    m.M_trt    <- l.model.out.trt$m.M    # Treatment
     
     # Vectors with costs and utilities by treatment
     v.u_no_trt <- c(u.H, u.S1, u.S2, u.D)
@@ -43,7 +50,7 @@ f.calculate_ce_out <- function(v.params, n.wtp = 100000){ # User defined
     v.tc_trt    <- m.M_trt %*% v.c_trt
     
     # Total discounted mean Costs and QALYs
-    tu.d_no_trt <- t(v.tu_no_trt) %*% v.dwe  # 1x31 %*% 31x1 -> 1x1
+    tu.d_no_trt <- t(v.tu_no_trt) %*% v.dwe 
     tu.d_trt    <- t(v.tu_trt) %*% v.dwe
     
     tc.d_no_trt <- t(v.tc_no_trt) %*% v.dwc
