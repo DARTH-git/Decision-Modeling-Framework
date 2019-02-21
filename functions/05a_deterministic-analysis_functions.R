@@ -24,8 +24,15 @@ f.generate_basecase_params <- function(){ # User defined
 #### Calculate cost-effectiveness outcomes ####
 #---------------------------------------------#
 f.calculate_ce_out <- function(v.params, n.wtp = 100000){ # User defined
-  # v.params: vector of parameters to run the simluation model on
-  # n.wtp: Willingness-to-pay threshold to compute net benefits
+  ### Definition:
+  ##   Calculates costs and effects for a given vector of parameters using a 
+  ##   simulation model.
+  ### Arguments:  
+  ##   v.params: vector of parameters to run the simluation model on
+  ##   n.wtp: Willingness-to-pay threshold to compute net benefits
+  ### Returns:
+  ##   m.ce: Matrix with discounted costs, effectiveness and NMB
+  ##
   with(as.list(v.params), {
     # Run STM model at a parameter set for each intervention
     l.model.out.no_trt <- f.decision_model(v.params)

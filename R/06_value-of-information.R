@@ -30,6 +30,7 @@ v.wtp <- seq(0, 200000, by = 10000)
 #### 06.3 Expected value of perfect information (EVPI) ####
 evpi <- calc_evpi(wtp = v.wtp, psa = l.psa)
 plot(evpi, effect_units = "QALY")
+ggsave("figs/06_evpi.png", width = 8, height = 6)
 
 #### 06.4 Expected value of partial perfect information (EVPPI) ####
 

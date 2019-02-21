@@ -73,7 +73,7 @@ l.psa <- make_psa_obj(cost = m.c,
                       parameters = m.psa.input, 
                       strategies = v.names.str)
 
-#### 05b.5 Save PSA matrices ####
+#### 05b.5 Save PSA objects ####
 save(m.psa.input, m.c, m.e, v.names.str, n.str,
      l.psa,
      file = "data/05b_psa-dataset.RData")
@@ -105,7 +105,7 @@ ggsave("figs/05b_cea-frontier-psa.png", width = 8, height = 6)
 ceac_obj <- ceac(wtp = v.wtp, psa = l.psa)
 ### Regions of highest probability of cost-effectiveness for each strategy
 summary(ceac_obj)
-### CEAC plot
+### CEAC & CEAF plot
 plot(ceac_obj)
 ggsave("figs/05b_ceac-ceaf.png", width = 8, height = 6)
 
