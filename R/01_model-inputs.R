@@ -3,7 +3,7 @@
 # implementation of the Sick-Sicker state-transition model (STM)               #
 #                                                                              # 
 # Depends on:                                                                  #
-#   01_model-inputs-external_functions.R                                       #
+#   01_model-inputs_functions.R                                                #
 #                                                                              # 
 # Authors: Fernando Alarid-Escudero                                            # 
 # E-mail: fernando.alarid@cide.edu                                             # 
@@ -36,7 +36,7 @@ v.dwe <- 1 / ((1 + d.c) ^ (0:(n.t))) # vector with discount weights for QALYs
 v.s.init <- c(H = 1, S1 = 0, S2 = 0, D = 0) # initial state vector
 
 #### 01.2.2 All-cause age-, sex- and race- (ASR) specific mortality ####
-df.r.asr <- read.csv("data/01_all-cause-mortality-USA-2015.csv")
+df.r.asr <- read.csv("data/01_all-cause-mortality.csv")
 v.r.asr  <- df.r.asr %>%
   dplyr::select(Total) %>%
   as.matrix()              # vector with mortality rates
