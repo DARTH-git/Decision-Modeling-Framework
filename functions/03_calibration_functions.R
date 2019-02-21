@@ -56,6 +56,7 @@ f.log_lik <- function(v.params){ # User defined
   
   n.samp <- nrow(v.params)
   v.llik <- matrix(0, nrow = n.samp, ncol = n.target) 
+  colnames(v.llik) <- c("Surv", "Prev", "PropSick")
   v.llik.overall <- numeric(n.samp)
   for(j in 1:n.samp) { # j=1
     jj <- tryCatch( { 
@@ -65,24 +66,24 @@ f.log_lik <- function(v.params){ # User defined
     ###  Calculate log-likelihood of model outputs to targets  ###
     ## TARGET 1: Survival ("Surv")
     ## Normal log-likelihood  
-    v.llik[j, 1] <- sum(dnorm(x = SickSicker.targets$Surv$value,
-                          mean = l.model.res$Surv,
-                          sd = SickSicker.targets$Surv$se,
-                          log = T))
+    v.llik[j, "Surv"] <- sum(dnorm(x = SickSicker.targets$Surv$value,
+                                   mean = l.model.res$Surv,
+                                   sd = SickSicker.targets$Surv$se,
+                                   log = T))
     
     ## TARGET 2: Prevalence ("Prev")
     ## Normal log-likelihood
-    v.llik[j, 2] <- sum(dnorm(x = SickSicker.targets$Prev$value,
-                          mean = l.model.res$Prev,
-                          sd = SickSicker.targets$Prev$se,
-                          log = T))
+    v.llik[j, "Prev"] <- sum(dnorm(x = SickSicker.targets$Prev$value,
+                                   mean = l.model.res$Prev,
+                                   sd = SickSicker.targets$Prev$se,
+                                   log = T))
     
-    ## TARGET 3: Proprotion Sick+Sicker who are Sick
+    ## TARGET 3: Proprotion Sick+Sicker who are Sick ("PropSick")
     ## Normal log-likelihood
-    v.llik[j, 3] <- sum(dnorm(x = SickSicker.targets$PropSick$value,
-                          mean = l.model.res$PropSick,
-                          sd = SickSicker.targets$PropSick$se,
-                          log = T))
+    v.llik[j, "PropSick"] <- sum(dnorm(x = SickSicker.targets$PropSick$value,
+                                       mean = l.model.res$PropSick,
+                                       sd = SickSicker.targets$PropSick$se,
+                                       log = T))
     
     ## OVERALL
     ## can give different targets different weights (user must change this)
