@@ -155,7 +155,7 @@ plotrix::plotCI(x = SickSicker.targets$PropSick$Time, y = SickSicker.targets$Pro
                 ui = SickSicker.targets$PropSick$ub,
                 li = SickSicker.targets$PropSick$lb,
                 ylim = c(0, 1), 
-                xlab = "Time", ylab = "Pr(Sicker | Sick+Sicker)")
+                xlab = "Time", ylab = "Pr(Sicker | Sick Sicker)")
 lines(x = SickSicker.targets$PropSicker$Time,
       y = df.out.prop.sum$lb, col = "red", lty = 2)
 lines(x = SickSicker.targets$PropSicker$Time,
