@@ -67,10 +67,6 @@ f.decision_model <- function(v.params){ # User defined
     m.M <- matrix(0, 
                   nrow = (n.t + 1), ncol = n.states, 
                   dimnames = list(0:n.t, v.n))
-    # Initialize transition array
-    a.A <- matrix(0, 
-                  nrow = (n.t + 1), ncol = n.states, 
-                  dimnames = list(0:n.t, v.n))
     # Set first row of M with the initial state vector
     m.M[1, ] <- v.s.init
     
