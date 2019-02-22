@@ -35,8 +35,8 @@ library(tensorA) # to use tensor algebra
 ```{r read chunks, include = FALSE}
 source("R/01_model-inputs.R")
 source("R/02_simulation-model.R")
-source("R/03_calibration.R")
-source("R/04_validation.R")
+#source("R/03_calibration.R")
+#source("R/04_validation.R")
 #source("R/05a_deterministic-analysis.R")
 #source("R/05b_uncertainty-analysis.R")
 ```
@@ -44,7 +44,7 @@ source("R/04_validation.R")
 ## How to read this document
 This document is meant to showcase our framework via a fully functional decision model. In this case-study we perform a cost-effectiveness analysis (CEA) using a previously published 4-state model called the Sick-Sicker model.[@Enns2015] This document is supportive material to the 'A need for change! A coding framework for improving transparency in decision modeling' paper from the DARTH workgroup, and you are therefore recommended to first read this paper before you read this document.
 
-We start this document by explaining the case example we use, followed by expalining all the different components as described in the paper. As explained in the paper, uur file organization consist of several folder. This markdown manuscript can be found in the manuscript folder. Our figures can be found in the figure folder and when we talk about functions we use you can find them in the *functions* folder. All other `R` files can be found in the `R` script folder.
+We start this document by explainig the case example we use, followed by expalining all the different components as described in the paper. As explained in the paper, our file organization consist of several folder. This markdown manuscript can be found in the *manuscript* folder. Our figures can be found in the *figure*folder, data is the *data* folder and when we talk about functions we use you can find them in the *functions* folder. All other `R` files can be found in the `R` script folder. In this document we refer a lot to the `R` code but we don't allways show all of this. We therefore, recommend you to have our whole framework downloaded so you can open the `R` scripts and functions. When you like to follow along, please make sure you installed all packages we used in our code. [REFER TO FILE WITH ALL PACKAGES]
 
 
 ## The Sick-Sicker model 
@@ -57,11 +57,11 @@ Two alternative strategies exist for this hypothetical disease: a no-treatment a
 We are asked to evaluate the cost-effectiveness of this treatment that increases QoL in one of the disease states assuming as willingness to pay of $8000.[@Krijkamp2018] We also identify the uncertainty around our decision based on the CEA using sensitivity analysis. We end the showcase of our framework by performing a value of information (VoI) analysis to see if it is worth investing in extra research projects with the aim to reduce the uncertainty around our decision. All steps of the cost-effectiveness analysis will be described using the different components of the framework. 
 
 ###01 Define model inputs
-As described in the paper, in this component we declare all model input variables and set their values. The `R` script running all components of this section is the `01_model-inputs.R` file in the `R` script folder. 
+As described in the paper, in this component we declare all model input variables and set their values. The `R` script running all components of this section is the *01_model-inputs.R* file in the `R` script folder. 
 
 The input to inform the values is categorized in three categories: external, estimated, and calibrated. The majority of the Sick-Sicker model parameters are informed by external data, while only three parameter values need to be estimated using model calibration. 
 
-In this component we start with the general setup of the model,specifying among others the time horizon, prevalence of the different health states at the start of the model and discount rates. The next step is to declare and inform the external parameter. The model parameter values and `R` variable names are presented in Table \ref{tab:parameters}. 
+In this component we start with the general setup of the model, specifying among others the time horizon, prevalence of the different health states at the start of the model and discount rates. The next step is to declare and inform the external parameter. The model parameter values and `R` variable names are presented in Table \ref{tab:parameters}. 
 
 Table: \label{tab:parameters} Description of parameters with their `R` name and value.
 
@@ -92,7 +92,7 @@ Table: \label{tab:parameters} Description of parameters with their `R` name and 
 | Intervention effect                |             |               |
 | - Utility for treated individuals in S1 | `u.Trt` |  0.95        |
 
-The all-cause mortality of healthy individuals is age specific. We therefore load the `01_all-cause-mortality-USA-2015.csv` file, including the age-, sex- and race- (ASR) specific mortality rates for the US population in 2015 derived from the Human Mortality database.
+The all-cause mortality of healthy individuals is age specific. We therefore load the *01_all-cause-mortality-USA-2015.csv* file, including the age-, sex- and race- (ASR) specific mortality rates for the US population in 2015 derived from the Human Mortality database.
 
 The other external parameter values are all stored the 01_init-params.csv file in the data folder. Based on this file a base-case parameters set, an `R` data frame, of this information is generated by the `f.generate_init_params()` function. Using a function to create a basecase parameters dataframe might see complex, but it is important for the sensitivity analysis we will do in component 5 of the framework. 
 
@@ -100,41 +100,45 @@ The other external parameter values are all stored the 01_init-params.csv file i
 print.function(f.define_init_params) # print the code of the function
 ```
 
-In this code you can see that the functions start calling the .csv file and stores the values of the paramers. All of this is combined in a dataframe. The Sick-Sicker model does not have estimated paramters, but there are three parameters that need to be estimated vai model calibration. In this stage of theframework, we simply set these parameters to valid “dummy” values that are compatible with the next phase of the analysis, model implementation, but are ultimately just placeholder values until we conduct the calibration phase. This means that these values will be replaced by the best-fitted calibrated values after we performed the calibration. 
-
-
-
-
+In this code you can see that the functions start calling the .csv file and stores the values of the parameters. All of this is combined in a dataframe. The Sick-Sicker model does not have estimated parameters, but there are three parameters that need to be estimated via model calibration. In this stage of the framework, we simply set these parameters to valid “dummy” values that are compatible with the next phase of the analysis, model implementation, but are ultimately just placeholder values until we conduct the calibration phase. This means that these values will be replaced by the best-fitted calibrated values after we performed the calibration. 
 
 
 ###02 Model implementation
+In this component we build the backbone of the decision analysis: the implementation of the model. In this section of the framework, all combined in the *02_simulation-model.R* `R` script, a function is used that maps model inputs to outputs, for the Markov model we are using to capture the dynamic process of the Sick-Sicker example. The *02_simulation-model.R* file itself is not very large. It is loading some packages, sources the input from component 01, sources the function that is creating the model, after which the functions is ran and the results are stored. The output of the model is the traditional cohort trace, describing how the cohort is distributed among the different health states over time. This trace will be used in many of the other component sections. 
 
-The `R` script running all components of this section is the `02_simulation-model.R` file in the `R` script folder. 
-
-In order to be able to run a state-transition cohort model a transition probability matrix needs to be created. This matrix contains the probabilities of transitioning from the current health state, indicated by the rows, towards the new health states, specified in the columns. More information about creating these matrices is described in a paper about State-transition models using R [@Alarid-Escudero2018]. 
-
-The `02_simulation-model_functions.R` file in the functions folder creates a functions called `f.decision_model` that is able to generate this transition probability matrix for every cycle. Using indexing, when running the model, we can use the transition probability matrix corresponding with the current age of the cohort. 
+The key component of this file, is the *02_simulation-model_functions.R* file. As described in the paper, constructing a model as a function at this stage facilitates subsequent stages of the model development and analysis, as these processes will all call the same model function, but pass different parameter values and/or calculate different final outcomes based on the model outputs. In the next part of this section we will describe the code of the function.
 
 ```{r}
 print.function(f.decision_model) # print the code of the function
 ```
-To incorporate the age specific mortality for healthy individuals the function calculates a transition probability matrix for every cycle. All these cycle specifyc matrixed are collected in a structure called array `a.P`. The functions include some code to check if both the transition probabilities them self, as well as the transition probability matrices are valid.  
 
-The transition probability matrix for the first cycles shows the transition probabilities at the first cycles. 
-```{r, eval = TRUE, echo = TRUE}
-l.out.stm$a.P[, , 1] # transition probability matrix for the first cycles
+The `f.decision_model()` function is informed by just one argument, called `v.params`. This argument informs the model about the model parameters. The parameter values for our Sick-Sicker model are stored in the dataframe `df.params` and is passed into the function as an argument.
+
+```{r, eval = FALSE, echo = TRUE}
+l.out.stm <- f.decision_model(v.params = df.params.init) # run the function
 ```
 
-Comparing the matrix for the last cycle, `n.t` with the one above from cycle 1 shows you the increased probabilities of transitioning to death form all health states. 
-```{r, eval = TRUE, echo = TRUE}
+You probably noticed that the prefix of the argument is telling us it has to be a vector, while we pass a dataframe into the function. This is totally fine. The function is able to deal with both vectors, usefull for small models, as well as dataframes, when you have more parameter info. 
+
+The functions starts with calculating the age-specific transition probabilities based on the rates in the data frame. This means that the parameters will become vectors of length `n.t`, describing the probability do die for all ages. 
+
+The next part of the function, creates the age-specific transition probability matrices in an array. The transition probability matrices a core component of a state-transition cohort model. This matrix contains the probabilities of transitioning from the current health state, indicated by the rows, towards the new health states, specified in the columns. More information about creating these matrices is described in a paper about State-transition models using R [@Alarid-Escudero2018]. Since we have age specific transition probabilities, the transition probability matrix is different each cycle. Since these probabilities are only depending on the age of the cohort, and not on other events, we can generate all matrices at the start of the model. This results `n.t` matrices that we will store in an array, called `a.P`, of dimensions `n.s` x `n.s` x `n.t`. After initiation this array the array is filled based on the parameter values stored in the dataframe. When running the model, we can index the correct transition probability matrix corresponding with the current age of the cohort. The make sure we are using correct values, the functions include some code to check if both the transition probabilities them self, as well as the transition probability matrices are valid. The first three time-points of the probability array, as well as for the last cycle, are shown below.
+
+```{r, echo = FALSE, eval = TRUE}
+l.out.stm$a.P[, , 1:3] # show the first three time-points of a.P
 l.out.stm$a.P[, , n.t] # transition probability matrix for the last cycle
 ```
 
-The second part of the `f.decision_model` function computes a cohort trace matrix called `m.M`
+Comparing these probability matrices, shows you the increased probabilities of transitioning to death form all health states towards the end. 
 
+After the array is filled, the cohort trace matrix, `m.M`, of dimensions `n.t` x `n.s` is initiated. This matrix will store the state occupation at each point in time.  The first row of the matrix is informed by the initial state vector `v.s.init`. For the remaining points in time, we iteratively multiply the cohort trace with the age specific transition probability matrix indexed from array `a.P`. The model results are stored in a list, called `l.out.stm`. This list contains the array of the transition probability matrix for all cycles `t` and the cohort trace `m.M`. 
 
-By running the `02_simulation-model.R` file we generate the cohort trace describing how the cohort is distributed among the different health states over time. This is show in the Figure.
+```{r, eval = TRUE, echo = TRUE}
+head(l.out.stm$m.M)    # show the top part of the cohort trace
+tail(l.out.stm$m.M)    # show the bottom part of the cohort trace
+```
 
+Via the code below, we can graphically show the model dynamics by plotting the cohort trace. This Figure shows the distribution of the cohort among the different health states at each time point. 
 
 ```{r Sick-Sicker-Trace, echo = FALSE, fig.cap = 'Cohort trace of the Sick-Sicker cohort model', message = FALSE, warning = FALSE, fig.pos = "H"} 
 ggplot(melt(l.out.stm$m.M), aes(x = Var1, y = value, color = Var2, linetype = Var2)) +
@@ -148,112 +152,56 @@ ggplot(melt(l.out.stm$m.M), aes(x = Var1, y = value, color = Var2, linetype = Va
 # matplot(m.M, pch = v.n)
 ```
 
-
-
 ###03 Model calibration 
+```{r, eval = TRUE, echo = FALSE}
+source("functions/03_calibration_functions.R")
+```
+In this component, unknown or highly uncertain model parameters are estimated by calibrating model outputs to match specified calibration targets. This proces is executed by the *03_calibration.R* file. The target data is stored in the *03_calibration-targets.RData* file. The *03_calibration.R* file include much more code compared to the `R` scripts of the previous components. Like in compontent 02, we start with loading inputs and functions. In addition, we load the calibration targets data into the `R` environment. In the next section, **03.2 Visualize targets**, we create a graph for each of our targets, survival, prevalence and the proportion who are Sicker, among all those afflicted (Sick+Sicker). 
 
-We calibrated the Sick-Sicker model using a Bayesian approach using the incremental mixture importance sampling (IMIS) algorithm [Teele2006], which has been used to calibrate health policy models [Raftery2010, @Menzies2017, Rutter2018]. Bayesian methods allow us to quantify the uncertainty in the calibrated parameters even in the presence of non-identifiability [@Alarid-Escudero2018b]. We assumed a normal likelihood and uniform priors. For a more detailed description of IMIS for Bayesian calibration, different likelihood functions and prior distributions, we refer the reader to the tutorial for Bayesian calibration by Menzies et al. [@Menzies2017]. For illustration purposes, we also calibrated the Sick-Sicker model with the Nelder-Mead algorithm [@Nelder1965], which was initialized at 100 different starting points sampled from the prior distributions of the calibrated parameters. This calibration exercise can be found in the file `app2_calibration-nelder-mead.R`.
-
-We have external data for the calibration of three parameters from the Sick-Sicker model. This data, stored in the `03_calibration-tarted.RData` file, contains information about survival, the disease prevalence and the proportion who are sick among those afflicted (sick and sicker). The `03_calibration_functions.R` file contains two functions for the calibration process. One to generate model outputs for calibration from a parameters set called `f.calibration_out` and a Goodness of fit function for calibration from a parameter set called `f.gof`.
+In section *03.3 Run calibration algorithms*  we set the parameters we like to calibrate to fixed values and tast if our functions performing the calibrations, called `f.calibration_out` works. 
 
 ```{r}
-print.function(f.calibration_out) # print the code of the function
-print.function(f.gof)  # print the code of the function
-``` 
+print.function(f.calibration_out) # print the funtions
+```
+
+This function is informed by one argument, `v.params.calib`. This vector contains the values of the three parameters of interest. The placeholder values are replaced by these values and with these values the model is evaluated. This is done by running the `f.decision_model` function, described in component 02. This results in a new list with output of the model. With this new output, the epidemiological output, overal survial, disease prevalence and the proportion of sick in the sick and sicker state are calculated. The estimated values for these epidemiological outcomes at different timepoints are combined in a list, called `l.out`. This is the output from the `f.calibration_out` function. 
+
+Now we know our code works, we specify our calibration paratmers in section **03.3.1**. This includes setting the see, specifying the number of random samples, the name of the input paramters and most important, the range on input search spaces and the name of the calibration targets, `Surv`, `Prev`, `PropSick`.
+
+In the next section, **03.3.2**, to calibrate the Sick-Sicker model, we use a Bayesian approach using the incremental mixture importance sampling (IMIS) algorithm [Teele2006], which has been used to calibrate health policy models [Raftery2010, @Menzies2017, Rutter2018]
+
+
+Bayesian methods allow us to quantify the uncertainty in the calibrated parameters even in the presence of non-identifiability [@Alarid-Escudero2018b]. We assumed a normal likelihood and uniform priors. For a more detailed description of IMIS for Bayesian calibration, different likelihood functions and prior distributions, we refer the reader to the tutorial for Bayesian calibration by Menzies et al. [@Menzies2017]. For illustration purposes, we also calibrated the Sick-Sicker model with the Nelder-Mead algorithm [@Nelder1965], which was initialized at 100 different starting points sampled from the prior distributions of the calibrated parameters. This calibration exercise can be found in the file `app2_calibration-nelder-mead.R`.
+
+
+
+This component involves both the setup of the calibration (specification of plausible ranges or prior distributions for input parameters to be calibrated, specification of calibration targets, calculation of corresponding values from model outputs and assessment of fit to targets) as well as the carrying out the calibration itself with a chosen algorithm. 
+
+
+
+
+
+
+
+
+
+
+We have external data for the calibration of three parameters from the Sick-Sicker model. This data, stored in the `03_calibration-tarted.RData` file, contains information about survival, the disease prevalence and the proportion who are sick among those afflicted (sick and sicker). The `03_calibration_functions.R` file contains two functions for the calibration process. One to generate model outputs for calibration from a parameters set called `f.calibration_out` and a Goodness of fit function for calibration from a parameter set called `f.gof`.
 
 In the first section of the calibration we load the data, we visualize our targets and we check if the calibration function runs by using the default values of the parameters of interest. In the section 03.3.3 we run the Nelder-Mead for each starting point and we explore the best fitting input sets. The best set of parameters from the Nelder-Mead is saved in the file `03_nm-best-set.RData`.
 
 The last part of the calibration includes internal validation of the values predicted by the model using the best set of parameters and our targets. 
 
-The figures show that our best-set of parameters is quite good for the first two paramters since the model-predicted output is quite close to our targets. Our calibrated parameters are not very good in reaching the target values for the proportion of those who are sick among those who are afflicted. 
-
-###04 Calculate model outcome
-In this section we evaluate the model outcomes by combining the previous three sections. Each health state in the model is associated with a specific utility and a cost (Table \ref{tab:parameters}). We are asked to perform a cost-effectiveness analysis of a hypothetical treatment. This treatment is given to all patients in both Sick and Sicker and is associated with specific costs, see Table \ref{tab:parameters}. The cost of the treatment is additional to the cost of being sick or sicker for one year. The treatment improves QoL for those individuals who are sick but has no effect on the quality of life of those who are sicker [@Krijkamp2018]. 
-
-Via the `04_calculate-outcomes_functions.R` basecase values of the calibrated parameters are replaced with calibrated values from the `03_nm-best-set.RData` 
-data. This new set of parameters is used to run the model to produce a cohort trace for the CEA. The `04_calculate-outcomes_functions.R` files also generates the function `f.calculate_ce_out`, which is the core part of the model for the generation of cost-effectiveness results. Running this gives us the following cost and effectiveness outcomes. 
-```{r, eval = TRUE, echo = FALSE}
-#### 04.3 Compute cost-effectiveness outcomes ####
-f.calculate_ce_out(v.params = v.params.basecase)
-```
-
-This data is used to perform a CEA comparing the treatment strategy with the no treatment strategy.
-```{r, eval = TRUE, echo = FALSE}
-ce.out <- f.calculate_ce_out(v.params.basecase)
-
-# calculate lifelong per patient discounted cost and QALYs.
-DC          <- ce.out[2, "Cost"] - ce.out[1, "Cost"]      # calculate the difference in discounted costs between the two strategies 
-names(DC)   <- "Incremental costs"
-DE          <- ce.out[2, "Effect"] - ce.out[1, "Effect"]      # calculate the difference in discounted effects between the two strategies 
-names(DE)   <- "QALYs gained"
-ICER        <- DC / DE                 # calculate the ICER
-names(ICER) <- "ICER" 
-results     <- c(DC, DE, ICER)         # combine the results 
-
-# create full incremental cost-effectiveness analysis table 
-C <- round(c(ce.out[1, "Cost"], ce.out[2, "Cost"]), 2)  # bind and round the total costs of the two strategies
-E <- round(c(ce.out[1, "Effect"], ce.out[2, "Effect"]), 2)   # bind and round the total effects of the two strategies
-
-DC   <- c("", as.character(round(DC, 2)))   # round the delta of the costs (No Treatment is reference)
-DE   <- c("", as.character(round(DE, 2)))   # round the delta of the effects (No Treatment is reference)
-ICER <- c("", as.character(round(ICER, 2))) # round the ICER 
-
-table_ce <- cbind(v.names.str, C, E, DC, DE, ICER)     # combine all data in a table
-table_ce <- as.data.frame(table_ce)    # create a data frame 
-table_ce                                              # print the table    
-write.table(table_ce, "table_ce.txt")  # export the results to a .txt file 
-```
-
-Given our willingness-to-pay of \$80000, we conclude that the treatment strategy is not cost effective. 
-
-### Sensitivity analysis 
-To quantify the uncertainty of our decision based on the cost-effectiveness analysis (CEA) of the Sick-Sicker model both deterministic and probabilistic sensitivity analysis are performed. We start with the deterministic analysis performed using the `05a_deterministic-analysis.R` file followed by the uncertainty analysis code in `05b_uncertainty-analsyis.R`, both stored in the script ("R") folder. 
-
-####05a Deterministic analysis of Decision analysis / cost-effectiveness analysis 
-The deterministic sensitivity analysis of the Sick-Sicker model consists of a one-way sensitivity analysis (owsa) looking at the effect of the utility value used for Sicker (S2) on the QALY, the outcome of interest. In the `05a_deterministic-analysis_function.R` file we create the functions for a one-way sensitivity analysis `owsa.plot.det`, a two-way sensitivity analysis `twsa.plot.det` and the code to create tornado plots `TornadoPlot`. 
-
-```{r}
-print.function()
-```
+The figures show that our best-set of parameters is quite good for the first two parameters since the model-predicted output is quite close to our targets. Our calibrated parameters are not very good in reaching the target values for the proportion of those who are sick among those who are afflicted. 
 
 
-We are interested in the effect of the parameters `p.HS1`, `u.S2` and `c.Trt` on the QALYs. The results are summarixed in Figure \ref{fig:Tornado}.
-![Tornado Plot \label{fig:Tornado}](../figs/Markov-SickSicker-Tornado.png)
 
-####05b Uncertainty analyses of  Decision analysis / cost-effectiveness analysis
-A single function, called `f.generate_psa_params`, is created via the `05b_uncertainty-analysis_function.R` file that is able top generate a PSA dataset of CEA parameters. 
-
-Table: \label{tab:parameters PSA} Description of parameters with their R name and value.
-
-|           **Parameter**         |  **R name** |   **Distribtion**   |
-|:--------------------------------|:-----------:|:-------------:|
-| Annual transition probabilities |           |               |
-| - Disease onset (H to S1)       | `p.HS1`     |  `beta(30, 170)`        |
-| - Recovery (S1 to H)            | `p.S1H`     |  `beta(60, 60)`         |
-| Annual costs                    |             |               |
-| - Healthy individuals           | `c.H`       |  `gamma(shape = 100, scale = 20)`        |
-| - Sick individuals in S1        | `c.S1`      |  `gamma(shape = 177.8, scale = 22.5)`       |
-| - Sick individuals in S2        | `c.S2`      |  `gamma(shape = 225, scale = 66.7)`     |
-| - Additional costs of sick individuals treated in S1 or S2           | `c.Trt`     |  `gamma(shape = 73.5, scale = 163.3)`      |
-| Utility weights                 |             |               |
-| - Healthy individuals           | `u.H`       |`truncnorm(mean = 1, sd = 0.01, b = 1)`         |
-| - Sick individuals in S1        | `u.S1`      |`truncnorm(mean = 0.75, sd = 0.02, b = 1)`         |
-| - Sick individuals in S2        | `u.S2`      |`truncnorm(mean = 0.50, sd = 0.03, b = 1)`         |
-| Intervention effect             |             |               |
-| - Utility for treated individuals in S1 | `u.Trt` |`truncnorm(mean = 0.95, sd = 0.02, b = 1)`        |
-
-```{r}
-print.function(f.generate_psa_params) # print the code of the function
-``` 
-
-###06 Value of information
+Once appropriate values, ranges, and/or distributions have been identified for calibrated parameters, these values will be used in the analysis component, as appropriate. This means that we will replace the placeholder values we created in component 1 by  the calibrated values. 
 
 
+###05c Value of information
 
 ### References 
-
-
-
 
 
 
