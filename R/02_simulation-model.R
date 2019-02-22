@@ -28,4 +28,6 @@ source("functions/02_simulation-model_functions.R")
 #### 02.2 Run STM ####
 ### Create list of model output
 l.out.stm <- f.decision_model(v.params = df.params.init)
-l.out.stm
+l.out.stm$a.P[, , 1:3] # show the first three time-points
+head(l.out.stm$m.M)    # show the top part of the cohort trace
+tail(l.out.stm$m.M)    # show the bottom part of the cohort trace

@@ -50,6 +50,7 @@ m.c <- matrix(0,
               nrow = n.sim,
               ncol = n.str)
 colnames(m.c) <- v.names.str
+
 ## Matrix of effectiveness
 m.e <- matrix(0, 
               nrow = n.sim,

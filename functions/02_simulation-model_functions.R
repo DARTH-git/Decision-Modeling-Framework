@@ -1,6 +1,6 @@
 f.decision_model <- function(v.params){# User defined
   ### Arguments:  
-  #' @param v.params: vector of model parameters 
+  # v.params: vector of model parameters 
   #' @return a list with the transition probability array `a.P` and the cohort trace `m.M`.
   with(as.list(v.params), {
     #### Age-specific transition probabilities ####
