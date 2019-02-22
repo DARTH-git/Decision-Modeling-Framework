@@ -36,8 +36,8 @@ v.dwe <- 1 / ((1 + d.c) ^ (0:(n.t))) # vector with discount weights for QALYs
 v.s.init <- c(H = 1, S1 = 0, S2 = 0, D = 0) # initial state vector
 
 #### 01.2.2 All-cause age-, sex- and race- (ASR) specific mortality ####
-df.r.asr <- read.csv("data/01_all-cause-mortality.csv")
-v.r.asr  <- df.r.asr %>%
+df.r.mort_by_age <- read.csv("data/01_all-cause-mortality.csv")
+v.r.mort_by_age  <- df.r.mort_by_age %>%
   dplyr::select(Total) %>%
   as.matrix()              # vector with mortality rates
 

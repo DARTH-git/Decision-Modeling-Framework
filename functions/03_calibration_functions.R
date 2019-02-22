@@ -7,8 +7,9 @@ f.calibration_out <- function(v.params.calib){ # User defined
   ### Arguments:  
   ##   v.params.calib: vector of parameters that need to be calibrated
   ### Returns:
-  ##   l.out: List Survival (Surv), Prevalence of Sick and Sicker (Prev), 
-  ##          and proportion of Sicker from Sick and Scikerthose diseased
+  ##   l.out: List with Survival (Surv), Prevalence of Sick and Sicker (Prev), 
+  ##          and proportion of Sicker (PropSicker) out of all sick 
+  ##          (Sick+Sicker) individuals
   ##
   # Create temporary variable with base-case model parameters
   v.params <- df.params.init

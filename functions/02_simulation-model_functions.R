@@ -10,11 +10,11 @@ f.decision_model <- function(v.params){ # User defined
   with(as.list(v.params), {
     #### Age-specific transition probabilities ####
     # Mortality for healthy individuals
-    p.HDage  <- 1 - exp(-v.r.asr[(n.age.init + 1) + 0:(n.t - 1)])        
+    p.HDage  <- 1 - exp(-v.r.mort_by_age[(n.age.init + 1) + 0:(n.t - 1)])        
     # Mortality for sick individuals
-    p.S1Dage <- 1 - exp(-v.r.asr[(n.age.init + 1) + 0:(n.t - 1)] * hr.S1)
+    p.S1Dage <- 1 - exp(-v.r.mort_by_age[(n.age.init + 1) + 0:(n.t - 1)] * hr.S1)
     # Mortality for sicker individuals
-    p.S2Dage <- 1 - exp(-v.r.asr[(n.age.init + 1) + 0:(n.t - 1)] * hr.S2)
+    p.S2Dage <- 1 - exp(-v.r.mort_by_age[(n.age.init + 1) + 0:(n.t - 1)] * hr.S2)
     
     #### Create age-specific transition probability matrices in an array ####
     # Initialize array
