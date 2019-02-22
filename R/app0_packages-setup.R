@@ -39,6 +39,12 @@ v.packages.to.install <- c("dplyr", "truncnorm",
 
 f.install_and_load(v.packages.to.install)
 
+### Install Bioconductor package
+if (!requireNamespace("BiocManager", quietly = TRUE)){
+  install.packages("BiocManager")
+  BiocManager::install("genefilter", version = "3.8")
+}
+
 ### Install dampack from GitHub
 if (!require(dampack)) {
   devtools::install_github(repo = "DARTH-git/dampack") # Install package from GitHub
