@@ -48,4 +48,9 @@ if (!requireNamespace("BiocManager", quietly = TRUE)){
 ### Install dampack from GitHub
 if (!require(dampack)) {
   devtools::install_github(repo = "DARTH-git/dampack") # Install package from GitHub
+} else{
+  vers.dampack <- packageVersion("dampack")
+  if(vers.dampack!="0.1.0"){
+    devtools::install_github(repo = "DARTH-git/dampack") # Install package from GitHub
+  }
 }
