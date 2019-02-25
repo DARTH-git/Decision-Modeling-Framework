@@ -3,11 +3,11 @@ title: "Sick-Sicker case study - as part of the framework paper"
 author: "DARTH workgroup"
 date: '`r Sys.Date()`'
 output: 
-  pdf_document: default
-    #fig_caption: yes
   word_document:
     toc: yes     # table of content
     toc_depth: 1 # depth of the table of content
+  pdf_document: default
+    #fig_caption: yes
   html_document: default
 bibliography: references.bib
 ---
@@ -57,7 +57,7 @@ Two alternative strategies exist for this hypothetical disease: a no-treatment a
 
 We assume that most of the parameters of the Sick-Sicker model and their uncertainty have been previously estimated and are known to the analyst. However, while we can identify those who are afflicted with the illness through obvious symptoms, we can’t easily distinguish those in the S1 state from the those in the S2 state. Thus, we can’t directly estimate state-specific mortality hazard ratios, nor do we know the transition probability of progressing from S1 to S2. Therefore, we calibrated the model to different epidemiological data. We internally validated the calibrated model by comparing the predicted outputs from the model evaluated at the calibrated parameters against the calibration targets. 
 
-As part of the cost-effectiveness analysis (CEA), we conducted different deterministic sensitivity analysis (SA), including one-way and two-way SA, and tornado plots. To quantify the effect of parameter uncertainty on decision uncertainty, we conducted a probabilistic sensitivity analysis (PSA) and reported our uncertainty analysis results with a cost-effectiveness acceptability curve (CEAC), cost-effectiveness acceptability frontier (CEAF) and ELC. We also conducted a value of information (VOI) analysis to determine whether potential future research is needed to reduce parameter uncertainty.
+As part of the cost-effectiveness analysis (CEA), we conducted different deterministic sensitivity analysis (SA), including one-way and two-way SA, and tornado plots. To quantify the effect of parameter uncertainty on decision uncertainty, we conducted a probabilistic sensitivity analysis (PSA) and reported our uncertainty analysis results with a cost-effectiveness acceptability curve (CEAC), cost-effectiveness acceptability frontier (CEAF) and expected loss curves (ELC). We also conducted a value of information (VOI) analysis to determine whether potential future research is needed to reduce parameter uncertainty.
 All steps of the cost-effectiveness analysis will be described using the different components of the framework. 
 
 
@@ -190,7 +190,7 @@ Finally, the posterior and MAP from the IMIS calibration are stored in the file 
 For illustration purposes, we also provide code to calibrated the Sick-Sicker model with the Nelder-Mead algorithm [@Nelder1965], which was initialized at 100 different starting points sampled from the prior distributions of the calibrated parameters. This calibration exercise can be found in the file `app2_calibration-nelder-mead.R`, but we will not go into details for this file. 
 
 ###04 Validation
-In this section, we like to check the internal validity of our Sick-Sicker model before we continue with the analysis. Checking the internal validity means that we need to make sure that the output corresponds with our input. For example, we like to check that Sicker individuals can not recover and that most of our cohort died by the end of the time horizon. We also plot our model-predicted outputs againts the calibration targets. Therefore, the *04_validation.R* file stats with sourcing all previously described functions and generated calibration data. 
+In this section, we like to check the internal validity of our Sick-Sicker model before we continue with the analysis. Checking the internal validity means that we need to make sure that the output corresponds with our input. For example, we like to check that Sicker individuals can not recover and that most of our cohort died by the end of the time horizon. We also plot our model-predicted outputs against the calibration targets. Therefore, the *04_validation.R* file stats with sourcing all previously described functions and generated calibration data. 
 
 We compute the model-predicted outputs for each sample of posterior distribution as well as for the MAP estimate. Section *04.5* is computing these model-predicted outputs for each sample using the function `f.data_summary`. 
 ```{r}
@@ -233,8 +233,7 @@ XXXXX
 
 
 ####05b Uncertainty analysis 
-
-A single function, called `f.generate_psa_params`, is created via the `05b_uncertainty-analysis_function.R` file that is able top generate a PSA dataset of CEA parameters as described in Table \ref{tab:parameters PSA}.  
+In this subsection, we evaluate decision uncertainy by evaluating the uncertainty of our parameter values using probabilistic sensitiviy analysis (PSA). Until now we used the parameter values as described in Table {tab:parameters}. However, the truth is that we are uncertain about the described values. Most of these input parameters are defined by a distribtion as described in Table \ref{tab:parameters PSA}. 
 
 Table: \label{tab:parameters PSA} Description of parameters with their R name and value.
 
@@ -254,12 +253,14 @@ Table: \label{tab:parameters PSA} Description of parameters with their R name an
   | - Sick individuals in S2        | `u.S2`      |`truncnorm(mean = 0.50, sd = 0.03, b = 1)`         |
   | Intervention effect             |             |               |
   | - Utility for treated individuals in S1 | `u.Trt` |`truncnorm(mean = 0.95, sd = 0.02, b = 1)`        |
-  
+
+In a PSA we sample the input parameter values from these distributions and we than run the model for each sample. This means that we need to make multiple PSA data sets to run the model with. In the file *05b_uncertainty-analysis_functions.R* we created a single function, called `f.generate_psa_params`, that is able top generate a PSA dataset of CEA input parameters for each number of simulations we like to have in our PSA. We specify the number of PSA simulation via the `n.sim` argument. The function is also using a seed to allow reproducing the results of this stocastic proces. 
 
 ```{r, eval = FALSE, echo = TRUE}
 print.function(f.generate_psa_params) # print the function 
 ```
 
+The function returns a dataframe of PSA output, that can then be used to run the model for each sample. 
 
 
 
