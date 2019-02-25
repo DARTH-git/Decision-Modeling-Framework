@@ -21,7 +21,7 @@ knitr::opts_knit$set(root.dir = '~/Dropbox (Persoonlijk)/03_Onderzoek/DARTH fram
 ```
 
 
-```{r load_packages, include=FALSE}
+```{r load_packages, include = FALSE, warning = FALSE}
 library(knitr)
 # https://haozhu233.github.io/kableExtra/awesome_table_in_html.html
 library(kableExtra) 
@@ -42,10 +42,11 @@ source("R/04_validation.R")
 ```
 
 ## How to read this document
-This document is meant to showcase our framework via a fully functional decision model. In this case-study we perform a cost-effectiveness analysis (CEA) using a previously published 4-state model called the Sick-Sicker model.[@Enns2015] This document is supportive material to the 'A need for change! A coding framework for improving transparency in decision modeling' paper from the DARTH workgroup, and you are therefore recommended to first read this paper before you read this document.
+This document is meant guide you through the `R` code we use to showcase our framework via a fully functional decision model. In this case-study we perform a cost-effectiveness analysis (CEA) using a previously published 4-state model called the Sick-Sicker model.[@Enns2015] This document is supportive material to the *A need for change! A coding framework for improving transparency in decision modeling* paper from the DARTH workgroup. Therefore, rou are recommended to read that paper first, before continue reading this file. 
 
-We start this document by explainig the case example we use, followed by expalining all the different components as described in the paper. As explained in the paper, our file organization consist of several folder. This markdown manuscript can be found in the *manuscript* folder. Our figures can be found in the *figs* folder, data is the *data* folder and when we talk about functions we use you can find them in the *functions* folder. All other `R` files can be found in the `R` script folder. In this document we refer a lot to the `R` code but we don't allways show all of this. We therefore, recommend you to have our whole framework downloaded so you can open the `R` scripts and functions. When you like to follow along, please make sure you installed all packages we used in our code. [REFER TO FILE WITH ALL PACKAGES]
+As described in the paper, this document is guiding you through all the files we need to perforem the CEA analysis of the Sick-Sicker model. The framework can be downloaded from Github (https://github.com/DARTH-git/Decision-Modeling-Framework). We recommend downloading this complete framework as a .zip file containing all folders. Unzip the folder and save it on your computer. In our framework, you find multiple folders as described in Table 1. When you like to follow along, please make sure you installed all packages we used in our code. [REFER TO FILE WITH ALL PACKAGES]. To prepare for running the code you should open the XX file, in the XX folder containing the code to install all `R` packages needed. 
 
+We start this document by repeating the Sick-sicker case example description, followed by guiding you through the different components as described in the paper. As explained in the paper, our file organization consist of several folder. This markdown manuscript can be found in the *manuscript* folder. Our figures can be found in the *figs* folder, data is the *data* folder and when we talk about functions, printed in *italic* style, you can find them in the *functions* folder. All other `R` files can be found in the `R`-script folder. In this document we refer a lot to the `R` code but we don't allways show all of this. We therefore, it is very useful to have the complete framework downloaded.  
 
 ## The Sick-Sicker model 
 In the Sick-Sicker model, a hypothetical disease affects individuals with an average age of `r n.age.init` years and results in increased mortality, increased treatment costs and reduced quality of life. We simulate a hypothetical cohort of `r n.age.init`-year-old individuals over a lifetime (or reaching age `r n.age.init + n.t` years old) using `r n.t` annual cycles, represented with `n.t`. The cohort start in the "Healthy" health state (denoted "H"). Healthy individuals are at risk of developing the illness, at which point they would transition to the first stage of the disease (the "Sick" health state, denoted "S1"). Sick individuals are at risk of further progressing to a more severe stage (the "Sicker" health state, denoted "S2"), which is constant in this case example. There is a chance that individuals in the Sick state eventually recover and return back to the Healthy healthy state. However, once an individual reaches the Sicker health state, they cannot recover; that is, the probability of transitioning to the Sick or Healthy health states from the Sicker health state is zero. Individuals in the Healthy state face background mortality that is age-specific (i.e., time-dependent). Sick and Sicker individuals face an increased mortality in the form of a hazard rate ratio (HR) of 3 and 10 times, respectively, on the background mortality rate. Sick and Sicker individuals also experience increased health care costs and reduced QoL compared to healthy individuals. Once simulated individuals die, they transition to the "Dead" health state (denoted "D"), where they remain. Figure \ref{fig:STM Sick-Sicker} shows the state-transition diagram of the Sick-Sicker model. The evolution of the cohort is simulated in one-year discrete-time cycles. Both costs and QALYs are discounted at an annual rate of `r d.e` %. 
@@ -172,7 +173,8 @@ This function is informed by one argument, `v.params.calib`. This vector contain
 
 Now we know our code works, we specify our calibration paratmers in section **03.3.1**. This includes setting the see, specifying the number of random samples, the name of the input paramters and most important, the range on input search spaces and the name of the calibration targets, `Surv`, `Prev`, `PropSick`.
 
-In the next section, **03.3.2**, to calibrate the Sick-Sicker model, we use a Bayesian approach using the incremental mixture importance sampling (IMIS) algorithm [Teele2006], which has been used to calibrate health policy models [Raftery2010, @Menzies2017, Rutter2018]. Bayesian methods allow us to quantify the uncertainty in the calibrated parameters even in the presence of non-identifiability [@Alarid-Escudero2018b]. We assumed a normal likelihood and uniform priors. For a more detailed description of IMIS for Bayesian calibration, different likelihood functions and prior distributions, we refer the reader to the tutorial for Bayesian calibration by Menzies et al. [@Menzies2017]. We use the `IMIS` function from the likenames package, to draw samples from the the posterior distribution of multivariate variable. We respectively specify the incremental sample size at each iteration of IMIS, the desired posterior sample size at the resample stage, the maximum number of iterations in IMIS and the number of optimizers which could be 0. The function returns a list, which we called `l.fit.imis`, with the posterior resamples, the diagnostic statistics at each IMIS iteration and the centers of Gaussian components [@IMIS]. We store the posterior resamples in the matrix `m.calib.post`. 
+In the next section, **03.3.2**, to calibrate the Sick-Sicker model, we use a Bayesian approach using the incremental mixture importance sampling (IMIS) algorithm [Teele2006], which has been used to calibrate health policy models [Raftery2010, @Menzies2017, Rutter2018]. Bayesian methods allow us to quantify the uncertainty in the calibrated parameters even in the presence of non-identifiability [@Alarid-Escudero2018b]. We assumed a normal likelihood and uniform priors. For a more detailed description of IMIS for Bayesian calibration, different likelihood functions and prior distributions, we refer the reader to the tutorial for Bayesian calibration by Menzies et al. [@Menzies2017]. We use the `IMIS` function from the likenames package that 
+is calling the functions `f.log_lik`, `likelihood`, `sample.prior`, `f.log_prior` and `prior`, that are specified in the `03_calibration_functions.R` file, to draw samples from the the posterior distribution of multivariate variable. We respectively specify the incremental sample size at each iteration of IMIS, the desired posterior sample size at the resample stage, the maximum number of iterations in IMIS and the number of optimizers which could be 0. The function returns a list, which we called `l.fit.imis`, with the posterior resamples, the diagnostic statistics at each IMIS iteration and the centers of Gaussian components [@IMIS]. We store the posterior resamples in the matrix `m.calib.post`. 
 
 Now we start exploring this posterior distribution in section **03.4**. From this data, we compute the posterior mean, median and 95% credible interval, mode and maximum-a-posteriori (MAP). All for these summary statistics are combined in a dataframe called, `df.posterior.summ`. 
 
@@ -188,34 +190,30 @@ Finally, the posterior and MAP from the IMIS calibration are stored in the file 
 For illustration purposes, we also provide code to calibrated the Sick-Sicker model with the Nelder-Mead algorithm [@Nelder1965], which was initialized at 100 different starting points sampled from the prior distributions of the calibrated parameters. This calibration exercise can be found in the file `app2_calibration-nelder-mead.R`, but we will not go into details for this file. 
 
 ###04 Validation
-In this section, we like to check the internal validity of our Sick-Sicker model before we continue with the analysis. We need to make sure that the output corresponds with our input. For example, we like to check that Sicker individuals can not recover and that most of our cohort died by the end of the time horizon. We also plot our model-predicted outputs againts the calibration targets. Therefore, the *04_validation.R* file stats with sourcing all previously described functions and generated calibration data. 
+In this section, we like to check the internal validity of our Sick-Sicker model before we continue with the analysis. Checking the internal validity means that we need to make sure that the output corresponds with our input. For example, we like to check that Sicker individuals can not recover and that most of our cohort died by the end of the time horizon. We also plot our model-predicted outputs againts the calibration targets. Therefore, the *04_validation.R* file stats with sourcing all previously described functions and generated calibration data. 
 
-We compute the model-predicted outputs for each sample of posterior distribution as well as for the MAP estimate. This
-
-Section *04.5* is computing the model-predicted outputs for each sample using the function `f.data_summary`. 
+We compute the model-predicted outputs for each sample of posterior distribution as well as for the MAP estimate. Section *04.5* is computing these model-predicted outputs for each sample using the function `f.data_summary`. 
 ```{r}
 print.function(f.data_summary)
 ```
-This functions is informed by three arguments, `data`, `varname` and `groupnames`. 
+This function is informed by three arguments, `data`, `varname` and `groupnames`. 
 
+The computation of the model-predicted outputs using the MAP estimates is done by inserting the `v.calib.post.map` data into the previously described `f.calibration_out` function. This function creates a list including the estimated values for survival, prevalence and the proportion of sicker individuals at the time points 10, 20 and 30. 
 
-
-#### 04.5.2 Compute model-predicted outputs at MAP estimate ####
-l.out.calib.map <- f.calibration_out(v.calib.post.map)
-
-In sections **04.6 Internal validation: Model-predicted outputs vs. targets** we check the internal validition of our model-predicted outputs versus our targets using plots. The generated plots are saved as .png files, which in turn can be used without the need of running the p
+In sections **04.6 Internal validation: Model-predicted outputs vs. targets** we check the internal validation of our model-predicted outputs versus our targets using plots. The generated plots are saved as .png files, which in turn can be used without the need of re-running the code. 
 
 ![Survival data: Posterior vs targets  \label{fig:04_surv}](../figs/04_posterior-vs-targets-survival.png)
 
 ![Prevalence data: Posterior vs targets  \label{fig:04_p}](../figs/04_posterior-vs-targets-prevalence.png)
 
 ![Proportion sicker data: Posterior vs targets  \label{fig:04_proportion}](../figs/04_posterior-vs-targets-proportion-sicker.png)
-
+**[Do we need an interpretation of the graphs?]**
 
 ### 05: Analysis
-This component consists of multiple analysis parts.
+The analysis component is where the model developed in components 1-4 is applied to answer the question(s) of interest given current information. Our framework separates the analysis in three sections, section **5a** being the deterministic analysis, **5b** the uncertainty analysis and **5c** the value of information analysis. For procedures in the cost-effectiveness analyses, we rely on the R package dampack, which is available here: https://github.com/DARTH-git/dampack. Instructions for installing dampack are described in Appendix A. provided in the framework *app0_packages-setup.R script*.
 
-The analysis component is where the model developed in components 1-4 is applied to answer the question(s) of interest given current information. 
+
+The analysis component is where the model developed in components 1-4 is applied to answer the question(s) of interest given current information. An analysis will generally be broken down into several subcomponents. As an example, we describe an analysis with three subcomponents: a deterministic analysis (including deterministic sensitivity analyses), an uncertainty analysis, and a VOI analysis. Though the purposes and structure of these subcomponents varies, the general setup is similar. First, the analyst must specify what input parameter values should be passed to the model function. Second, the analysis must setup calculation of the desired output values from the model outputs, which again are more comprehensive and detailed that may be necessary. For example, a Markov cohort model would output the cohort trace over time, but in a given analysis, it is just the cohort’s survival over time or cumulative lifetime costs that is of interest. Within cost-effectiveness analyses in particular, there are many standard calculations, comparisons, and visualizations that are conducted based on the total costs and QALYs calculated from model outputs for a set of strategies. 
 
 ###05a Deterministic analysis
 
