@@ -210,18 +210,31 @@ In sections **04.6 Internal validation: Model-predicted outputs vs. targets** we
 **[Do we need an interpretation of the graphs?]**
 
 ### 05: Analysis
-The analysis component is where the model developed in components 1-4 is applied to answer the question(s) of interest given current information. Our framework separates the analysis in three sections, section **5a** being the deterministic analysis, **5b** the uncertainty analysis and **5c** the value of information analysis. For procedures in the cost-effectiveness analyses, we rely on the R package dampack, which is available here: https://github.com/DARTH-git/dampack. Instructions for installing dampack are described in Appendix A. provided in the framework *app0_packages-setup.R script*.
+The analysis component is where the model developed in components 1-4 is applied to answer the question(s) of interest given current information. Our framework separates the analysis in three subcomponents, subcomponents **5a** being the deterministic analysis, **5b** the uncertainty analysis and **5c** the value of information analysis. For the Sick-Sicker example, all three subcomponents will be used to answer the CE research question and to quantify the uncertainty of our decision. For procedures in the cost-effectiveness analyses, we rely on the R package dampack, which is available here: 
+<https://github.com/DARTH-git/dampack>. Instructions for installing dampack are described in Appendix A. provided in the framework *app0_packages-setup.R script*.
+
+####05a Deterministic analysis
+In this subcomponent we start with performing the basic CEA, followed by evaluating some of the parameter uncertainy using deterministic sensitivity analysis. The functions file of this subcomponent, `05a_deterministic-analysis_function.R` file contains the functions `f.generate_basecase_params()` and `f.calculate_ce_out`. These `f.generate_basecase_params` function is used to generate a base-case set of paramters needed for the CEA analysis. This included using the function `f.define_init_params` to generate the initial parameter values, as described before, but now the placeholder values are replaced by the calibrated values. 
+
+```{r, eval = FALSE, echo = TRUE}
+print(f.generate_basecase_params) # print the function 
+```
+
+The results for the `f.generate_basecase_params` function are stored in the variable` v.params.basecase`, containing all the basecase values of the parameters. These values are used as input for the `f.calculate_ce_out` function. The users can also specify the willingness-to-pay (WTP) value using the `n.wtp` argument of the function. This WTP value is used to compute a net monetary benefit (NMB) value. If the users does not specify the WTP, a default value of 100000 will be used by the function. 
+```{r, eval = FALSE, echo = TRUE}
+print(f.calculate_ce_out) # print the function 
+```
+
+The first part of the function runs the decision model using the previously described function `f.decision_model`. Since we set the argument `v.params` equal to `v.params.basecase`, we are now using the basecase parameters rather than the initial values. Running this code gives us a list of output for both the treatment, `l.model.out.trt`, and no treatement, `l.model.out.no_trt` strategy of the Sick-Sicker model. In the second part of the function we create multiple vectors for both the cost and effects of both strategies. These vectors in turn are mulitplied using matrix multiplication, indicated by `%*%` in R, with the Markov trace. This results in vectors of total costs (`v.tc`) and total effects (`v.tu`) per cycle. By multiplying these vectors with the vectors with the discount weights for costs (`v.dwc`) and effects (`v.dwe`) we get the total discounted mean costs (`tc.d_no_trt` and `tc.d_trt`) and QALYs (`tu.d_no_trt` and `tu.d_trt`) for both strategies. These values are used in the calculation the NMB. The total costa, total effectiveness and the NMB are combined in a matrix, called `m.ce`. This matrix is the result of the function. This compact matrix with the CE results can be used as an argumnet in the `calculate_icers` function from the DAMPACK package. 
 
 
-The analysis component is where the model developed in components 1-4 is applied to answer the question(s) of interest given current information. An analysis will generally be broken down into several subcomponents. As an example, we describe an analysis with three subcomponents: a deterministic analysis (including deterministic sensitivity analyses), an uncertainty analysis, and a VOI analysis. Though the purposes and structure of these subcomponents varies, the general setup is similar. First, the analyst must specify what input parameter values should be passed to the model function. Second, the analysis must setup calculation of the desired output values from the model outputs, which again are more comprehensive and detailed that may be necessary. For example, a Markov cohort model would output the cohort trace over time, but in a given analysis, it is just the cohort’s survival over time or cumulative lifetime costs that is of interest. Within cost-effectiveness analyses in particular, there are many standard calculations, comparisons, and visualizations that are conducted based on the total costs and QALYs calculated from model outputs for a set of strategies. 
+We now have the results of our CEA and we would like to evaluate the uncertainity around this decision using one-way sensitivity analysis (OWSA). 
+XXXXX
 
-###05a Deterministic analysis
 
-###05b Uncertainty analysis 
+####05b Uncertainty analysis 
 
-####05b Uncertainty analyses of  Decision analysis / cost-effectiveness analysis
-
-A single function, called `f.generate_psa_params`, is created via the `05b_uncertainty-analysis_function.R` file that is able top generate a PSA dataset of CEA parameters. 
+A single function, called `f.generate_psa_params`, is created via the `05b_uncertainty-analysis_function.R` file that is able top generate a PSA dataset of CEA parameters as described in Table \ref{tab:parameters PSA}.  
 
 Table: \label{tab:parameters PSA} Description of parameters with their R name and value.
 
@@ -243,6 +256,9 @@ Table: \label{tab:parameters PSA} Description of parameters with their R name an
   | - Utility for treated individuals in S1 | `u.Trt` |`truncnorm(mean = 0.95, sd = 0.02, b = 1)`        |
   
 
+```{r, eval = FALSE, echo = TRUE}
+print.function(f.generate_psa_params) # print the function 
+```
 
 
 
@@ -256,7 +272,7 @@ Table: \label{tab:parameters PSA} Description of parameters with their R name an
 
 
 
-###05c Value of information
+####05c Value of information
 
 ### References 
 
