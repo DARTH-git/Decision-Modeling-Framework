@@ -33,17 +33,18 @@ f.install_and_load <- function(packages) {
 ### Install packages from CRAN
 v.packages.to.install <- c("dplyr", "truncnorm", 
                            "lhs", "IMIS", "matrixStats",
-                           "modeest", "plotrix", "psych",
+                           "plotrix", "psych",
                            "scatterplot3d", "reshape2",
                            "devtools")
 
 f.install_and_load(v.packages.to.install)
 
-### Install Bioconductor package
+### Install Bioconductor package needed for modeest
 if (!requireNamespace("BiocManager", quietly = TRUE)){
   install.packages("BiocManager")
   BiocManager::install("genefilter", version = "3.8")
 }
+install.packages("modeest")
 
 ### Install dampack from GitHub
 if (!require(dampack)) {
