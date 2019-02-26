@@ -35,15 +35,12 @@ v.packages.to.install <- c("dplyr", "truncnorm",
                            "lhs", "IMIS", "matrixStats",
                            "plotrix", "psych",
                            "scatterplot3d", "reshape2",
-                           "devtools")
+                           "BiocManager", "devtools")
 
 f.install_and_load(v.packages.to.install)
 
-### Install Bioconductor package needed for modeest
-if (!requireNamespace("BiocManager", quietly = TRUE)){
-  install.packages("BiocManager")
-  BiocManager::install("genefilter", version = "3.8")
-}
+### Install genefilter from Bioconductor package needed for modeest
+BiocManager::install("genefilter", version = "3.8")
 install.packages("modeest")
 
 ### Install dampack from GitHub
