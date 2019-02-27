@@ -54,4 +54,5 @@ if (!require(dampack)) {
   if(vers.dampack!="0.1.0"){
     devtools::install_github(repo = "DARTH-git/dampack") # Install package from GitHub
   }
+  rm(vers.dampack)
 }
