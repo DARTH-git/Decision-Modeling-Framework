@@ -6,7 +6,7 @@ f.calibration_out <- function(v.params.calib, l.params.all){ # User defined
   ##   Computes model outputs to be used for calibration routines
   ### Arguments:  
   ##   v.params.calib: vector of parameters that need to be calibrated
-  ##   l.params.all: List with all parameters of decision model
+  ##   l.params.all: List with all parameters of the decision model
   ### Returns:
   ##   l.out: List with Survival (Surv), Prevalence of Sick and Sicker (Prev), 
   ##          and proportion of Sicker (PropSicker) out of all sick 

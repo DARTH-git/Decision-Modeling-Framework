@@ -1,7 +1,7 @@
 ################################################################################ 
 # This script calibrates the Sick-Sicker state-transition model (STM) to       #
 # epidemiological targets using a Bayesian approach with the Incremental       #
-# Mixture Iportance Samping (IMIS) algorithm                                   #
+# Mixture Importance Samping (IMIS) algorithm                                 #
 #                                                                              # 
 # Depends on:                                                                  #
 #   00_general_functions.R                                                     #
@@ -21,7 +21,7 @@
 ################################################################################ 
 # rm(list = ls()) # to clean the workspace
 
-#### 03.1 Load packages and functions ####
+#### 03.1 Load packages, data and functions ####
 #### 03.1.1 Load packages and functions ####
 # Calibration functionality
 library(lhs) # latin hypercube sampling
@@ -80,18 +80,18 @@ f.calibration_out(v.params.calib = v.params.calib, l.params.all = l.params.all)
 ### Specify seed (for reproducible sequence of random numbers)
 set.seed(072218)
 
-### number of random samples
+### Number of random samples to obtain from the posterior distribution 
 n.resamp <- 1000
 
-### names and number of input parameters to be calibrated
+### Names and number of input parameters to be calibrated
 v.param.names <- c("p.S1S2", "hr.S1", "hr.S2")
 n.param       <- length(v.param.names)
 
-### vector with range on input search space
+### Vector with range on input search space
 v.lb <- c(p.S1S2 = 0.01, hr.S1 = 1.0, hr.S2 = 5)  # lower bound
 v.ub <- c(p.S1S2 = 0.50, hr.S1 = 4.5, hr.S2 = 15) # upper bound
 
-### number of calibration targets
+### Number of calibration targets
 v.target.names <- c("Surv", "Prev", "PropSick")
 n.target       <- length(v.target.names)
 
@@ -100,11 +100,11 @@ l.fit.imis <- IMIS(B = 1000, # incremental sample size at each iteration of IMIS
                    B.re = n.resamp, # desired posterior sample size
                    number_k = 10, # maximum number of iterations in IMIS
                    D = 0)
-### obtain posterior
+### Obtain posterior
 m.calib.post <- l.fit.imis$resample
 
 #### 03.4 Exploring posterior distribution ####
-#### 03.4.1 Summary statitics of posterior distribution ####
+#### 03.4.1 Summary statistics of posterior distribution ####
 ### Compute posterior mean
 v.calib.post.mean <- colMeans(m.calib.post)
 
@@ -130,6 +130,7 @@ df.posterior.summ <- data.frame(
   MAP       = v.calib.post.map,
   check.names = FALSE)
 df.posterior.summ
+save(df.posterior.summ, file = "tables/03_summary-posterior.RData")
 
 #### 03.4.2 Visualization of posterior distribution ####
 # rescale posterior to plot density of plots
@@ -152,8 +153,8 @@ png("figs/03_posterior-distribution-joint.png",
   s3d$points3d(l.fit.imis$center, col = "red", pch = 8)
   # add legend
   legend(s3d$xyz.convert(0.05, 1.0, 5), 
-         col= c("black", "red"), 
-         bg="white", pch = c(1, 8), yjust=0, 
+         col = c("black", "red"), 
+         bg = "white", pch = c(1, 8), yjust = 0, 
          legend = c("Posterior sample", "Center of Gaussian components"), 
          cex = 1.1)
 dev.off()

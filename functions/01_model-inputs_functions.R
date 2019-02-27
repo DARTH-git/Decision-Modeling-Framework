@@ -102,5 +102,4 @@ f.load_all_params <- function(file.init = "data/01_init-params.csv",
   )
   l.params.all <- c(l.params.all, 
                     df.params.init) # Add initial set of parameters
-  
 }
