@@ -10,8 +10,12 @@
 #   05a_deterministic-analysis_functions.R                                     #
 #   05b_probabilistic-analysis_functions.R                                     #
 #                                                                              # 
-# Author: Fernando Alarid-Escudero                                             # 
-# E-mail: fernando.alarid@cide.edu                                             # 
+# Authors:                                                                     #
+#     - Fernando Alarid-Escudero, PhD, <fernando.alarid@cide.edu>              # 
+#     - Eline Krijkamp, MS                                                     #
+#     - Petros Pechlivanoglou, PhD                                             #
+#     - Hawre Jalal, MD, PhD                                                   #
+#     - Eva A. Enns, PhD                                                       # 
 ################################################################################
 # The structure of this code is according to the DARTH framework               #
 # https://github.com/DARTH-git/Decision-Modeling-Framework                     #

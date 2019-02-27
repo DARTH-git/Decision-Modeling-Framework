@@ -3,8 +3,8 @@
 #---------------------------------------------------#
 f.generate_psa_params <- function(n.sim, seed = 20190220){ # User defined
   ### Definition:
-  ##  Generates PSA input dataset by sampling decision model parameters from
-  ##  their distributions
+  ##   Generates PSA input dataset by sampling decision model parameters from
+  ##   their distributions
   ### Arguments:  
   ##   n.sim: Number of PSA samples
   ##   seed:  Seed for reproducibility of Monte Carlo sampling
