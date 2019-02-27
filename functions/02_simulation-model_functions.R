@@ -1,15 +1,21 @@
-f.decision_model <- function(v.params){# User defined
+f.decision_model <- function(l.params.all, verbose = FALSE){ # User defined
+  ### Definition:
+  ##   Decision model implementation function
   ### Arguments:  
-  # v.params: vector of model parameters 
-  #' @return a list with the transition probability array `a.P` and the cohort trace `m.M`.
-  with(as.list(v.params), {
+  ##   l.params.all: List with all parameters of decision model
+  ##   verbose: Logical variable to indicate print out of messages
+  ### Returns:
+  ##   a.P: Transition probability array
+  ##   m.M: Matrix cohort trace
+  ##
+  with(as.list(l.params.all), {
     #### Age-specific transition probabilities ####
     # Mortality for healthy individuals
-    p.HDage  <- 1 - exp(-v.r.asr[(n.age.init + 1) + 0:(n.t - 1)])        
+    p.HDage  <- 1 - exp(-v.r.mort_by_age[(n.age.init + 1) + 0:(n.t - 1)])        
     # Mortality for sick individuals
-    p.S1Dage <- 1 - exp(-v.r.asr[(n.age.init + 1) + 0:(n.t - 1)] * hr.S1)
+    p.S1Dage <- 1 - exp(-v.r.mort_by_age[(n.age.init + 1) + 0:(n.t - 1)] * hr.S1)
     # Mortality for sicker individuals
-    p.S2Dage <- 1 - exp(-v.r.asr[(n.age.init + 1) + 0:(n.t - 1)] * hr.S2)
+    p.S2Dage <- 1 - exp(-v.r.mort_by_age[(n.age.init + 1) + 0:(n.t - 1)] * hr.S2)
     
     #### Create age-specific transition probability matrices in an array ####
     # Initialize array
@@ -17,13 +23,13 @@ f.decision_model <- function(v.params){# User defined
                  dimnames = list(v.n, v.n, 0:(n.t-1)))
     # Fill in array
     # From H
-    a.P["H", "H", ]  <- (1 - p.HDage) * (1 - p.HS1)
-    a.P["H", "S1", ] <- (1 - p.HDage) * p.HS1
+    a.P["H", "H", ]  <- (1-p.HDage) * (1 - p.HS1)
+    a.P["H", "S1", ] <- (1-p.HDage) * p.HS1
     a.P["H", "D", ]  <- p.HDage
     # From S1
-    a.P["S1", "H", ]  <- (1 - p.S1Dage) * p.S1H
-    a.P["S1", "S1", ] <- (1 - p.S1Dage) * (1 - (p.S1S2 + p.S1H))
-    a.P["S1", "S2", ] <- (1 - p.S1Dage) * p.S1S2
+    a.P["S1", "H", ]  <- (1-p.S1Dage) * p.S1H
+    a.P["S1", "S1", ] <- (1-p.S1Dage) * (1 - (p.S1S2 + p.S1H))
+    a.P["S1", "S2", ] <- (1-p.S1Dage) * p.S1S2
     a.P["S1", "D", ]  <- p.S1Dage
     # From S2
     a.P["S2", "S2", ] <- 1 - p.S2Dage
@@ -45,25 +51,25 @@ f.decision_model <- function(v.params){# User defined
                                                 "; at cycle ",
                                                 v.cycles.notval), ncol = 1), 
                                 check.names = FALSE)
-      message("Not valid transition probabilities")
-      # print(df.notvalid)
-      stop(print(df.notvalid), call. = FALSE)
+      if(verbose){
+        message("Not valid transition probabilities")
+        # print(df.notvalid)
+        stop(print(df.notvalid), call. = FALSE)
+      } #else stop()
     }
     )
     
     # Check if transition probability array is valid
     valid <- apply(a.P, 3, function(x) all.equal(sum(rowSums(x)), n.states))
     if (!isTRUE(all.equal(as.numeric(sum(valid)), as.numeric(n.t)))) {
-      stop("This is not a valid transition Matrix")
+      if(verbose){
+        stop("This is not a valid transition Matrix")
+      } #else stop()
     }
     
     #### Compute cohort trace matrix and tranistion array for age-dependent STM ####
     # Initialize cohort trace matrix
     m.M <- matrix(0, 
-                  nrow = (n.t + 1), ncol = n.states, 
-                  dimnames = list(0:n.t, v.n))
-    # Initialize transition array
-    a.A <- matrix(0, 
                   nrow = (n.t + 1), ncol = n.states, 
                   dimnames = list(0:n.t, v.n))
     # Set first row of M with the initial state vector

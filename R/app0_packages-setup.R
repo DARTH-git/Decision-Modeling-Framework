@@ -19,9 +19,9 @@ f.install_and_load <- function(packages) {
   k <- packages[!(packages %in% installed.packages()[,"Package"])]
   if(length(k)){
     install.packages(k, 
-                     repos="https://cran.rstudio.com/", 
-                     dependencies = TRUE)
-  }
+                    repos="https://cran.rstudio.com/", 
+                    dependencies = TRUE)
+    }
   
   for(package_name in packages){
     library(package_name,

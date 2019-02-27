@@ -3,11 +3,16 @@
 # for the simulated cohort of the Sick-Sicker state-transition model (STM)     #
 #                                                                              # 
 # Depends on:                                                                  #
+#   00_general_functions.R                                                     #
 #   01_model-inputs.R                                                          #
 #   02_simulation-model_functions.R                                            #
 #                                                                              # 
-# Author: Fernando Alarid-Escudero                                             # 
-# E-mail: fernando.alarid@cide.edu                                             # 
+# Authors:                                                                     #
+#     - Fernando Alarid-Escudero, PhD, <fernando.alarid@cide.edu>              # 
+#     - Eline Krijkamp, MS                                                     #
+#     - Petros Pechlivanoglou, PhD                                             #
+#     - Hawre Jalal, MD, PhD                                                   #
+#     - Eva A. Enns, PhD                                                       # 
 ################################################################################
 # The structure of this code is according to the DARTH framework               #
 # https://github.com/DARTH-git/Decision-Modeling-Framework                     #
@@ -27,16 +32,20 @@ source("functions/00_general_functions.R")
 source("functions/02_simulation-model_functions.R")
 source("functions/05a_deterministic-analysis_functions.R")
 
+#### 05a.1.4 Load calibrated parameters ####
+load("data/03_imis-output.RData")
+
 #### 05a.2 Cost-effectiveness analysis parameters ####
-## Strategy names
+### Strategy names
 v.names.str <- c("No Treatment", "Treatment")  
-## Number of strategies
+### Number of strategies
 n.str <- length(v.names.str)
-## Parameters for basecase CEA
-v.params.basecase <- f.generate_basecase_params()
+### Parameters for base-case CEA
+## Update base-case parameters with calibrated values at MAP
+l.params.basecase <- f.update_param_list(l.params.all, v.calib.post.map) 
 
 #### 05a.3 Compute cost-effectiveness outcomes ####
-df.out.ce <- f.calculate_ce_out(v.params = v.params.basecase, 
+df.out.ce <- f.calculate_ce_out(l.params.all = l.params.basecase, 
                                 n.wtp = 150000)
 df.out.ce
 
@@ -60,7 +69,7 @@ owsa.nmb <- owsa_det(parms = c("c.Trt", "p.HS1", "u.S1", "u.Trt"), # parameter n
                                    "u.Trt" = c(0.75, 0.95)),
                      nsamps = 100, # number of values  
                      FUN = f.calculate_ce_out, # Function to compute outputs 
-                     params.basecase = v.params.basecase, # Vector with base-case parameters
+                     params.basecase = l.params.basecase, # List with base-case parameters
                      outcome = "NMB",      # Output to do the OWSA on
                      strategies = v.names.str, # Names of strategies
                      n.wtp = 150000        # Extra argument to pass to FUN
@@ -85,7 +94,7 @@ twsa.nmb <- twsa_det(parm1 = "u.S1",  # parameter 1 name
                                    "u.Trt" = c(0.90, 1.00)),
                      nsamps = 40, # number of values  
                      FUN = f.calculate_ce_out, # Function to compute outputs 
-                     params.basecase = v.params.basecase, # Vector with base-case parameters
+                     params.basecase = l.params.basecase, # Vector with base-case parameters
                      outcome = "NMB",      # Output to do the OWSA on
                      strategies = v.names.str, # Names of strategies
                      n.wtp = 150000        # Extra argument to pass to FUN

@@ -5,12 +5,18 @@
 # script could be modified by adding an external validation exercise.          #
 #                                                                              # 
 # Depends on:                                                                  #
+#   00_general_functions.R                                                     #
 #   01_model-inputs.R                                                          #
 #   02_simulation-model_functions.R                                            #
 #   03_calibration_functions.R                                                 #
+#   04_validation_functions.R                                                  #
 #                                                                              # 
-# Author: Fernando Alarid-Escudero                                             # 
-# E-mail: fernando.alarid@cide.edu                                             # 
+# Authors:                                                                     #
+#     - Fernando Alarid-Escudero, PhD, <fernando.alarid@cide.edu>              # 
+#     - Eline Krijkamp, MS                                                     #
+#     - Petros Pechlivanoglou, PhD                                             #
+#     - Hawre Jalal, MD, PhD                                                   #
+#     - Eva A. Enns, PhD                                                       # 
 ################################################################################ 
 # The structure of this code is according to the DARTH framework               #
 # https://github.com/DARTH-git/Decision-Modeling-Framework                     #
@@ -19,15 +25,16 @@
 
 #### 04.1 Load packages and functions ####
 #### 04.1.1 Load packages and functions ####
-# Data manipulation
+### Data manipulation
 library(reshape2) # to reshape data from wide to long
-# Visualization
-library(plotrix) # plots with lower and upper error bands
+### Visualization
+library(plotrix)  # plots with lower and upper error bands
 
 #### 04.1.2 Load inputs ####
 source("R/01_model-inputs.R")
 
 #### 04.1.3 Load functions ####
+source("functions/00_general_functions.R")
 source("functions/02_simulation-model_functions.R")
 source("functions/03_calibration_functions.R")
 source("functions/04_validation-functions.R")
@@ -49,60 +56,52 @@ m.out.prop <- matrix(NA, nrow = n.samp, ncol = nrow(SickSicker.targets$PropSicke
 colnames(m.out.prop) <- SickSicker.targets$PropSicker$Time
 # Evaluate model at each posterior sample and store results
 for(i in 1:n.samp){ # i = 1
-  l.out.post <- f.calibration_out(m.calib.post[i, ])
+  l.out.post <- f.calibration_out(v.params.calib = m.calib.post[i, ], 
+                                  l.params.all = l.params.all)
   m.out.surv[i, ] <- l.out.post$Surv
   m.out.prev[i, ] <- l.out.post$Prev
   m.out.prop[i, ] <- l.out.post$PropSicker
   cat('\r', paste(round(i/n.samp * 100), "% done", sep = " ")) # display progress
 }
-
 # Create data frames with model predicted outputs
 df.out.surv <- data.frame(Type = "Model", 
                           Target = "Survival",
                           m.out.surv, 
                           check.names = FALSE)
-
 df.out.prev <- data.frame(Type = "Model", 
                           Target = "Prevalence",
                           m.out.prev, 
                           check.names = FALSE)
-
 df.out.prop <- data.frame(Type = "Model", 
                           Target = "Proportion of Sicker",
                           m.out.prop, 
                           check.names = FALSE)
-
 # Transform data frames to long format
 df.out.surv.lng <- reshape2::melt(df.out.surv, 
                      id.vars = c("Type", "Target"), 
                      variable.name = "Time")
-
 df.out.prev.lng <- reshape2::melt(df.out.prev, 
                         id.vars = c("Type", "Target"), 
                         variable.name = "Time")
-
 df.out.prop.lng <- reshape2::melt(df.out.prop, 
                         id.vars = c("Type", "Target"), 
                         variable.name = "Time")
-
 # Compute posterior model-predicted 95% CI
 df.out.surv.sum <- f.data_summary(df.out.surv.lng, varname = "value",
                              groupnames = c("Type", "Target", "Time"))
-
 df.out.prev.sum <- f.data_summary(df.out.prev.lng, varname = "value",
                                 groupnames = c("Type", "Target", "Time"))
-
 df.out.prop.sum <- f.data_summary(df.out.prop.lng, varname = "value",
                                 groupnames = c("Type", "Target", "Time"))
 
 #### 04.5.2 Compute model-predicted outputs at MAP estimate ####
-l.out.calib.map <- f.calibration_out(v.calib.post.map)
+l.out.calib.map <- f.calibration_out(v.params.calib = v.calib.post.map, 
+                                     l.params.all = l.params.all)
 
 #### 04.6 Internal validation: Model-predicted outputs vs. targets ####
 # TARGET 1: Survival ("Surv")
 png("figs/04_posterior-vs-targets-survival.png", 
     width = 8, height = 6, units = 'in', res = 300)
-
 plotrix::plotCI(x = SickSicker.targets$Surv$Time, y = SickSicker.targets$Surv$value, 
                 ui = SickSicker.targets$Surv$ub,
                 li = SickSicker.targets$Surv$lb,
@@ -155,7 +154,7 @@ plotrix::plotCI(x = SickSicker.targets$PropSick$Time, y = SickSicker.targets$Pro
                 ui = SickSicker.targets$PropSick$ub,
                 li = SickSicker.targets$PropSick$lb,
                 ylim = c(0, 1), 
-                xlab = "Time", ylab = "Pr(Sicker | Sick Sicker)")
+                xlab = "Time", ylab = "Pr(Sicker | Sick+Sicker)")
 lines(x = SickSicker.targets$PropSicker$Time,
       y = df.out.prop.sum$lb, col = "red", lty = 2)
 lines(x = SickSicker.targets$PropSicker$Time,

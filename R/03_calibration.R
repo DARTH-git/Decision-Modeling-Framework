@@ -4,12 +4,17 @@
 # Mixture Iportance Samping (IMIS) algorithm                                   #
 #                                                                              # 
 # Depends on:                                                                  #
+#   00_general_functions.R                                                     #
 #   01_model-inputs.R                                                          #
 #   02_simulation-model_functions.R                                            #
 #   03_calibration_functions.R                                                 #
 #                                                                              # 
-# Author: Fernando Alarid-Escudero                                             # 
-# E-mail: fernando.alarid@cide.edu                                             # 
+# Authors:                                                                     #
+#     - Fernando Alarid-Escudero, PhD, <fernando.alarid@cide.edu>              # 
+#     - Eline Krijkamp, MS                                                     #
+#     - Petros Pechlivanoglou, PhD                                             #
+#     - Hawre Jalal, MD, PhD                                                   #
+#     - Eva A. Enns, PhD                                                       # 
 ################################################################################ 
 # The structure of this code is according to the DARTH framework               #
 # https://github.com/DARTH-git/Decision-Modeling-Framework                     #
@@ -33,6 +38,7 @@ library(scatterplot3d) # 3D scatterplots
 source("R/01_model-inputs.R")
 
 #### 03.1.3 Load functions ####
+source("functions/00_general_functions.R")
 source("functions/02_simulation-model_functions.R")
 source("functions/03_calibration_functions.R")
 
@@ -40,22 +46,26 @@ source("functions/03_calibration_functions.R")
 load("data/03_calibration-targets.RData")
 
 #### 03.2 Visualize targets ####
-# TARGET 1: Survival ("Surv")
-plotrix::plotCI(x = SickSicker.targets$Surv$Time, y = SickSicker.targets$Surv$value, 
+### TARGET 1: Survival ("Surv")
+plotrix::plotCI(x = SickSicker.targets$Surv$Time, 
+                y = SickSicker.targets$Surv$value, 
                 ui = SickSicker.targets$Surv$ub,
                 li = SickSicker.targets$Surv$lb,
                 ylim = c(0, 1), 
                 xlab = "Time", ylab = "Pr(Alive)")
 
-# TARGET 2: Prevalence ("Prev")
-plotrix::plotCI(x = SickSicker.targets$Prev$Time, y = SickSicker.targets$Prev$value, 
+### TARGET 2: Prevalence ("Prev")
+plotrix::plotCI(x = SickSicker.targets$Prev$Time, 
+                y = SickSicker.targets$Prev$value, 
                 ui = SickSicker.targets$Prev$ub,
                 li = SickSicker.targets$Prev$lb,
                 ylim = c(0, 1), 
                 xlab = "Time", ylab = "Pr(Sick+Sicker)")
 
-# TARGET 3: Proportion who are Sicker ("PropSicker"), among all those afflicted (Sick+Sicker)
-plotrix::plotCI(x = SickSicker.targets$PropSick$Time, y = SickSicker.targets$PropSick$value, 
+### TARGET 3: Proportion who are Sicker ("PropSicker"), among all those 
+###           afflicted (Sick+Sicker)
+plotrix::plotCI(x = SickSicker.targets$PropSick$Time, 
+                y = SickSicker.targets$PropSick$value, 
                 ui = SickSicker.targets$PropSick$ub,
                 li = SickSicker.targets$PropSick$lb,
                 ylim = c(0, 1), 
@@ -64,46 +74,46 @@ plotrix::plotCI(x = SickSicker.targets$PropSick$Time, y = SickSicker.targets$Pro
 #### 03.3 Run calibration algorithms ####
 # Check that it works
 v.params.calib = c(p.S1S2 = 0.105, hr.S1 = 3, hr.S2 = 10)
-f.calibration_out(v.params.calib = v.params.calib)
+f.calibration_out(v.params.calib = v.params.calib, l.params.all = l.params.all)
 
 #### 03.3.1 Specify calibration parameters ####
-# Specify seed (for reproducible sequence of random numbers)
+### Specify seed (for reproducible sequence of random numbers)
 set.seed(072218)
 
-# number of random samples
+### number of random samples
 n.resamp <- 1000
 
-# names and number of input parameters to be calibrated
+### names and number of input parameters to be calibrated
 v.param.names <- c("p.S1S2", "hr.S1", "hr.S2")
 n.param       <- length(v.param.names)
 
-# vector with range on input search space
+### vector with range on input search space
 v.lb <- c(p.S1S2 = 0.01, hr.S1 = 1.0, hr.S2 = 5)  # lower bound
 v.ub <- c(p.S1S2 = 0.50, hr.S1 = 4.5, hr.S2 = 15) # upper bound
 
-# number of calibration targets
+### number of calibration targets
 v.target.names <- c("Surv", "Prev", "PropSick")
 n.target       <- length(v.target.names)
 
 #### 03.3.2 Run IMIS algorithm ####
-l.fit.imis <- IMIS(B = 1000, # the incremental sample size at each iteration of IMIS
-                   B.re = n.resamp, # the desired posterior sample size
-                   number_k = 10, # the maximum number of iterations in IMIS
+l.fit.imis <- IMIS(B = 1000, # incremental sample size at each iteration of IMIS
+                   B.re = n.resamp, # desired posterior sample size
+                   number_k = 10, # maximum number of iterations in IMIS
                    D = 0)
-# obtain posterior
+### obtain posterior
 m.calib.post <- l.fit.imis$resample
 
 #### 03.4 Exploring posterior distribution ####
 #### 03.4.1 Summary statitics of posterior distribution ####
-# Compute posterior mean
+### Compute posterior mean
 v.calib.post.mean <- colMeans(m.calib.post)
 
-# Compute posterior median and 95% credible interval
+### Compute posterior median and 95% credible interval
 m.calib.post.95cr <- colQuantiles(m.calib.post, probs = c(0.025, 0.5, 0.975))
 
-# Compute posterior mode
+### Compute posterior mode
 v.calib.post.mode <- apply(m.calib.post, 2, 
-                           function(x) as.numeric(mlv(x)[1]))
+                           function(x) as.numeric(mlv(x, method = "shorth")[1]))
 
 # Compute posterior values for draw
 v.calib.post <- exp(f.log_post(m.calib.post))

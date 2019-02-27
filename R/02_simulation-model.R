@@ -6,8 +6,12 @@
 #   01_model-inputs.R                                                          #
 #   02_simulation-model_functions.R                                            #
 #                                                                              # 
-# Author: Fernando Alarid-Escudero                                             # 
-# E-mail: fernando.alarid@cide.edu                                             # 
+# Authors:                                                                     #
+#     - Fernando Alarid-Escudero, PhD, <fernando.alarid@cide.edu>              # 
+#     - Eline Krijkamp, MS                                                     #
+#     - Petros Pechlivanoglou, PhD                                             #
+#     - Hawre Jalal, MD, PhD                                                   #
+#     - Eva A. Enns, PhD                                                       # 
 ################################################################################ 
 # The structure of this code is according to the DARTH framework               #
 # https://github.com/DARTH-git/Decision-Modeling-Framework                     #
@@ -27,7 +31,9 @@ source("functions/02_simulation-model_functions.R")
 
 #### 02.2 Run STM ####
 ### Create list of model output
-l.out.stm <- f.decision_model(v.params = df.params.init)
-l.out.stm$a.P[, , 1:3] # show the first three time-points of a.P
-head(l.out.stm$m.M)    # show the top part of the cohort trace
-tail(l.out.stm$m.M)    # show the bottom part of the cohort trace
+l.out.stm <- f.decision_model(l.params.all = l.params.all)
+### Plot Markov cohort trace
+matplot(l.out.stm$m.M,
+        xlab = "Cycle", ylab = "Proportion")
+legend("right", legend = l.params.all$v.n, 
+       pch = as.character(1:4), col = 1:4)

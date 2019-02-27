@@ -1,10 +1,10 @@
 ################################################################################ 
-# This script generates targets from the microsimulation implementation of the #
-# Sick-Sicker model for a given and known parameter set                        #
+# This Appendix 1 script generates targets from the microsimulation            #
+# implementation of the Sick-Sicker model for a given and known parameter set  #
 #                                                                              # 
 # Depends on:                                                                  #
 #   01_model-inputs.R                                                          #
-#   app1_generate-targets_functions.R                                                     #
+#   app1_generate-targets_functions.R                                          #
 #                                                                              # 
 # Author: Fernando Alarid-Escudero                                             # 
 # E-mail: fernando.alarid@cide.edu                                             # 
