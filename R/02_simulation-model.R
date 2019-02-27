@@ -27,5 +27,9 @@ source("functions/02_simulation-model_functions.R")
 
 #### 02.2 Run STM ####
 ### Create list of model output
-l.out.stm <- f.decision_model(v.params = df.params.init)
-l.out.stm
+l.out.stm <- f.decision_model(l.params.all = l.params.all)
+### Plot Markov cohort trace
+matplot(l.out.stm$m.M,
+        xlab = "Cycle", ylab = "Proportion")
+legend("right", legend = l.params.all$v.n, 
+       pch = as.character(1:4), col = 1:4)

@@ -1,26 +1,23 @@
 #-------------------------------------------------------------------#
 #### Generate model outputs for calibration from a parameter set ####
 #-------------------------------------------------------------------#
-f.calibration_out <- function(v.params.calib){ # User defined
+f.calibration_out <- function(v.params.calib, l.params.all){ # User defined
   ### Definition:
   ##   Computes model outputs to be used for calibration routines
   ### Arguments:  
   ##   v.params.calib: vector of parameters that need to be calibrated
+  ##   l.params.all: List with all parameters of decision model
   ### Returns:
   ##   l.out: List with Survival (Surv), Prevalence of Sick and Sicker (Prev), 
   ##          and proportion of Sicker (PropSicker) out of all sick 
   ##          (Sick+Sicker) individuals
   ##
-  # Create temporary variable with base-case model parameters
-  v.params <- df.params.init
   # Substitute values of calibrated parameters in base-case with 
   # calibrated values
-  v.params["p.S1S2"] <- v.params.calib["p.S1S2"]
-  v.params["hr.S1"]  <- v.params.calib["hr.S1"]
-  v.params["hr.S2"]  <- v.params.calib["hr.S2"]
+  l.params.all <- f.update_param_list(l.params.all = l.params.all, params.updated = v.params.calib)
   
   # Run model with updated calibrated parameters
-  l.out.stm <- f.decision_model(v.params = v.params)
+  l.out.stm <- f.decision_model(l.params.all = l.params.all)
   
   ####### Epidemiological Output ###########################################
   #### Overall Survival (OS) ####
@@ -62,7 +59,8 @@ f.log_lik <- function(v.params){ # User defined
   for(j in 1:n.samp) { # j=1
     jj <- tryCatch( { 
     ###   Run model for parametr set "v.params" ###
-    l.model.res <- f.calibration_out(v.params[j, ])
+    l.model.res <- f.calibration_out(v.params.calib = v.params[j, ], 
+                                     l.params.all = l.params.all)
   
     ###  Calculate log-likelihood of model outputs to targets  ###
     ## TARGET 1: Survival ("Surv")
@@ -99,7 +97,7 @@ f.log_lik <- function(v.params){ # User defined
   return(v.llik.overall)
 }
 # test if it works
-# f.log_lik(v.params = sample.prior(2))
+# f.log_lik(v.params = sample.prior(n.samp = 2))
 
 likelihood <- function(v.params){ 
   ### Definition:

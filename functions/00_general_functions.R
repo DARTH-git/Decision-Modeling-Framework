@@ -1,3 +1,21 @@
+#-----------------------------------------------------#
+#### Function to update param list with new values ####
+#-----------------------------------------------------#
+f.update_param_list <- function(l.params.all, params.updated){
+  ### Definition:
+  ##   Updates list of all parameters with new values for specific parameters
+  ### Arguments:  
+  ##   l.params.all: List with all parameters of decision model
+  ##   params.updated: Parameters for which values need to be updated
+  ### Returns:
+  ##   l.params.all: List with all parameters updated
+  ##
+  if (typeof(params.updated)!="list"){
+    params.updated <- split(unname(params.updated),names(params.updated)) #converte the named vector to a list
+  }
+  l.params.all <- modifyList(l.params.all, params.updated) #update the values
+  return(l.params.all)
+}
 #---------------------------------------------------------------#
 #### Function to compute one-way sensitivity analysis (OWSA) ####
 #---------------------------------------------------------------#
@@ -11,7 +29,7 @@
 #' range is determined by \code{nsamp}
 #' @param nsamps number of parameter values. If NULL, 100 parameter values are 
 #' used
-#' @param params.basecase Vector with parameters for the base case
+#' @param params.basecase List with parameters for the base case
 #' @param FUN Function that takes \code{params.basecase} and \code{...} and 
 #' produces \code{outcome} of interest
 #' @param outcome String with the outcome of interest produced by \code{nsamp}
@@ -28,6 +46,7 @@
 #'
 owsa_det <- function(parms, ranges, nsamps = 100, params.basecase, FUN, outcome, 
                      strategies = NULL, ...){
+  ### Check for errors
   if(sum(parms %in% names(params.basecase)) != length(parms)){
     stop("parms should be in names of params.basecase")
   }
@@ -46,16 +65,16 @@ owsa_det <- function(parms, ranges, nsamps = 100, params.basecase, FUN, outcome,
   
   jj <- tryCatch({
     funtest <- FUN(params.basecase, ...)  
-  },error = function(e) NA)
+  }, error = function(e) NA)
   if(is.na(sum(is.na(jj)))){
     stop("FUN is not well defined by 'params.basecase' and ...")
   }
   funtest <- FUN(params.basecase, ...)
   if(is.null(strategies)){
-    strategies <- funtest[,1]
+    strategies <- funtest[, 1]
     n.str <- length(strategies) 
   }
-  if(length(strategies)!=length(funtest[,1])){
+  if(length(strategies)!=length(funtest[, 1])){
     stop("Number of strategies not the same as in FUN")
   }
   v.outcomes <- colnames(funtest)[-1]
@@ -66,23 +85,23 @@ owsa_det <- function(parms, ranges, nsamps = 100, params.basecase, FUN, outcome,
   
   df.owsa.all <- NULL
   for (i in 1:length(parms)) { # i <- 2
-    # Generate matrix of inputs
-    m.owsa.input <- cbind(placeholder_name = seq(ranges[[i]][1], 
-                                                 ranges[[i]][2], 
-                                                 length.out = nsamps), 
-                          params.basecase[-which(names(params.basecase) == parms[i])])
-    names(m.owsa.input)[names(m.owsa.input) == "placeholder_name"] <- parms[i]  
-    # Initialize matrix to store outcomes from a OWSA of the CEA
+    ### Generate matrix of inputs
+    v.owsa.input <- seq(ranges[[i]][1], 
+                        ranges[[i]][2], 
+                        length.out = nsamps)
+    ### Initialize matrix to store outcomes from a OWSA of the CEA
     m.out.owsa <- matrix(0, 
-                         nrow = nrow(m.owsa.input), 
+                         nrow = length(v.owsa.input), 
                          ncol = n.str)
-    # Run model and capture outcome
-    for (j in 1:nrow(m.owsa.input)){ # j <- 1
-      m.out.owsa[j, ] <- FUN(m.owsa.input[j, ], ...)[[outcome]]
+    ### Run model and capture outcome
+    l.owsa.input <- params.basecase
+    for (j in 1:length(v.owsa.input)){ # j <- 1
+      l.owsa.input[names(l.owsa.input) == parms[i]] <- v.owsa.input[j]
+      m.out.owsa[j, ] <- FUN(l.owsa.input, ...)[[outcome]]
     }
     
     df.owsa <- data.frame(parameter = parms[i],
-                          m.owsa.input[, parms[i]],
+                          v.owsa.input,
                           m.out.owsa)
     names(df.owsa)[-1] <- c("param_val", strategies)
     
@@ -113,7 +132,7 @@ owsa_det <- function(parms, ranges, nsamps = 100, params.basecase, FUN, outcome,
 #' range is determined by \code{nsamp}
 #' @param nsamps number of parameter values. If NULL, 100 parameter values are 
 #' used
-#' @param params.basecase Vector with parameters for the base case
+#' @param params.basecase List with parameters for the base case
 #' @param FUN Function that takes \code{params.basecase} and \code{...} and 
 #' produces \code{outcome} of interest
 #' @param outcome String with the outcome of interest produced by \code{nsamp}
@@ -129,7 +148,7 @@ owsa_det <- function(parms, ranges, nsamps = 100, params.basecase, FUN, outcome,
 #'
 twsa_det <- function(parm1, parm2, ranges, nsamps = 40, params.basecase, FUN, outcome, 
                      strategies = NULL, ...){
-  
+  ### Check for errors
   if(sum(c(parm1, parm2) %in% names(params.basecase)) != 2){
     stop("parm1 and parm2 should be in names of params.basecase")
   }
@@ -144,7 +163,7 @@ twsa_det <- function(parm1, parm2, ranges, nsamps = 40, params.basecase, FUN, ou
   
   jj <- tryCatch({
     funtest <- FUN(params.basecase, ...)  
-  },error = function(e) NA)
+  }, error = function(e) NA)
   if(is.na(sum(is.na(jj)))){
     stop("FUN is not well defined by 'params.basecase' and ...")
   }
@@ -153,7 +172,7 @@ twsa_det <- function(parm1, parm2, ranges, nsamps = 40, params.basecase, FUN, ou
     strategies <- funtest[,1]
     n.str <- length(strategies) 
   }
-  if(length(strategies)!=length(funtest[,1])){
+  if(length(strategies)!=length(funtest[, 1])){
     stop("Number of strategies not the same as in FUN")
   }
   v.outcomes <- colnames(funtest)[-1]
@@ -162,34 +181,35 @@ twsa_det <- function(parm1, parm2, ranges, nsamps = 40, params.basecase, FUN, ou
     stop("outcome is not part of FUN outcomes")
   }
   
-  # Generate matrix of inputs
+  ### Generate matrix of inputs
   df.twsa.params <- expand.grid(placeholder_name1 = seq(ranges[[1]][1], 
                                                         ranges[[1]][2], 
                                                         length.out = nsamps), 
                                 placeholder_name2 = seq(ranges[[2]][1], 
                                                         ranges[[2]][2], 
                                                         length.out = nsamps))
+  names(df.twsa.params) <- c(parm1, parm2)
+  n.rows <- nrow(df.twsa.params)
   
-  m.twsa.input <- cbind(df.twsa.params, 
-                        v.params.basecase[-which(names(v.params.basecase) %in% c(parm1, parm2))])
-  
-  names(m.twsa.input)[names(m.twsa.input) == "placeholder_name1"] <- parm1
-  names(m.twsa.input)[names(m.twsa.input) == "placeholder_name2"] <- parm2
-  # Initialize matrix to store outcomes from a OWSA of the CEA
+  ### Initialize matrix to store outcomes from a OWSA of the CEA
   m.out.twsa <- matrix(0, 
-                       nrow = nrow(m.twsa.input), 
+                       nrow = n.rows, 
                        ncol = n.str)
   
-  # Run model and capture outcome
-  for (i in 1:nrow(m.twsa.input)){ # i <- 1
-    m.out.twsa[i, ] <- FUN(m.twsa.input[i, ], ...)[[outcome]]
-    # Display simulation progress
-    if(i/(nrow(m.twsa.input)/10) == round(i/(nrow(m.twsa.input)/10),0)) {
-      cat('\r', paste(i/nrow(m.twsa.input) * 100, "% done", sep = " "))
+  ### Run model and capture outcome
+  l.twsa.input <- params.basecase
+  for (i in 1:n.rows){ # i <- 1
+    l.twsa.input[names(l.twsa.input) == parm1] <- df.twsa.params[i,1]
+    l.twsa.input[names(l.twsa.input) == parm2] <- df.twsa.params[i,2]
+    m.out.twsa[i, ] <- FUN(l.twsa.input, ...)[[outcome]]
+    
+    ## Display simulation progress
+    if(i/(n.rows/10) == round(i/(n.rows/10),0)) {
+      cat('\r', paste(i/n.rows * 100, "% done", sep = " "))
     }
   }
   
-  df.twsa <- data.frame(m.twsa.input[, 1:2],
+  df.twsa <- data.frame(df.twsa.params,
                         m.out.twsa)
   names(df.twsa)[-c(1:2)] <- strategies
   

@@ -1,29 +1,7 @@
-#------------------------------------------------------#
-#### Generate base-case set of CEA Parameters       ####
-#------------------------------------------------------#
-f.generate_basecase_params <- function(){ # User defined
-  ### Definition:
-  ##  Generates base-case parameters for decision model
-  ### Arguments:  
-  ##   NULL
-  ### Returns:
-  ##   v.params.basecase: Vector with base-case parameters for decision model
-  ##
-  # Load calibrated parameters
-  load("data/03_imis-output.RData")
-  # Load initial parameters
-  v.params.basecase <- f.define_init_params()
-  # Replace calibrated parameters with calibrated values at MAP
-  v.params.basecase["p.S1S2"] <- v.calib.post.map["p.S1S2"]
-  v.params.basecase["hr.S1"]  <- v.calib.post.map["hr.S1"]
-  v.params.basecase["hr.S2"]  <- v.calib.post.map["hr.S2"]
-  return(v.params.basecase)  
-}
-
 #---------------------------------------------#
 #### Calculate cost-effectiveness outcomes ####
 #---------------------------------------------#
-f.calculate_ce_out <- function(v.params, n.wtp = 100000){ # User defined
+f.calculate_ce_out <- function(l.params.all, n.wtp = 100000){ # User defined
   ### Definition:
   ##   Calculates costs and effects for a given vector of parameters using a 
   ##   simulation model.
@@ -31,52 +9,56 @@ f.calculate_ce_out <- function(v.params, n.wtp = 100000){ # User defined
   ##   v.params: vector of parameters to run the simluation model on
   ##   n.wtp: Willingness-to-pay threshold to compute net benefits
   ### Returns:
-  ##   m.ce: Matrix with discounted costs, effectiveness and NMB
+  ##   df.ce: Dataframe with discounted costs, effectiveness and NMB
   ##
-  with(as.list(v.params), {
-    # Run STM model at a parameter set for each intervention
-    l.model.out.no_trt <- f.decision_model(v.params)
-    l.model.out.trt    <- f.decision_model(v.params)
+  with(as.list(l.params.all), {
+    ## Create disocunting vectors
+    v.dwc <- 1 / ((1 + d.e) ^ (0:(n.t))) # vector with discount weights for costs
+    v.dwe <- 1 / ((1 + d.c) ^ (0:(n.t))) # vector with discount weights for QALYs
     
-    # Cohort trace by treatment
+    ## Run STM model at a parameter set for each intervention
+    l.model.out.no_trt <- f.decision_model(l.params.all = l.params.all)
+    l.model.out.trt    <- f.decision_model(l.params.all = l.params.all)
+    
+    ## Cohort trace by treatment
     m.M_no_trt <- l.model.out.no_trt$m.M # No treatment
     m.M_trt    <- l.model.out.trt$m.M    # Treatment
     
-    # Vectors with costs and utilities by treatment
+    ## Vectors with costs and utilities by treatment
     v.u_no_trt <- c(u.H, u.S1, u.S2, u.D)
     v.u_trt    <- c(u.H, u.Trt, u.S2, u.D)
     
     v.c_no_trt <- c(c.H, c.S1, c.S2, c.D)
     v.c_trt    <- c(c.H, c.S1 + c.Trt, c.S2 + c.Trt, c.D)
     
-    # Mean Costs and QALYs for Treatment and NO Treatment
+    ## Mean Costs and QALYs for Treatment and NO Treatment
     v.tu_no_trt <- m.M_no_trt %*% v.u_no_trt
     v.tu_trt    <- m.M_trt %*% v.u_trt
     
     v.tc_no_trt <- m.M_no_trt %*% v.c_no_trt
     v.tc_trt    <- m.M_trt %*% v.c_trt
     
-    # Total discounted mean Costs and QALYs
+    ## Total discounted mean Costs and QALYs
     tu.d_no_trt <- t(v.tu_no_trt) %*% v.dwe 
     tu.d_trt    <- t(v.tu_trt) %*% v.dwe
     
     tc.d_no_trt <- t(v.tc_no_trt) %*% v.dwc
     tc.d_trt    <- t(v.tc_trt)    %*% v.dwc
     
-    # Vector with total discounted mean Costs and QALYs
+    ## Vector with total discounted mean Costs and QALYs
     v.tc.d <- c(tc.d_no_trt, tc.d_trt)
     v.tu.d <- c(tu.d_no_trt, tu.d_trt)
     
-    # Vector with discounted net monetary beneifts (NMB)
+    ## Vector with discounted net monetary beneifts (NMB)
     v.nmb.d <- v.tu.d * n.wtp - v.tc.d
     
-    # Matrix with discounted costs, effectiveness and NMB
-    m.ce <- data.frame(Strategy = v.names.str,
-                       Cost     = v.tc.d,
-                       Effect   = v.tu.d,
-                       NMB      = v.nmb.d)
+    ## Dataframe with discounted costs, effectiveness and NMB
+    df.ce <- data.frame(Strategy = v.names.str,
+                        Cost     = v.tc.d,
+                        Effect   = v.tu.d,
+                        NMB      = v.nmb.d)
     
-    return(m.ce)
+    return(df.ce)
   }
   )
 }

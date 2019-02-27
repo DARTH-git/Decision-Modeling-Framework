@@ -4,8 +4,10 @@
 # cohort of the Sick-Sicker state-transition model (STM) to create PSA dataset #
 #                                                                              # 
 # Depends on:                                                                  #
+#   00_general_functions.R                                                     #
 #   01_model-inputs.R                                                          #
 #   02_simulation-model_functions.R                                            #
+#   05a_deterministic-analysis_functions.R                                     #
 #   05b_probabilistic-analysis_functions.R                                     #
 #                                                                              # 
 # Author: Fernando Alarid-Escudero                                             # 
@@ -26,14 +28,15 @@ library(dampack)   # decision-analytic modeling visualization tool
 source("R/01_model-inputs.R")
 
 #### 05b.1.3 Load functions ####
+source("functions/00_general_functions.R")
 source("functions/02_simulation-model_functions.R")
 source("functions/05a_deterministic-analysis_functions.R")
 source("functions/05b_probabilistic-analysis_functions.R")
 
 #### 05a.2 Cost-effectiveness analysis parameters ####
-## Strategy names
+### Strategy names
 v.names.str <- c("No Treatment", "Treatment")  
-## Number of strategies
+### Number of strategies
 n.str <- length(v.names.str)
 
 #### 05b.3 Setup probabilistic analysis ####
@@ -56,10 +59,11 @@ df.e <- as.data.frame(matrix(0,
 colnames(df.e) <- v.names.str
 
 #### 05b.4 Conduct probabilistic sensitivity analysis ####
-# Run decision model on each parameter set of PSA input dataset to produce
-# PSA outputs for cost and effects
+### Run decision model on each parameter set of PSA input dataset to produce
+### PSA outputs for cost and effects
 for(i in 1:n.sim){ # i <- 1
-  df.out.temp <- f.calculate_ce_out(df.psa.input[i, ])
+  l.psa.input <- f.update_param_list(l.params.all, df.psa.input[i,])
+  df.out.temp <- f.calculate_ce_out(l.psa.input)
   df.c[i, ] <- df.out.temp$Cost
   df.e[i, ] <- df.out.temp$Effect
   # Display simulation progress
