@@ -3,11 +3,11 @@ title: "Sick-Sicker case study - as part of the framework paper"
 author: "DARTH workgroup"
 date: '`r Sys.Date()`'
 output: 
+  pdf_document: default
+    #fig_caption: yes
   word_document:
     toc: no     # table of content
     toc_depth: 1 # depth of the table of content
-  pdf_document: default
-    #fig_caption: yes
   html_document: default
 bibliography: references.bib
 ---
