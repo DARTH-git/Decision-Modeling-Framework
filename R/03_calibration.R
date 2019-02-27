@@ -133,10 +133,10 @@ df.posterior.summ
 save(df.posterior.summ, file = "tables/03_summary-posterior.RData")
 
 #### 03.4.2 Visualization of posterior distribution ####
-# rescale posterior to plot density of plots
+### Rescale posterior to plot density of plots
 v.calib.alpha <- scales::rescale(v.calib.post)
 
-# Plot the 1000 draws from the posterior
+### Plot the 1000 draws from the posterior
 png("figs/03_posterior-distribution-joint.png", 
     width = 8, height = 6, units = 'in', res = 300)
   s3d <- scatterplot3d(x = m.calib.post[, 1],
@@ -149,9 +149,9 @@ png("figs/03_posterior-distribution-joint.png",
                        xlab = v.param.names[1], 
                        ylab = v.param.names[2], 
                        zlab = v.param.names[3])
-  # add center of Gaussian components
+  ## Add center of Gaussian components
   s3d$points3d(l.fit.imis$center, col = "red", pch = 8)
-  # add legend
+  ## Add legend
   legend(s3d$xyz.convert(0.05, 1.0, 5), 
          col = c("black", "red"), 
          bg = "white", pch = c(1, 8), yjust = 0, 
@@ -159,7 +159,7 @@ png("figs/03_posterior-distribution-joint.png",
          cex = 1.1)
 dev.off()
 
-# Plot the 1000 draws from the posterior with marginal histograms
+### Plot the 1000 draws from the posterior with marginal histograms
 png("figs/03_posterior-distribution-marginal.png", 
     width = 8, height = 6, units = 'in', res = 300)
   pairs.panels(m.calib.post)
