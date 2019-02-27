@@ -41,40 +41,40 @@ n.str <- length(v.names.str)
 n.sim <- 1000
 
 ### Generate PSA input dataset
-m.psa.input <- f.generate_psa_params(n.sim = n.sim)
+df.psa.input <- f.generate_psa_params(n.sim = n.sim)
 
 ### Initialize matrices for PSA output 
 ## Matrix of costs
-m.c <- matrix(0, 
-              nrow = n.sim,
-              ncol = n.str)
-colnames(m.c) <- v.names.str
+df.c <- as.data.frame(matrix(0, 
+                             nrow = n.sim,
+                             ncol = n.str))
+colnames(df.c) <- v.names.str
 ## Matrix of effectiveness
-m.e <- matrix(0, 
-              nrow = n.sim,
-              ncol = n.str)
-colnames(m.e) <- v.names.str
+df.e <- as.data.frame(matrix(0, 
+                             nrow = n.sim,
+                             ncol = n.str))
+colnames(df.e) <- v.names.str
 
 #### 05b.4 Conduct probabilistic sensitivity analysis ####
 # Run decision model on each parameter set of PSA input dataset to produce
 # PSA outputs for cost and effects
 for(i in 1:n.sim){ # i <- 1
-  df.out.temp <- f.calculate_ce_out(m.psa.input[i, ])
-  m.c[i, ] <- df.out.temp$Cost
-  m.e[i, ] <- df.out.temp$Effect
+  df.out.temp <- f.calculate_ce_out(df.psa.input[i, ])
+  df.c[i, ] <- df.out.temp$Cost
+  df.e[i, ] <- df.out.temp$Effect
   # Display simulation progress
   if(i/(n.sim/10) == round(i/(n.sim/10),0)) {
     cat('\r', paste(i/n.sim * 100, "% done", sep = " "))
   }
 }
 ### Creae PSA object for dampack
-l.psa <- make_psa_obj(cost = m.c, 
-                      effectiveness = m.e, 
-                      parameters = m.psa.input, 
+l.psa <- make_psa_obj(cost = df.c, 
+                      effectiveness = df.e, 
+                      parameters = df.psa.input, 
                       strategies = v.names.str)
 
 #### 05b.5 Save PSA objects ####
-save(m.psa.input, m.c, m.e, v.names.str, n.str,
+save(df.psa.input, df.c, df.e, v.names.str, n.str,
      l.psa,
      file = "data/05b_psa-dataset.RData")
 
