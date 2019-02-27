@@ -43,8 +43,8 @@ source("functions/04_validation-functions.R")
 load("data/03_calibration-targets.RData")
 load("data/03_imis-output.RData")
 
-#### 04.5 Compute model-predicted outputs ####
-#### 04.5.1 Compute model-predicted outputs for each sample of posterior distribution ####
+#### 04.2 Compute model-predicted outputs ####
+#### 04.2.1 Compute model-predicted outputs for each sample of posterior distribution ####
 # Number of posterior samples
 n.samp <- nrow(m.calib.post)
 # Define matrices to store model outputs
@@ -94,12 +94,12 @@ df.out.prev.sum <- f.data_summary(df.out.prev.lng, varname = "value",
 df.out.prop.sum <- f.data_summary(df.out.prop.lng, varname = "value",
                                 groupnames = c("Type", "Target", "Time"))
 
-#### 04.5.2 Compute model-predicted outputs at MAP estimate ####
+#### 04.3.2 Compute model-predicted outputs at MAP estimate ####
 l.out.calib.map <- f.calibration_out(v.params.calib = v.calib.post.map, 
                                      l.params.all = l.params.all)
 
-#### 04.6 Internal validation: Model-predicted outputs vs. targets ####
-# TARGET 1: Survival ("Surv")
+#### 04.4 Internal validation: Model-predicted outputs vs. targets ####
+### TARGET 1: Survival ("Surv")
 png("figs/04_posterior-vs-targets-survival.png", 
     width = 8, height = 6, units = 'in', res = 300)
 plotrix::plotCI(x = SickSicker.targets$Surv$Time, y = SickSicker.targets$Surv$value, 
@@ -123,7 +123,7 @@ legend("bottomright",
        lty = c(NA, 2, NA))
 dev.off()
 
-# TARGET 2: Prevalence ("Prev")
+### TARGET 2: Prevalence ("Prev")
 png("figs/04_posterior-vs-targets-prevalence.png", 
     width = 8, height = 6, units = 'in', res = 300)
 plotrix::plotCI(x = SickSicker.targets$Prev$Time, y = SickSicker.targets$Prev$value, 
@@ -147,7 +147,7 @@ legend("bottomright",
        lty = c(NA, 2, NA))
 dev.off()
 
-# TARGET 3: Proportion who are Sicker ("PropSicker"), among all those afflicted (Sick+Sicker)
+### TARGET 3: Proportion who are Sicker ("PropSicker"), among all those afflicted (Sick+Sicker)
 png("figs/04_posterior-vs-targets-proportion-sicker.png", 
     width = 8, height = 6, units = 'in', res = 300)
 plotrix::plotCI(x = SickSicker.targets$PropSick$Time, y = SickSicker.targets$PropSick$value, 

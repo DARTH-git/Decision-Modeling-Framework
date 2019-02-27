@@ -130,7 +130,10 @@ df.posterior.summ <- data.frame(
   MAP       = v.calib.post.map,
   check.names = FALSE)
 df.posterior.summ
-save(df.posterior.summ, file = "tables/03_summary-posterior.RData")
+
+### Save summary statistics of posterior distribution
+save(df.posterior.summ, 
+     file = "tables/03_summary-posterior.RData")
 
 #### 03.4.2 Visualization of posterior distribution ####
 ### Rescale posterior to plot density of plots
