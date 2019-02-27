@@ -21,3 +21,21 @@ increased treatment costs and reduced quality of life.
 
 Running the model to generate output is a very important part of the modeling process. This part of the process however, is code wise very simple. This file is informed by the generated inputs and decision model implementation. The function used is the function for an iterative loop for time, the total number of cycles the model needs to run, multiplies the transition probability matrix for the current cycle with the allocation of the cohort at that cycle. This multiplication calculated how the cohort is allocated among the health state at the next cycle. So this iterative process fills the Markov trace. Since the transition probabilities differ between the treatment strategy and the no treatment strategy within the iterative process this calculation is done for both the strategies.  
 
+
+
+###04 Calculate model outcome
+In this section we evaluate the model outcomes by combining the previous three sections. Each health state in the model is associated with a specific utility and a cost (Table \ref{tab:parameters}). We are asked to perform a cost-effectiveness analysis of a hypothetical treatment. This treatment is given to all patients in both Sick and Sicker and is associated with specific costs, see Table \ref{tab:parameters}. The cost of the treatment is additional to the cost of being sick or sicker for one year. The treatment improves QoL for those individuals who are sick but has no effect on the quality of life of those who are sicker [@Krijkamp2018]. 
+
+Via the `04_calculate-outcomes_functions.R` basecase values of the calibrated parameters are replaced with calibrated values from the `03_nm-best-set.RData` 
+data. This new set of parameters is used to run the model to produce a cohort trace for the CEA. The `04_calculate-outcomes_functions.R` files also generates the function `f.calculate_ce_out`, which is the core part of the model for the generation of cost-effectiveness results. Running this gives us the following cost and effectiveness outcomes. 
+
+
+
+####05a Deterministic analysis of Decision analysis / cost-effectiveness analysis 
+The deterministic sensitivity analysis of the Sick-Sicker model consists of a one-way sensitivity analysis (owsa) looking at the effect of the utility value used for Sicker (S2) on the QALY, the outcome of interest. In the `05a_deterministic-analysis_function.R` file we create the functions for a one-way sensitivity analysis `owsa.plot.det`, a two-way sensitivity analysis `twsa.plot.det` and the code to create tornado plots `TornadoPlot`. 
+
+
+We are interested in the effect of the parameters `p.HS1`, `u.S2` and `c.Trt` on the QALYs. The results are summarixed in Figure \ref{fig:Tornado}.
+![Tornado Plot \label{fig:Tornado}](../figs/Markov-SickSicker-Tornado.png)
+
+

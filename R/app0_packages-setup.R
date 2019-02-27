@@ -33,19 +33,23 @@ f.install_and_load <- function(packages) {
 ### Install packages from CRAN
 v.packages.to.install <- c("dplyr", "truncnorm", 
                            "lhs", "IMIS", "matrixStats",
-                           "modeest", "plotrix", "psych",
+                           "plotrix", "psych",
                            "scatterplot3d", "reshape2",
-                           "devtools")
+                           "BiocManager", "devtools")
 
 f.install_and_load(v.packages.to.install)
 
-### Install Bioconductor package
-if (!requireNamespace("BiocManager", quietly = TRUE)){
-  install.packages("BiocManager")
-  BiocManager::install("genefilter", version = "3.8")
-}
+### Install genefilter from Bioconductor package needed for modeest
+BiocManager::install("genefilter", version = "3.8")
+install.packages("modeest")
 
 ### Install dampack from GitHub
 if (!require(dampack)) {
   devtools::install_github(repo = "DARTH-git/dampack") # Install package from GitHub
+} else{
+  vers.dampack <- packageVersion("dampack")
+  if(vers.dampack!="0.1.0"){
+    devtools::install_github(repo = "DARTH-git/dampack") # Install package from GitHub
+  }
+  rm(vers.dampack)
 }
