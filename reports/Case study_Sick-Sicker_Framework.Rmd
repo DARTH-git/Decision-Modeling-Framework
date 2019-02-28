@@ -172,7 +172,7 @@ ggplot(melt(l.out.stm$m.M), aes(x = Var1, y = value, color = Var2, linetype = Va
 ```{r, eval = TRUE, echo = FALSE}
 source("functions/03_calibration_functions.R")
 ```
-In this component, we calibrate unknown model parameters by matching model outputs to specified calibration targets. Specifically, we calibrate the Sick-Sicker model to match survival, prevalence and the proportion who are Sicker, among all those afflicted (Sick+Sicker). We used a Bayesian calibration approach using the incremental mixture importance sampling (IMIS) algorithm [@Teele2006], which has been used to calibrate health policy models (@Raftery2010, @Menzies2017, @Rutter2018). Bayesian methods allow us to quantify the uncertainty in the calibrated parameters even in the presence of non-identifiability (@Alarid-Escudero2018b). This analysis is coded in the *03_calibration.R* file. The target data is stored in the *03_calibration-targets.RData* file. Similar to component 02, in the section **03.1 Load packages, data and functions** we start by loading inputs and functions. In addition, we load the calibration targets data into the R workspace. In the next section, **03.2 Visualize targets**, we plot each of the calibration targets with their confidence intervals.
+In this component, we calibrate unknown model parameters by matching model outputs to specified calibration targets. Specifically, we calibrate the Sick-Sicker model to match survival, prevalence and the proportion who are Sicker, among all those afflicted (Sick+Sicker). We used a Bayesian calibration approach using the incremental mixture importance sampling (IMIS) algorithm [@Steele2006], which has been used to calibrate health policy models (@Raftery2010, @Menzies2017, @Rutter2018). Bayesian methods allow us to quantify the uncertainty in the calibrated parameters even in the presence of non-identifiability (@Alarid-Escudero2018b). This analysis is coded in the *03_calibration.R* file. The target data is stored in the *03_calibration-targets.RData* file. Similar to component 02, in the section **03.1 Load packages, data and functions** we start by loading inputs and functions. In addition, we load the calibration targets data into the R workspace. In the next section, **03.2 Visualize targets**, we plot each of the calibration targets with their confidence intervals.
 
 In section **03.3 Run calibration algorithms**, we set the parameters we like to calibrate to fixed values and test if the function `f.calibration_out` that produces model outputs corresponding to the calibration targets works. This function takes a vector of parameters that need to be calibrated and a list with all parameters of decision model and computes model outputs to be used for calibration routines.
 
@@ -188,39 +188,40 @@ In the next section, **03.3.2 Run IMIS algorithm**, we calibrate the Sick-Sicker
 
 We then expolore this posterior distributions in section **03.4 Exploring posterior distribution**. We start by estimating the posterior mean, median and 95% credible interval, the mode and the maximum-a-posteriori (MAP). To estimate the mode, we use the package `modeest`.[@modeest] All for these summary statistics are combined in a dataframe called `df.posterior.summ`. Table XX shows the summary statistics of the posterior distribution. 
 
-```{r}
-table <- source("tables/03_summary-posterior.RData")
+```{r, eval = TRUE, echo = FALSE}
+load("tables/03_summary-posterior.RData")
+kable(df.posterior.summ[, -1], caption = "Summary statistics of the posterior distribution") # create a table 
 ``` 
 
 
-Interpreting these statistics can be quite hard and is easier via a graph. In section 03.4.2 we visualize the posterior distributions. These figures are save in the *figs* directory and shown below. 
+In section **03.4.2 Visualization of posterior distribution **, we generate a pairwise scatter plot of the calibrated parameters (Figure \ref{fig:03_posterior-distribution-marginal}) and a 3D scatter plot of the joint posterior distribution  (Figure \ref{fig:Posterior-distribution-joint}). These figures are saved in the *figs* directory.
 
 ![Joint posterior distribution \label{fig:Posterior-distribution-joint}](../figs/03_posterior-distribution-joint.png)
 
-![Posterior distribution marginal \label{fig:03_posterior-distribution-marginal}](../figs/03_posterior-distribution-marginal.png)
-[HOW DO WE INTERPRET THESE FIGURES?]
+![Pairwise posterior distribution of calibrated parameters \label{fig:03_posterior-distribution-marginal}](../figs/03_posterior-distribution-marginal.png)
 
-Finally, the posterior and MAP from the IMIS calibration are stored in the file *03_imis-output.RData*. Storing this data as a datafile gives us the possibility to inport the data without re-running the calibration code. 
+Finally, the posterior distribution and MAP estimate from the IMIS calibration are stored in the file *03_imis-output.RData*. Storing this data as an Rdata file allows to import the data in following sections without needing to re-runn the calibration component. 
 
-For illustration purposes, we also provide code to calibrated the Sick-Sicker model with the Nelder-Mead algorithm [@Nelder1965], which was initialized at 100 different starting points sampled from the prior distributions of the calibrated parameters. This calibration exercise can be found in the file **app2_calibration-nelder-mead.R**, but we will not go into details for this file. 
+
+
 
 ###04 Validation
-In this section, we like to check the internal validity of our Sick-Sicker model before we continue with the analysis. Checking the internal validity means that we need to make sure that the output corresponds with our input. For example, we like to check that Sicker individuals can not recover and that most of our cohort died by the end of the time horizon. We also plot our model-predicted outputs against the calibration targets. Therefore, the **04_validation.R** file stats with sourcing all previously described functions and generated calibration data. 
+In this section, we check the internal validity of our Sick-Sicker model before we move on to the analysis components. To internally validate the Sick-Sicker model, we compare the model-predicted output evaluated at posterior parameters against the calibration targets. This is all done in the **04_validation.R** script by loading all previously described functions and the generated calibration targets. 
 
-We compute the model-predicted outputs for each sample of posterior distribution as well as for the MAP estimate. Section 04.5 is computing these model-predicted outputs for each sample using the function `f.data_summary`. 
+In section **04.2 Compute model-predicted outputs**, we compute the model-predicted outputs for each sample of posterior distribution as well as for the MAP estimate. We then use the function `f.data_sumary` to summarize the model-predicted posterior outputs into different summary statistics. 
 ```{r}
 print.function(f.data_summary)
 ```
 This function is informed by three arguments, `data`, `varname` and `groupnames`. 
 
-The computation of the model-predicted outputs using the MAP estimates is done by inserting the `v.calib.post.map` data into the previously described `f.calibration_out` function. This function creates a list including the estimated values for survival, prevalence and the proportion of sicker individuals at the time points 10, 20 and 30. 
+The computation of the model-predicted outputs using the MAP estimate is done by inserting the `v.calib.post.map` data into the previously described `f.calibration_out` function. This function creates a list including the estimated values for survival, prevalence and the proportion of sicker individuals at cycles 10, 20 and 30. 
 
-In sections 04.6 Internal validation: Model-predicted outputs vs. targets we check the internal validation of our model-predicted outputs versus our targets using plots. The generated plots are saved as .png files, which in turn can be used without the need of re-running the code. 
+In sections **04.6 Internal validation: Model-predicted outputs vs. targets**, we check the internal validation by plotting the model-predicted outputs against the calibration targets Figure (\ref{fig:04_surv}-\ref{fig:04_proportion}). The generated plots are saved as .png files, which could be used in reporst later on without the need of re-running the code. 
 
-![Survival data: Posterior vs targets  \label{fig:04_surv}](../figs/04_posterior-vs-targets-survival.png)
+![Survival data: Model-predicted outputs vs targets  \label{fig:04_surv}](../figs/04_posterior-vs-targets-survival.png)
 
-![Prevalence data: Posterior vs targets  \label{fig:04_p}](../figs/04_posterior-vs-targets-prevalence.png)
+![Prevalence data of sick individuals: Model-predicted output vs targets  \label{fig:04_p}](../figs/04_posterior-vs-targets-prevalence.png)
 
-![Proportion sicker data: Posterior vs targets  \label{fig:04_proportion}](../figs/04_posterior-vs-targets-proportion-sicker.png)
-**[Do we need an interpretation of the graphs?]**
+![Proportion who are Sicker, among all those afflicted (Sick + Sicker): Model-predicted output \label{fig:04_proportion}](../figs/04_posterior-vs-targets-proportion-sicker.png)
+
   
