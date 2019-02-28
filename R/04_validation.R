@@ -43,18 +43,20 @@ source("functions/04_validation-functions.R")
 load("data/03_calibration-targets.RData")
 load("data/03_imis-output.RData")
 
-#### 04.5 Compute model-predicted outputs ####
-#### 04.5.1 Compute model-predicted outputs for each sample of posterior distribution ####
-# Number of posterior samples
+#### 04.2 Compute model-predicted outputs ####
+#### 04.2.1 Compute model-predicted outputs for each sample of posterior distribution ####
+### Number of posterior samples
 n.samp <- nrow(m.calib.post)
-# Define matrices to store model outputs
+
+### Define matrices to store model outputs
 m.out.surv <- matrix(NA, nrow = n.samp, ncol = nrow(SickSicker.targets$Surv))
 colnames(m.out.surv) <- SickSicker.targets$Surv$Time
 m.out.prev <- matrix(NA, nrow = n.samp, ncol = nrow(SickSicker.targets$Prev))
 colnames(m.out.prev) <- SickSicker.targets$Prev$Time
 m.out.prop <- matrix(NA, nrow = n.samp, ncol = nrow(SickSicker.targets$PropSicker))
 colnames(m.out.prop) <- SickSicker.targets$PropSicker$Time
-# Evaluate model at each posterior sample and store results
+
+### Evaluate model at each posterior sample and store results
 for(i in 1:n.samp){ # i = 1
   l.out.post <- f.calibration_out(v.params.calib = m.calib.post[i, ], 
                                   l.params.all = l.params.all)
@@ -63,7 +65,8 @@ for(i in 1:n.samp){ # i = 1
   m.out.prop[i, ] <- l.out.post$PropSicker
   cat('\r', paste(round(i/n.samp * 100), "% done", sep = " ")) # display progress
 }
-# Create data frames with model predicted outputs
+
+### Create data frames with model predicted outputs
 df.out.surv <- data.frame(Type = "Model", 
                           Target = "Survival",
                           m.out.surv, 
@@ -76,7 +79,8 @@ df.out.prop <- data.frame(Type = "Model",
                           Target = "Proportion of Sicker",
                           m.out.prop, 
                           check.names = FALSE)
-# Transform data frames to long format
+
+### Transform data frames to long format
 df.out.surv.lng <- reshape2::melt(df.out.surv, 
                      id.vars = c("Type", "Target"), 
                      variable.name = "Time")
@@ -86,7 +90,8 @@ df.out.prev.lng <- reshape2::melt(df.out.prev,
 df.out.prop.lng <- reshape2::melt(df.out.prop, 
                         id.vars = c("Type", "Target"), 
                         variable.name = "Time")
-# Compute posterior model-predicted 95% CI
+
+### Compute posterior model-predicted 95% CI
 df.out.surv.sum <- f.data_summary(df.out.surv.lng, varname = "value",
                              groupnames = c("Type", "Target", "Time"))
 df.out.prev.sum <- f.data_summary(df.out.prev.lng, varname = "value",
@@ -94,12 +99,12 @@ df.out.prev.sum <- f.data_summary(df.out.prev.lng, varname = "value",
 df.out.prop.sum <- f.data_summary(df.out.prop.lng, varname = "value",
                                 groupnames = c("Type", "Target", "Time"))
 
-#### 04.5.2 Compute model-predicted outputs at MAP estimate ####
+#### 04.3.2 Compute model-predicted outputs at MAP estimate ####
 l.out.calib.map <- f.calibration_out(v.params.calib = v.calib.post.map, 
                                      l.params.all = l.params.all)
 
-#### 04.6 Internal validation: Model-predicted outputs vs. targets ####
-# TARGET 1: Survival ("Surv")
+#### 04.4 Internal validation: Model-predicted outputs vs. targets ####
+### TARGET 1: Survival ("Surv")
 png("figs/04_posterior-vs-targets-survival.png", 
     width = 8, height = 6, units = 'in', res = 300)
 plotrix::plotCI(x = SickSicker.targets$Surv$Time, y = SickSicker.targets$Surv$value, 
@@ -123,7 +128,7 @@ legend("bottomright",
        lty = c(NA, 2, NA))
 dev.off()
 
-# TARGET 2: Prevalence ("Prev")
+### TARGET 2: Prevalence ("Prev")
 png("figs/04_posterior-vs-targets-prevalence.png", 
     width = 8, height = 6, units = 'in', res = 300)
 plotrix::plotCI(x = SickSicker.targets$Prev$Time, y = SickSicker.targets$Prev$value, 
@@ -147,7 +152,7 @@ legend("bottomright",
        lty = c(NA, 2, NA))
 dev.off()
 
-# TARGET 3: Proportion who are Sicker ("PropSicker"), among all those afflicted (Sick+Sicker)
+### TARGET 3: Proportion who are Sicker ("PropSicker"), among all those afflicted (Sick+Sicker)
 png("figs/04_posterior-vs-targets-proportion-sicker.png", 
     width = 8, height = 6, units = 'in', res = 300)
 plotrix::plotCI(x = SickSicker.targets$PropSick$Time, y = SickSicker.targets$PropSick$value, 

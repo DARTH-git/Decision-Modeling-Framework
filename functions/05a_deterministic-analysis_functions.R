@@ -6,13 +6,13 @@ f.calculate_ce_out <- function(l.params.all, n.wtp = 100000){ # User defined
   ##   Calculates costs and effects for a given vector of parameters using a 
   ##   simulation model.
   ### Arguments:  
-  ##   v.params: vector of parameters to run the simluation model on
+  ##   v.params: vector of parameters to run the simulation model on
   ##   n.wtp: Willingness-to-pay threshold to compute net benefits
   ### Returns:
   ##   df.ce: Dataframe with discounted costs, effectiveness and NMB
   ##
   with(as.list(l.params.all), {
-    ## Create disocunting vectors
+    ## Create discounting vectors
     v.dwc <- 1 / ((1 + d.e) ^ (0:(n.t))) # vector with discount weights for costs
     v.dwe <- 1 / ((1 + d.c) ^ (0:(n.t))) # vector with discount weights for QALYs
     
@@ -49,7 +49,7 @@ f.calculate_ce_out <- function(l.params.all, n.wtp = 100000){ # User defined
     v.tc.d <- c(tc.d_no_trt, tc.d_trt)
     v.tu.d <- c(tu.d_no_trt, tu.d_trt)
     
-    ## Vector with discounted net monetary beneifts (NMB)
+    ## Vector with discounted net monetary benefits (NMB)
     v.nmb.d <- v.tu.d * n.wtp - v.tc.d
     
     ## Dataframe with discounted costs, effectiveness and NMB

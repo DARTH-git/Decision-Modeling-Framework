@@ -67,12 +67,12 @@ f.decision_model <- function(l.params.all, verbose = FALSE){ # User defined
       } #else stop()
     }
     
-    #### Compute cohort trace matrix and tranistion array for age-dependent STM ####
+    #### Compute cohort trace matrix and transition array for age-dependent STM ####
     # Initialize cohort trace matrix
     m.M <- matrix(0, 
                   nrow = (n.t + 1), ncol = n.states, 
                   dimnames = list(0:n.t, v.n))
-    # Set first row of M with the initial state vector
+    # Set first row of m.M with the initial state vector
     m.M[1, ] <- v.s.init
     
     # Iterate STM over time

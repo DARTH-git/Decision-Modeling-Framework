@@ -1,7 +1,7 @@
 ---
 title: "Sick-Sicker case study"
-author: "DARTH workgroup"
-date: '`r Sys.Date()`'
+author: "Supplementory material to the paper: 'A need for change! A coding framework for improving transparency in decision modeling'"
+date: "DARTH workgroup"
 output: 
   pdf_document: default
     #fig_caption: yes
@@ -28,8 +28,8 @@ library(kableExtra)
 library(dplyr)
 library(reshape2)
 library(ggplot2)
-library(scales) # for dollar signs and commas
-library(tensorA) # to use tensor algebra
+library(scales)   # for dollar signs and commas
+library(tensorA)  # to use tensor algebra
 ```
 
 ```{r read chunks, include = FALSE}
@@ -41,27 +41,24 @@ source("R/04_validation.R")
 #source("R/05b_uncertainty-analysis.R")
 ```
 
-## How to read this document
-This report is a supplementary material meant to guide you through the R code of a full functional decision model we use to showcase the DARTH framework described in the manuscript titled *A need for change! A coding framework for improving transparency in decision modeling*.[@Alarid-Escudero2019b] We recommend to first read the manuscript itself for a description of the different components of our proposed framework before continue reading this document.
-
-In this case-study, we perform a cost-effectiveness analysis (CEA) using a previously published 4-state model called the Sick-Sicker model. [@Enns2015] The code of this model is structured using the DARTH framework. This framework can be downloaded from the DARTH-git on GitHub (https://github.com/DARTH-git/Decision-Modeling-Framework). We recommend downloading this complete framework as a .zip file containing all folders. Unzip the folder and save it on your computer. The framework is divided into different directories, described in Table 1, that could be accessed from the RStudio project **Decision-Modeling-Framework.Rproj**. In this framework, you will find multiple directories as described in Table 1 of the main manuscript. [@Alarid-Escudero2019b] We refer to the directory names of this framework using *italic* style. This report is created with Markdown and is located in the *reports* directory of the framework. The
-figuresfor the case-study can be found in the *figs* directory, data required to conduct some of the analyses of the different components are in the *data* directory and the `R` scripts with functions, are located in the *functions* directory. The main `R` scripts that conduct the analyses of the different components of the framework are stored in the `R` directory. In this document we do not show all the `R` code we refer to. Therefore, it is important to follow along while reading this document. To make sure you have all the required packages needed to run all the code, first install all the required packages by running the **00_general-setup.R** script in the `R` directory.
-
-```{r, eval = FALSE, echo = TRUE, warning = FALSE }
-source("R/app0_packages-setup.R")
-```
-
 ## The Sick-Sicker model 
-In the Sick-Sicker model, a hypothetical disease affects individuals with an average age of `r n.age.init` years and results in increased mortality, increased treatment costs and reduced quality of life (QoL). We simulate this hypothetical cohort of `r n.age.init`-year-old individuals over a lifetime (i.e., reaching an age of `r n.age.init + n.t` years old) using `r n.t` annual cycles, represented with `n.t`. The cohort starts in the "Healthy" health state (denoted "H"). Healthy individuals are at risk of developing the illness, at which point they would transition to the first stage of the disease (the "Sick" health state, denoted "S1"). Sick individuals are at risk of further progressing to a more severe stage (the "Sicker" health state, denoted "S2"), which is a constant probability in this case example. There is a chance that individuals in the Sick state eventually recover and return back to the Healthy state. However, once an individual reaches the Sicker state, they cannot recover; that is, the probability of transitioning to the Sick or Healthy states from the Sicker state is zero. Individuals in the Healthy state face background mortality that is age-specific (i.e., time-dependent). Sick and Sicker individuals face an increased mortality expressed as a hazard rate ratio (HR) of 3 and 10, respectively, on the background mortality rate. Sick and Sicker individuals also experience increased health care costs and reduced QoL compared to healthy individuals. Once simulated individuals die, they transition to the "Dead" state (denoted "D"), where they remain. Figure \ref{fig:STM Sick-Sicker} shows the state-transition diagram of the Sick-Sicker model. The evolution of the cohort is simulated in one-year discrete-time cycles. Both costs and quality-adjusted life years (QALYs) are discounted at an annual rate of `r d.e` %. 
+In this case-study, we perform a cost-effectiveness analysis (CEA) using a previously published 4-state model called the Sick-Sicker model. [@Enns2015] In the Sick-Sicker model, a hypothetical disease affects individuals with an average age of `r l.params.all$n.age.init` years and results in increased mortality, increased treatment costs and reduced quality of life (QoL). We simulate this hypothetical cohort of `r l.params.all$n.age.init`-year-old individuals over a lifetime (i.e., reaching an age of `r l.params.all$n.age.init + l.params.all$n.t` years old) using `r l.params.all$n.t` annual cycles, represented with `n.t`. The cohort starts in the "Healthy" health state (denoted "H"). Healthy individuals are at risk of developing the illness, at which point they would transition to the first stage of the disease (the "Sick" health state, denoted "S1"). Sick individuals are at risk of further progressing to a more severe stage (the "Sicker" health state, denoted "S2"), which is a constant probability in this case-study. There is a chance that individuals in the Sick state eventually recover and return back to the Healthy state. However, once an individual reaches the Sicker state, they cannot recover; that is, the probability of transitioning to the Sick or Healthy states from the Sicker state is zero. Individuals in the Healthy state face background mortality that is age-specific (i.e., time-dependent). Sick and Sicker individuals face an increased mortality expressed as a hazard rate ratio (HR) of 3 and 10, respectively, on the background mortality rate. Sick and Sicker individuals also experience increased health care costs and reduced QoL compared to healthy individuals. Once simulated individuals die, they transition to the "Dead" state (denoted "D"), where they remain. Figure \ref{fig:STM Sick-Sicker} shows the state-transition diagram of the Sick-Sicker model. The evolution of the cohort is simulated in one-year discrete-time cycles. Both costs and quality-adjusted life years (QALYs) are discounted at an annual rate of `r l.params.all$d.e` %. 
 
 ![State-transition diagram of the Sick-Sicker model. Healthy individuals can get Sick, die or stay healthy. Sick individuals can recover, transitioning back to healthy, can die, or stay sick. Once individuals are Sicker, they stay Sicker until they die.  \label{fig:STM Sick-Sicker}](../figs/Sick-Sicker figure.png)
 
 Two alternative strategies exist for this hypothetical disease: a no-treatment and a treatment strategy. Under the treatment strategy, Sick and Sicker individuals receive treatment and continue doing so until they recover or die. The cost of the treatment is additional to the cost of being Sick or Sicker for one year. The treatment improves QoL for those individuals who are Sick but has no effect on the QoL of those who are sicker. To evaluate these two alternative strategies, we perform a cost-effectiveness analysis (CEA).
 
-We assume that most of the parameters of the Sick-Sicker model and their uncertainty have been previously estimated and are known to the analyst. However, while we can identify those who are afflicted with the illness through obvious symptoms, we can not easily distinguish those in the Sick state from the those in the Sicker state. Thus, we can not directly estimate state-specific mortality hazard rate ratios, nor do we know the transition probability of progressing from Sick to Sicker. Therefore, we calibrate the model to different epidemiological data. We internally validated the calibrated model by comparing the predicted outputs from the model evaluated at the calibrated parameters against the calibration targets.[@Eddy2012,@Goldhaber-Fiebert2010] 
+We assume that most of the parameters of the Sick-Sicker model and their uncertainty have been previously estimated and are known to the analyst. However, while we can identify those who are afflicted with the illness through obvious symptoms, we can not easily distinguish those in the Sick state from the those in the Sicker state. Thus, we can not directly estimate state-specific mortality hazard rate ratios, nor do we know the transition probability of progressing from Sick to Sicker. Therefore, we calibrate the model to different epidemiological data. We internally validated the calibrated model by comparing the predicted outputs from the model evaluated at the calibrated parameters against the calibration targets.[@Eddy2012, @Goldhaber-Fiebert2010] 
 
 As part of the CEA, we conducted different deterministic sensitivity analysis (SA), including one-way and two-way SA, and tornado plots. To quantify the effect of parameter uncertainty on decision uncertainty, we conducted a probabilistic sensitivity analysis (PSA) and reported our uncertainty analysis results with a cost-effectiveness acceptability curve (CEAC), cost-effectiveness acceptability frontier (CEAF) and expected loss curves (ELC). We also conducted a value of information (VOI) analysis to determine whether potential future research is needed to reduce parameter uncertainty. All steps of the CEA will be described using the different components of the framework. 
 
+## Set up
+This report is a supplementary material meant to guide you through the `R` code of a full functional decision model we use to showcase the DARTH framework described in the manuscript titled *A need for change! A coding framework for improving transparency in decision modeling*. The code following the framework can be downloaded from the DARTH-git on GitHub (https://github.com/DARTH-git/Decision-Modeling-Framework). We recommend downloading this complete framework as a .zip file containing all directories. Unzip the folder and save it on your computer. The framework is divided into different directories, described in Table 1, that could be accessed from the RStudio project **Decision-Modeling-Framework.Rproj**. In this framework, you will find multiple directories as described in Table 1 of the main manuscript. We refer to the directory names of this framework using *italic* style. This report is created with Markdown and is located in the *reports* directory of the framework. The
+figures for the case-study can be found in the *figs* directory, data required to conduct some of the analyses of the different components are in the *data* directory and the `R` scripts with functions, are located in the *functions* directory. The main `R` scripts that conduct the analyses of the different components of the framework are stored in the `R` directory. In this document we do not show all the `R` code we refer to. Therefore, it is important to follow along while reading this document. To make sure you have all the required packages needed to run all the code, first install all the required packages by running the **00_general-setup.R** script in the `R` directory.
+
+```{r, eval = FALSE, echo = TRUE, warning = FALSE }
+source("R/app0_packages-setup.R")
+```
 
 ###01 Define model inputs
 As described in the main manuscript, in this component we declare all model input variables and set their values. The `R` script running the analysis of this component is the **01_model-inputs.R** file in the `R` directory. 
@@ -74,17 +71,17 @@ Table: \label{tab:parameters} Description of the initial parameters with their `
 
 |           **Parameter**            |  **R name** |   **Value**   |
 |:-----------------------------------|:-----------:|:-------------:|
-| Time horizon ($n_t$)               | `n.t`       | `r n.t` years |
+| Time horizon ($n_t$)               | `n.t`       | `r l.params.all$n.t` years |
 | Names of health states ($n$)       | `v.n`       | H, S1, S2, D  |
 | Annual discount rate (costs/QALYs) | `d.c`/`d.e` |  3%           |
 | Annual transition probabilities    |             |               |
-| - Disease onset (H to S1)          | `p.HS1`     |  `r df.params.init$p.HS1`         |
-| - Recovery (S1 to H)               | `p.S1H`     |  `r df.params.init$p.S1H`          |
-| - Disease progression (S1 to S2)  in the time-homogenous model   | `p.S1S2`    |  `r df.params.init$p.S1S2`        |
+| - Disease onset (H to S1)          | `p.HS1`     |  `r l.params.all$p.HS1`         |
+| - Recovery (S1 to H)               | `p.S1H`     |  `r l.params.all$p.S1H`          |
+| - Disease progression (S1 to S2)  in the time-homogenous model   | `p.S1S2`    |  `r l.params.all$p.S1S2`        |
 | Annual mortality                   |             |               |
 | - All-cause mortality (H to D)     | `p.HD`      |  age-specific |
-| - Hazard rate ratio of death in S1 vs H | `hr.S1`     |  `r df.params.init$hr.S1`            |
-| - Hazard rate ratio of death in S2 vs H | `hr.S2`     |  `r df.params.init$hr.S1`           |
+| - Hazard rate ratio of death in S1 vs H | `hr.S1`     |  `r l.params.all$hr.S1`            |
+| - Hazard rate ratio of death in S2 vs H | `hr.S2`     |  `r l.params.all$hr.S1`           |
 | Annual costs                       |             |               |
 | - Healthy individuals              | `c.H`       |  $2,000       |
 | - Sick individuals in S1           | `c.S1`      |  $4,000       |
@@ -99,45 +96,53 @@ Table: \label{tab:parameters} Description of the initial parameters with their `
 | Intervention effect                |             |               |
 | - Utility for treated individuals in S1 | `u.Trt` |  0.95        |
 
-Age-specific background mortality for healthy individuals represented by the US population in 2015 and obtained from the [Human Mortality database](https://www.mortality.org). This information is stored in the **01_all-cause-mortality-USA-2015.csv** file in the *data* directory, which we load into our `R` environment.
-
-Some parameter values might be stored in a .csv file. For this case-study, these parameter values are stored in the **01_init-params.csv** file in the *data* directory.
-
-Based on this file a `R` data frame with the base-case parameters is generated by the `f.generate_init_params` function. We use a function to create a list of base-case parameters to have all model parameters in a single object. This object will have to be updated for the calibration and the different sensitivity analyses in components 3 and 5 of the framework, respectively. Below, we guide you through the components of the function. 
+Age-specific background mortality for healthy individuals is represented by the US population in 2015 and obtained from the [Human Mortality database](https://www.mortality.org). This information is stored in the **01_all-cause-mortality.csv** file in the *data* directory. Based on this .csv file a vector with mortality rates by age is created using the `f.load_mort_data` function in the **01_model-inputs_functions** script. This functions gives us the flexibility to easily import data from other coutries or years. 
 
 ```{r}
-print.function(f.define_init_params) # print the code of the function
+print.function(f.load_mort_data) # print the function
+``` 
+
+An other function in the **01_model-inputs_functions** script, is the `f.load_all_parms` function. This function, which is actually using the `f.load_mort_data` function, loads all parameters for the decision model from multiple sources and creates a list that contains all parameters and their values. 
+```{r}
+print.function(f.load_all_params)  # print the function
+``` 
+
+The `f.load_all_params` function is informed by the arguments `file.init` and `file.mort`. The `file.init` argument is a string with the location and name of the file with initial set of parameters. The inital parameter values for our case-study are stored in the **01_init-params.csv** file located in the *data* directory. The `f.load_all_params` function read this .csv file into the function environment as a dataframe called, `df.params.init`.  
+
+The `file.mort` argument is a string with the location and name of the file with mortality data. As described before, in our case-study this is the **01_all-cause-mortality.csv** file. Within the `f.load_all_parms` function, the `f.load_mort_data` function is used to create a vector with mortality rates from the .csv data. 
+
+After loading all the information, the `f.load_all_params` generates a list called,`l.params.all`, including all parameters for the model including the general setup parametes and the vector of mortality rates. The function also stores the dataframe  `df.params.init` with the initial set of parameters in the list. This is all executed in the in the **01_model-inputs.R** script by running the code below. 
+```{r, eval = FALSE, echo = TRUE}
+l.params.all <- f.load_all_params(file.init = "data/01_init-params.csv",
+                                  file.mort = "data/01_all-cause-mortality.csv")
 ```
+For the Sick-Sicker model we do not have to estimated parameters, but we d o have three parameters that need to be estimated via model calibration. In this stage of the framework, we simply set these parameters to valid “dummy” values that are compatible with the next phase of the analysis, model implementation, but are ultimately just placeholder values until we conduct the calibration phase. This means that these values will be replaced by the best-fitted calibrated values after we performed the calibration in component 3. 
 
-In this code, the `f.define_init_params` function loads the .csv file and stores the values of the parameters in a named dataframe. The Sick-Sicker model does not have estimated parameters, but there are three parameters that need to be estimated via model calibration. In this stage of the framework, we simply set these parameters to valid “dummy” values that are compatible with the next phase of the analysis, model implementation, but are ultimately just placeholder values until we conduct the calibration phase. This means that these values will be replaced by the best-fitted calibrated values after we performed the calibration in component 3. 
-
+Using a function to create a list of base-case parameters to have all model parameters in a single object is very useful, because this object will have to be updated for the calibration and the different sensitivity analyses in components 3 and 5 of the framework, respectively. Below, we guide you through the components of the function. 
 
 ###02 Model implementation
-In this component, we build the backbone of the decision analysis: the implementation of the model. This component is performed by the **02_simulation-model.R** script. This file itself is not very large. It simply loads some packages, sources the input from component 01, sources the function `f.decision_model` that is used the capture the dynamic process of the Sick-Sicker example, runs this function and stores the output. The output of the model is the traditional cohort trace, describing how the cohort is distributed among the different health states over time, which is plotted at the end of this script. This trace will be used in many of the other component sections. 
+In this component, we build the backbone of the decision analysis: the implementation of the model. This component is performed by the **02_simulation-model.R** script. This file itself is not very large. It simply loads some packages, sources the input from component 01, sources the function `f.decision_model` that is used the capture the dynamic process of the Sick-Sicker example, runs this function and stores the output. The output of the model is the traditional cohort trace, describing how the cohort is distributed among the different health states over time, which is plotted at the end of this script. This trace will be used in many of the other components.
 
-The function `f.decision_model` is defined in the **02_simulation-model_functions.R file**. As described in the paper, constructing a model as a function at this stage facilitates subsequent stages of the model development and analysis, as these processes will all call the same model function, but pass different parameter values and/or calculate different final outcomes based on the model outputs. In the next part of this section, we will describe the code within the function.
+The function `f.decision_model` is defined in the **02_simulation-model_functions.R file**. As described in the paper, constructing a model as a function at this stage facilitates subsequent stages of the model development and analysis, as these processes will all call the same model function, but pass different parameter values and/or calculate different final outcomes based on the model outputs. In the next part, we will describe the code within the function.
 
 ```{r}
 print.function(f.decision_model) # print the code of the function
 ```
 
-The `f.decision_model` function is informed by the argument `v.params`. Via this
-argument we specify all the parameter values. This function has all the mathematical equations of the decision models coded inside. For the Sick-Sicker model, these parameters are stored in the list `l.params.all`, which we passed into the function as shown below. 
+The `f.decision_model` function is informed by the argument `l.params.all`. Via this argument we give the function a list with with all parameters of the decision model. For the Sick-Sicker model, these parameters are stored in the list `l.params.all`, which we passed into the function as shown below. 
 
 ```{r, eval = FALSE, echo = TRUE}
-l.out.stm <- f.decision_model(v.params = df.params.init) # run the function
+l.out.stm <- f.decision_model(l.params.all = l.params.all) # run the function
 ```
 
-You probably noticed that the prefix of the argument is telling us it has to be a vector, while we pass a dataframe into the function. This is totally fine. The function is able to deal with both vectors, usefull for small models, as well as dataframes, when you have more parameter info. 
+This function itself has all the mathematical equations of the decision models coded inside. It starts by calculating the age-specific transition probabilities from all non-dead states based on the vector of age-specific mortality rates `v.r.asr`. These parameters will become vectors of length `n.t`, describing the probability to die for all ages from all non-dead states. 
 
-The function starts by calculating the age-specific transition probabilities from all non-dead states based on the vector of age-specific mortality rates `v.r.asr`. These parameters will become vectors of length `n.t`, describing the probability to die for all ages from all non-dead states. 
-
-The next part of the function, creates an array that stores the age-specific transition probability matrices in each of the third dimension. The transition probability matrix is a core component of a state-transition cohort model. This matrix contains the probabilities of transitioning from the current health state, indicated by the rows, to the other health states, specified by the columns. More information about creating these matrices is described in a paper on state-transition models using R [@Alarid-Escudero2019]. Since we have age-specific transition probabilities, the transition probability matrix is different at each cycle. These probabilities are only depending on the age of the cohort, and not on other events; therefore, we can generate all matrices at the start of the model. This results in `n.t` different age-specific matrices that are stored in an array, called `a.P`, of dimensions `n.s` x `n.s` x `n.t`. After initializing the array, it is filled with the transition probability stored in the list. When running the model, we can index the correct transition probability matrix corresponding with the current age of the cohort. We then added some sanity checks to make sure that the transition matrices and the transition probabilities are valid. The 
+The next part of the function, creates an array that stores the age-specific transition probability matrices in each of the third dimension. The transition probability matrix is a core component of a state-transition cohort model[@Iskandar2018]. This matrix contains the probabilities of transitioning from the current health state, indicated by the rows, to the other health states, specified by the columns. Since we have age-specific transition probabilities, the transition probability matrix is different at each cycle. These probabilities are only depending on the age of the cohort, and not on other events; therefore, we can generate all matrices at the start of the model. This results in `n.t` different age-specific matrices that are stored in an array, called `a.P`, of dimensions `n.s` x `n.s` x `n.t`. After initializing the array, it is filled with the transition probability stored in the list. When running the model, we can index the correct transition probability matrix corresponding with the current age of the cohort. We then added some sanity checks to make sure that the transition matrices and the transition probabilities are valid. The 
 transition probability matrices stored in the array `a.P`, for the first three and last cycle, are shown below. 
 
-```{r, echo = FALSE, eval = TRUE}
+```{r, echo = TRUE, eval = TRUE}
 l.out.stm$a.P[, , 1:3] # show the first three time-points of a.P
-l.out.stm$a.P[, , n.t] # transition probability matrix for the last cycle
+l.out.stm$a.P[, , l.params.all$n.t] # show the last 
 ```
 By comparing these probability matrices, we observe an increase in the probabilities of transitioning to death from all health states. 
 
@@ -148,9 +153,9 @@ head(l.out.stm$m.M)    # show the top part of the cohort trace
 tail(l.out.stm$m.M)    # show the bottom part of the cohort trace
 ```
 
-Using the code below, we can graphically show the model dynamics by plotting the cohort trace. This figure shows the distribution of the cohort among the different health states at each time point. 
+Using the code below, we can graphically show the model dynamics by plotting the cohort trace. Figure \ref{fig:Sick-Sicker-Trace} shows the distribution of the cohort among the different health states at each time point. 
 
-```{r Sick-Sicker-Trace, echo = FALSE, fig.cap = 'Cohort trace of the Sick-Sicker cohort model', message = FALSE, warning = FALSE, fig.pos = "H"} 
+```{r Sick-Sicker-Trace, echo = FALSE, fig.cap = "Cohort trace of the Sick-Sicker cohort model\\label{fig:Sick-Sicker-Trace}", message = FALSE, warning = FALSE, fig.pos = "H"} 
 ggplot(melt(l.out.stm$m.M), aes(x = Var1, y = value, color = Var2, linetype = Var2)) +
   geom_line(size = 1.3) +
   scale_color_discrete(l = 50, name = "Health state") +
@@ -161,54 +166,3 @@ ggplot(melt(l.out.stm$m.M), aes(x = Var1, y = value, color = Var2, linetype = Va
   theme()
 # matplot(m.M, pch = v.n)
 ```
-
-###03 Model calibration 
-```{r, eval = TRUE, echo = FALSE}
-source("functions/03_calibration_functions.R")
-```
-In this component, unknown or highly uncertain model parameters are estimated by calibrating model outputs to match specified calibration targets. This proces is executed by the **03_calibration.R** file. The target data is stored in the **03_calibration-targets.RData** file. The **03_calibration.R** file include much more code compared to the `R` scripts of the previous components. Like in compontent 02, we start with loading inputs and functions. In addition, we load the calibration target data. Next, in section 03.2 Visualize targets, we create a graph for each of our targets, survival, prevalence and the proportion who are Sicker, among all those afflicted (Sick+Sicker). 
-
-In section 03.3 Run calibration algorithms, we set the parameters we like to calibrate to fixed values and test if our function performing the calibrations, called `f.calibration_out`, works. 
-
-```{r}
-print.function(f.calibration_out) # print the funtions
-```
-
-This function is informed by the argument `v.params.calib`. This vector contains the values of the three parameters of interest. The placeholder values are replaced by these values and with these values the model is evaluated. This is done by running the `f.decision_model` function, described in component 02. This results in a new list with output of the model. With this new output, the epidemiological output, overall survial, disease prevalence and the proportion of Sicker in the Sick and Sicker state are calculated. The estimated values for these epidemiological outcomes at the timepoints $t$=11, $t$=21 and $t$=31, are combined in a list, called `l.out`. This is the output from the `f.calibration_out` function. 
-
-Now we know our function works, we specify our calibration parameters in section 03.3.1. This includes setting the seed, specifying the number of random samples, the name of the input paramters and most important, the range on input search spaces and the name of the calibration targets, `Surv`, `Prev`, `PropSick`.
-
-In the next section of this component to calibrate the Sick-Sicker model, section 03.3.2, we use a Bayesian approach using the incremental mixture importance sampling (IMIS) algorithm [Teele2006], which has been used to calibrate health policy models [@Raftery2010, @Menzies2017, Rutter2018]. Bayesian methods allow us to quantify the uncertainty in the calibrated parameters even in the presence of non-identifiability [@Alarid-Escudero2018b]. We assumed a normal likelihood and uniform priors. For a more detailed description of IMIS for Bayesian calibration, different likelihood functions and prior distributions, we refer the reader to the tutorial for Bayesian calibration by Menzies et al. [@Menzies2017]. We use the `IMIS` function from the likenamed package that is calling the functions `f.log_lik` to draw samples from the the posterior distribution of multivariate variable. [@IMIS] This IMIS function is using the functions `likelihood`, `sample.prior`, `f.log_prior` and `prior`, that are specified in the **03_calibration_functions.R** file. We respectively specify the incremental sample size at each iteration of IMIS, the desired posterior sample size at the resample stage, the maximum number of iterations in IMIS and the number of optimizers which could be 0. The function returns a list, which we called `l.fit.imis`, with the posterior resamples, the diagnostic statistics at each IMIS iteration and the centers of Gaussian components. We store the posterior resamples in the matrix `m.calib.post`. 
-
-In the next section, 03.4, we explore the posterior distributions. From these distributions, we compute the posterior mean, median and 95% credible interval, mode and maximum-a-posteriori (MAP). All for these summary statistics are combined in a data frame called `df.posterior.summ`. 
-
-Interpreting these statistics can be quite hard and is easier via a graph. In section 03.4.2 we visualize the posterior distributions. These figures are save in the *figures* folder and shown below. 
-
-![Posterior distribution joint \label{fig:Posterior-distribution-joint}](../figs/03_posterior-distribution-joint.png)
-
-![Posterior distribution marginal \label{fig:03_posterior-distribution-marginal}](../figs/03_posterior-distribution-marginal.png)
-[HOW DO WE INTERPRET THESE FIGURES?]
-
-Finally, the posterior and MAP from the IMIS calibration are stored in the file *03_imis-output.RData*. Storing this data as a datafile gives us the possibility to inport the data without re-running the calibration code. 
-
-For illustration purposes, we also provide code to calibrated the Sick-Sicker model with the Nelder-Mead algorithm [@Nelder1965], which was initialized at 100 different starting points sampled from the prior distributions of the calibrated parameters. This calibration exercise can be found in the file `app2_calibration-nelder-mead.R`, but we will not go into details for this file. 
-
-###04 Validation
-In this section, we like to check the internal validity of our Sick-Sicker model before we continue with the analysis. Checking the internal validity means that we need to make sure that the output corresponds with our input. For example, we like to check that Sicker individuals can not recover and that most of our cohort died by the end of the time horizon. We also plot our model-predicted outputs against the calibration targets. Therefore, the **04_validation.R** file stats with sourcing all previously described functions and generated calibration data. 
-
-We compute the model-predicted outputs for each sample of posterior distribution as well as for the MAP estimate. Section 04.5 is computing these model-predicted outputs for each sample using the function `f.data_summary`. 
-```{r}
-print.function(f.data_summary)
-```
-This function is informed by three arguments, `data`, `varname` and `groupnames`. 
-
-The computation of the model-predicted outputs using the MAP estimates is done by inserting the `v.calib.post.map` data into the previously described `f.calibration_out` function. This function creates a list including the estimated values for survival, prevalence and the proportion of sicker individuals at the time points 10, 20 and 30. 
-
-In sections 04.6 Internal validation: Model-predicted outputs vs. targets we check the internal validation of our model-predicted outputs versus our targets using plots. The generated plots are saved as .png files, which in turn can be used without the need of re-running the code. 
-
-![Survival data: Posterior vs targets  \label{fig:04_surv}](../figs/04_posterior-vs-targets-survival.png)
-
-![Prevalence data: Posterior vs targets  \label{fig:04_p}](../figs/04_posterior-vs-targets-prevalence.png)
-
-![Proportion sicker data: Posterior vs targets  \label{fig:04_proportion}](../figs/04_posterior-vs-targets-proportion-sicker.png)
-**[Do we need an interpretation of the graphs?]**

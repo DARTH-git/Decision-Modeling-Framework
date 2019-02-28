@@ -1,5 +1,5 @@
 ################################################################################ 
-# This script conducts the probabilistic sencitivity analysis (PSA) of the     #
+# This script conducts the probabilistic sensitivity analysis (PSA) of the     #
 # cost-effectiveness analysis of a hypothetical treatment for the simulated    #
 # cohort of the Sick-Sicker state-transition model (STM) to create PSA dataset #
 #                                                                              # 
@@ -104,6 +104,9 @@ df.cea.psa <- calculate_icers(cost = df.out.ce.psa$meanCost,
                               effect = df.out.ce.psa$meanEffect,
                               strategies = df.out.ce.psa$Strategy)
 df.cea.psa
+### Save CEA table with ICERs
+save(df.cea.psa, 
+     file = "tables/05b_probabilistic-cea-results.RData")
 
 #### 05a.6.3 Plot cost-effectiveness frontier ####
 plot(df.cea.psa)
@@ -120,7 +123,7 @@ ggsave("figs/05b_ceac-ceaf.png", width = 8, height = 6)
 #### 05b.6.3 Expected Loss Curves (ELCs) ####
 elc_obj <- calc_exp_loss(wtp = v.wtp, psa = l.psa)
 elc_obj
-plot(elc_obj)
+plot(elc_obj, log_y = FALSE)
 ggsave("figs/05b_elc.png", width = 8, height = 6)
 
 #### 05b.7 Create linear regression metamodeling sensitivity analysis graphs ####

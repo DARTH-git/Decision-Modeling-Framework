@@ -6,7 +6,7 @@ f.calibration_out <- function(v.params.calib, l.params.all){ # User defined
   ##   Computes model outputs to be used for calibration routines
   ### Arguments:  
   ##   v.params.calib: vector of parameters that need to be calibrated
-  ##   l.params.all: List with all parameters of decision model
+  ##   l.params.all: List with all parameters of the decision model
   ### Returns:
   ##   l.out: List with Survival (Surv), Prevalence of Sick and Sicker (Prev), 
   ##          and proportion of Sicker (PropSicker) out of all sick 
@@ -42,7 +42,7 @@ f.calibration_out <- function(v.params.calib, l.params.all){ # User defined
 f.log_lik <- function(v.params){ # User defined
   ### Definition:
   ##  Computes a log-likelihood value for one (or multiple) parameter set(s)
-  ##  using the simulation model and likelihoof functions
+  ##  using the simulation model and likelihood functions
   ### Arguments:  
   ##   v.params: Vector (or matrix) of model parameters 
   ### Returns:
@@ -77,7 +77,7 @@ f.log_lik <- function(v.params){ # User defined
                                    sd = SickSicker.targets$Prev$se,
                                    log = T))
     
-    ## TARGET 3: Proprotion Sick+Sicker who are Sick ("PropSick")
+    ## TARGET 3: Proportion Sick+Sicker who are Sick ("PropSick")
     ## Normal log-likelihood
     v.llik[j, "PropSick"] <- sum(dnorm(x = SickSicker.targets$PropSick$value,
                                        mean = l.model.res$PropSick,
