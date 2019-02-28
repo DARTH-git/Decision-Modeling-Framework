@@ -185,11 +185,11 @@ Once we make sure this code works, we specify the calibration parameters in sect
 
 In the next section, _03.3.2 Run IMIS algorithm_, we calibrate the Sick-Sicker model with the IMIS algorithm. For this case-study, we assume a normal likelihood and uniform priors but other could be used. For a more detailed description of IMIS for Bayesian calibration, different likelihood functions and prior distributions, we refer the reader to the tutorial for Bayesian calibration by Menzies et al. [@Menzies2017]. We use the `IMIS` function from the `IMIS` package that calls the functions `likelihood`, `sample.prior` and `prior`, to draw samples from the posterior distribution [@IMIS]. The functions are specified in the *03_calibration_functions.R* file. For the `IMIS` function, we specify the incremental sample size at each iteration of IMIS, the desired posterior sample size at the resample stage, the maximum number of iterations in IMIS and the number of optimizers which could be 0. The function returns a list, which we call `l.fit.imis`, with the posterior samples, the diagnostic statistics at each IMIS iteration and the centers of Gaussian components [@IMIS]. We store the posterior samples in the matrix `m.calib.post`. 
 
-We then expolore this posterior distributions in section _03.4 Exploring posterior distribution_. We start by estimating the posterior mean, median and 95% credible interval, the mode and the maximum-a-posteriori (MAP). To estimate the mode, we use the package `modeest` [@modeest]. All for these summary statistics are combined in a dataframe called `df.posterior.summ`. Table XX shows the summary statistics of the posterior distribution. 
+We then expolore this posterior distributions in section _03.4 Exploring posterior distribution_. We start by estimating the posterior mean, median and 95% credible interval, the mode and the maximum-a-posteriori (MAP). To estimate the mode, we use the package `modeest` [@modeest]. All for these summary statistics are combined in a dataframe called `df.posterior.summ`. Table \ref{tab:SummaryCal} shows the summary statistics of the posterior distribution. 
 
 ```{r, eval = TRUE, echo = FALSE}
 load("tables/03_summary-posterior.RData")
-kable(df.posterior.summ[, -1], caption = "Summary statistics of the posterior distribution") # create a table 
+kable(df.posterior.summ[, -1], caption = "Summary statistics of the posterior distribution\\label{tab:SummaryCal}") # create a table 
 ``` 
 
 
@@ -215,7 +215,7 @@ This function is informed by three arguments, `data`, `varname` and `groupnames`
 
 The computation of the model-predicted outputs using the MAP estimate is done by inserting the `v.calib.post.map` data into the previously described `f.calibration_out` function. This function creates a list including the estimated values for survival, prevalence and the proportion of sicker individuals at cycles 10, 20 and 30. 
 
-In sections _04.6 Internal validation: Model-predicted outputs vs. targets_, we check the internal validation by plotting the model-predicted outputs against the calibration targets Figure (\ref{fig:04_surv}-\ref{fig:04_proportion}). The generated plots are saved as .png files, which could be used in reporst later on without the need of re-running the code. 
+In sections _04.6 Internal validation: Model-predicted outputs vs. targets_, we check the internal validation by plotting the model-predicted outputs against the calibration targets Figure (\ref{fig:04_surv}-\ref{fig:04_proportion}). The generated plots are saved as .png files, which could be used in reports later on without the need of re-running the code. 
 
 ![Survival data: Model-predicted outputs vs targets  \label{fig:04_surv}](../figs/04_posterior-vs-targets-survival.png)
 
@@ -308,8 +308,10 @@ print.function(f.generate_psa_params) # print the function
 
 The function returns a dataframe with a PSA datasef of the input parameters, that will be used to produce distributions of costs, effectiveness and NMB.
 
-####05c Value of information
+**[FAE:Add and describe uncertainty analysis figures]**
 
+####05c Value of information
+**[FAE: Describe VOI scripts and add VOI figures with their description.]**
 
 ![Expected value of perfect information \label{fig:05c_evpi}](../figs/05c_evpi.png)
 
