@@ -34,7 +34,7 @@ source("functions/02_simulation-model_functions.R")
 source("functions/05a_deterministic-analysis_functions.R")
 
 #### 05a.1.4 Load calibrated parameters ####
-load("data/03_imis-output.RData")
+load("output/03_imis-output.RData")
 
 #### 05a.2 Cost-effectiveness analysis parameters ####
 ### Strategy names

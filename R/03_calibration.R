@@ -171,4 +171,4 @@ dev.off()
 #### 03.5 Store posterior and MAP from IMIS calibration ####
 save(m.calib.post,
      v.calib.post.map,
-     file = "data/03_imis-output.RData")
+     file = "output/03_imis-output.RData")

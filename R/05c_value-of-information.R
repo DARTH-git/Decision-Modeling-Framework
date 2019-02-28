@@ -25,7 +25,7 @@ library(dampack)   # decision-analytic modeling visualization tool
 
 #### 05c.1.2 Load functions ####
 #### 05c.1.3 Load PSA dataset ####
-load(file = "data/05b_psa-dataset.RData")
+load(file = "output/05b_psa-dataset.RData")
 
 #### 05c.2 Define VOI inputs ####
 ### Vector with willingness-to-pay (WTP) thresholds

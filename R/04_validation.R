@@ -41,7 +41,7 @@ source("functions/04_validation-functions.R")
 
 #### 04.1.4 Load targets and calibrated parameters ####
 load("data/03_calibration-targets.RData")
-load("data/03_imis-output.RData")
+load("output/03_imis-output.RData")
 
 #### 04.2 Compute model-predicted outputs ####
 #### 04.2.1 Compute model-predicted outputs for each sample of posterior distribution ####

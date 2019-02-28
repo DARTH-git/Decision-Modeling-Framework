@@ -84,10 +84,10 @@ l.psa <- make_psa_obj(cost = df.c,
 #### 05b.5 Save PSA objects ####
 save(df.psa.input, df.c, df.e, v.names.str, n.str,
      l.psa,
-     file = "data/05b_psa-dataset.RData")
+     file = "output/05b_psa-dataset.RData")
 
 #### 05b.6 Create probabilistic analysis graphs ####
-load(file = "data/05b_psa-dataset.RData")
+load(file = "output/05b_psa-dataset.RData")
 
 ### Vector with willingness-to-pay (WTP) thresholds
 v.wtp <- seq(0, 200000, by = 10000)
