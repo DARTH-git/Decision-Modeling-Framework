@@ -42,7 +42,7 @@ f.calibration_out <- function(v.params.calib, l.params.all){ # User defined
 f.log_lik <- function(v.params){ # User defined
   ### Definition:
   ##  Computes a log-likelihood value for one (or multiple) parameter set(s)
-  ##  using the simulation model and likelihoof functions
+  ##  using the simulation model and likelihood functions
   ### Arguments:  
   ##   v.params: Vector (or matrix) of model parameters 
   ### Returns:
@@ -77,7 +77,7 @@ f.log_lik <- function(v.params){ # User defined
                                    sd = SickSicker.targets$Prev$se,
                                    log = T))
     
-    ## TARGET 3: Proprotion Sick+Sicker who are Sick ("PropSick")
+    ## TARGET 3: Proportion Sick+Sicker who are Sick ("PropSick")
     ## Normal log-likelihood
     v.llik[j, "PropSick"] <- sum(dnorm(x = SickSicker.targets$PropSick$value,
                                        mean = l.model.res$PropSick,

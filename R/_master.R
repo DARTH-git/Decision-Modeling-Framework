@@ -1,5 +1,5 @@
 ################################################################################ 
-# This script runs all the components of the DARTH fraemwork using the         #
+# This script runs all the components of the DARTH framework using the         #
 # Sick-Sicker model as testbed. It computes the cost-effectiveness analysis of #
 # a hypothetical treatment for the simulated cohort of the Sick-Sicker         #
 # state-transition model (STM)                                                 #
@@ -27,11 +27,11 @@ source("R/01_model-inputs.R", echo = TRUE)
 source("R/02_simulation-model.R", echo = TRUE)
 
 #### 03 Calibrate simulation model ####
-### Uncomment if you want to rereun the calibration component 
+### Uncomment if you want to rerun the calibration component 
 # source("R/03_calibration.R", echo = TRUE)
 
 #### 04 Validate simulation model ####
-### Uncomment if you want to rereun the validation component
+### Uncomment if you want to rerun the validation component
 # source("R/04_validation.R", echo = TRUE)
 
 #### 05a Conduct deterministic analysis ####
@@ -41,4 +41,4 @@ source("R/05a_deterministic-analysis.R", echo = TRUE)
 source("R/05b_probabilistic-analysis.R", echo = TRUE )
 
 #### 06 Conduct value of information analysis ####
-source("R/06_value-of-information.R", echo = TRUE )
+source("R/05c_value-of-information.R", echo = TRUE )

@@ -19,9 +19,6 @@ f.generate_psa_params <- function(n.sim, seed = 20190220){ # User defined
   df.psa.params <- data.frame(
     ### Calibrated parameters
     m.calib.post,
-    # p.S1S2 = v.calib.post.map["p.S1S2"],# probability to become sicker when sick
-    # hr.S1  = v.calib.post.map["hr.S1"], # hazard ratio of death in S1 vs healthy
-    # hr.S2  = v.calib.post.map["hr.S2"], # hazard ratio of death in S2 vs healthy
     
     ### Transition probabilities (per cycle)
     p.HS1   = rbeta(n.sim, 30, 170),        # probability to become sick when healthy
