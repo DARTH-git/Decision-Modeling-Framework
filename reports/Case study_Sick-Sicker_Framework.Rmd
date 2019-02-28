@@ -1,7 +1,6 @@
 ---
 title: "Sick-Sicker case-study"
-author: "Supplementory material to the paper: 'A need for change! A coding framework for improving transparency in decision modeling'"
-date: "DARTH workgroup"
+author: "Supplementary Material to: A need for change! A coding framework for improving transparency in decision modeling"
 output: 
   pdf_document: default
     #fig_caption: yes
@@ -53,8 +52,7 @@ We assume that most of the parameters of the Sick-Sicker model and their uncerta
 As part of the CEA, we conducted different deterministic sensitivity analysis (SA), including one-way and two-way SA, and tornado plots. To quantify the effect of parameter uncertainty on decision uncertainty, we conducted a probabilistic sensitivity analysis (PSA) and reported our uncertainty analysis results with a cost-effectiveness acceptability curve (CEAC), cost-effectiveness acceptability frontier (CEAF) and expected loss curves (ELC). We also conducted a value of information (VOI) analysis to determine whether potential future research is needed to reduce parameter uncertainty. All steps of the CEA will be described using the different components of the framework. 
 
 ## Set up
-This report is a supplementary material meant to guide you through the `R` code of a full functional decision model we use to showcase the DARTH framework described in the manuscript titled *A need for change! A coding framework for improving transparency in decision modeling*. The code following the framework can be downloaded from the DARTH-git on GitHub (https://github.com/DARTH-git/Decision-Modeling-Framework). We recommend downloading this complete framework as a .zip file containing all directories. Unzip the folder and save it on your computer. The framework is divided into different directories, described in Table 1, that could be accessed from the RStudio project *Decision-Modeling-Framework.Rproj*. In this framework, you will find multiple directories as described in Table 1 of the main manuscript. We refer to the directory names of this framework and scripts stored in these directories  using *italic* style. This report is created with Markdown and is located in the *reports* directory of the framework. The
-figures for the case-study can be found in the *figs* directory, data required to conduct some of the analyses of the different components are in the *data* directory and the `R` scripts with functions, are located in the *functions* directory. The main `R` scripts that conduct the analyses of the different components of the framework are stored in the `R` directory. In this document we do not show all the `R` code we refer to. Therefore, it is important to follow along while reading this document. To make sure you have all the required packages needed to run all the code, first install all the required packages by running the *00_general-setup.R* script in the `R` directory.
+This report is a supplementary material meant to guide you through the `R` code of a fully functional decision model to showcase the framework described by the Decision Analysis in R for Technologies in Health (DARTH) workgroup in the manuscript *A need for change! A coding framework for improving transparency in decision modeling*. The code of this analysiscan be downloaded from the DARTH-git on GitHub (https://github.com/DARTH-git/Decision-Modeling-Framework). We recommend downloading the case-study files as a single .zip file containing all directories. Unzip the folder and save to your desired directory. The framework is divided into different directories, described in Table 1, that could be accessed from the RStudio project *Decision-Modeling-Framework.Rproj*. In this framework, you will find multiple directories as described in Table 1 of the main manuscript. We refer to the directory names of this framework and scripts stored in these directories using *italic* style. This report is created with Markdown and is located in the *reports* directory of the framework. The figures for the case-study can be found in the *figs* directory, data required to conduct some of the analyses of the different components are in the *data* directory and the `R` scripts with functions, are located in the *functions* directory. The main `R` scripts that conduct the analyses of the different components of the framework are stored in the `R` directory. In this document we do not show all the `R` code we refer to. Therefore, it is important to follow along while reading this document. To make sure you have all the required packages needed to run all the code, first install all the required packages by running the *00_general-setup.R* script in the `R` directory.
 
 ```{r, eval = FALSE, echo = TRUE, warning = FALSE }
 source("R/app0_packages-setup.R")
@@ -96,7 +94,7 @@ Table: \label{tab:parameters} Description of the initial parameters with their `
 | Intervention effect                |             |               |
 | - Utility for treated individuals in S1 | `u.Trt` |  0.95        |
 
-Age-specific background mortality for healthy individuals is represented by the US population in 2015 and obtained from the [Human Mortality database](https://www.mortality.org). This information is stored in the *01_all-cause-mortality.csv* file in the *data* directory. Based on this .csv file a vector with mortality rates by age is created using the `f.load_mort_data` function in the *01_model-inputs_functions.R* script. This functions gives us the flexibility to easily import data from other coutries or years. 
+Age-specific background mortality for healthy individuals is represented by the US population in 2015 and obtained from the [Human Mortality database](https://www.mortality.org). This information is stored in the *01_all-cause-mortality.csv* file in the *data* directory. Based on this .csv file a vector with mortality rates by age is created using the `f.load_mort_data` function in the *01_model-inputs_functions.R* script. This function gives us the flexibility to easily import data from other coutries or years. 
 
 ```{r}
 print.function(f.load_mort_data) # print the function
@@ -179,13 +177,13 @@ In section _03.3 Run calibration algorithms_, we set the parameters we like to c
 print.function(f.calibration_out) # print the funtions
 ```
 
-This function is informed by two argument `v.params.calib` and `l.params.all`. The vector  `v.params.calib` contains the values of the three parameters of interest and the list `l.params.all` contains all parameters of the decision model. The placeholder values are replaced by `v.params.calib` and with these values the model is evaluated. This is done by running the `f.decision_model` function, described in component 02. This results in a new list with output of the model corresponding to the parameter values in the `v.params.calib`. With this new decision model output, the overall survival, disease prevalence and the proportion of Sicker in the Sick and Sicker states are calculated. The estimated values for these epidemiological outcomes at different timepoints are combined in a list called `l.out` produced bu the `f.calibration_out`. 
+This function is informed by two argument `v.params.calib` and `l.params.all`. The vector `v.params.calib` contains the values of the three parameters of interest and the list `l.params.all` contains all parameters of the decision model. The placeholder values are replaced by `v.params.calib` and with these values the model is evaluated. This is done by running the `f.decision_model` function, described in component 02. This results in a new list with output of the model corresponding to the parameter values in the `v.params.calib`. With this new decision model output, the overall survival, disease prevalence and the proportion of Sicker in the Sick and Sicker states are calculated. The estimated values for these epidemiological outcomes at different timepoints are combined in a list called `l.out` produced bu the `f.calibration_out`. 
 
 Once we make sure this code works, we specify the calibration parameters in section _03.3.1 Specify calibration parameters_. These include setting the seed for the random number generation, specifying the number of random samples to obtain from the calibrated posterior distribition, the name of the input parameters and the range of these parameters that will inform the prior distributions of the calibrated parameters, and the name of the calibration targets: `Surv`, `Prev`, `PropSick`.
 
 In the next section, _03.3.2 Run IMIS algorithm_, we calibrate the Sick-Sicker model with the IMIS algorithm. For this case-study, we assume a normal likelihood and uniform priors but other could be used. For a more detailed description of IMIS for Bayesian calibration, different likelihood functions and prior distributions, we refer the reader to the tutorial for Bayesian calibration by Menzies et al. [@Menzies2017]. We use the `IMIS` function from the `IMIS` package that calls the functions `likelihood`, `sample.prior` and `prior`, to draw samples from the posterior distribution [@IMIS]. The functions are specified in the *03_calibration_functions.R* file. For the `IMIS` function, we specify the incremental sample size at each iteration of IMIS, the desired posterior sample size at the resample stage, the maximum number of iterations in IMIS and the number of optimizers which could be 0. The function returns a list, which we call `l.fit.imis`, with the posterior samples, the diagnostic statistics at each IMIS iteration and the centers of Gaussian components [@IMIS]. We store the posterior samples in the matrix `m.calib.post`. 
 
-We then expolore this posterior distributions in section _03.4 Exploring posterior distribution_. We start by estimating the posterior mean, median and 95% credible interval, the mode and the maximum-a-posteriori (MAP). To estimate the mode, we use the package `modeest` [@modeest]. All for these summary statistics are combined in a dataframe called `df.posterior.summ`. Table \ref{tab:SummaryCal} shows the summary statistics of the posterior distribution. 
+We then expolore these posterior distributions in section _03.4 Exploring posterior distribution_. We start by estimating the posterior mean, median and 95% credible interval, the mode and the maximum-a-posteriori (MAP). To estimate the mode, we use the package `modeest` [@modeest]. All for these summary statistics are combined in a dataframe called `df.posterior.summ`. Table \ref{tab:SummaryCal} shows the summary statistics of the posterior distribution. 
 
 ```{r, eval = TRUE, echo = FALSE}
 load("tables/03_summary-posterior.RData")
@@ -199,7 +197,7 @@ In section _03.4.2 Visualization of posterior distribution_, we generate a pairw
 
 ![Pairwise posterior distribution of calibrated parameters \label{fig:03_posterior-distribution-marginal}](../figs/03_posterior-distribution-marginal.png)
 
-Finally, the posterior distribution and MAP estimate from the IMIS calibration are stored in the file *03_imis-output.RData*. Storing this data as an Rdata file allows to import the data in following sections without needing to re-runn the calibration component. 
+Finally, the posterior distribution and MAP estimate from the IMIS calibration are stored in the file *03_imis-output.RData*. Storing this data as an .Rdata file allows to import the data in following sections without needing to re-run the calibration component. 
 
 
 
@@ -207,7 +205,7 @@ Finally, the posterior distribution and MAP estimate from the IMIS calibration a
 ###04 Validation
 In this section, we check the internal validity of our Sick-Sicker model before we move on to the analysis components. To internally validate the Sick-Sicker model, we compare the model-predicted output evaluated at posterior parameters against the calibration targets. This is all done in the *04_validation.R* script by loading all previously described functions and the generated calibration targets. 
 
-In section _04.2 Compute model-predicted outputs_, we compute the model-predicted outputs for each sample of posterior distribution as well as for the MAP estimate. We then use the function `f.data_sumary` to summarize the model-predicted posterior outputs into different summary statistics. 
+In section _04.2 Compute model-predicted outputs_, we compute the model-predicted outputs for each sample of posterior distribution as well as for the MAP estimate. We then use the function `f.data_summary` to summarize the model-predicted posterior outputs into different summary statistics. 
 ```{r}
 print.function(f.data_summary)
 ```
@@ -225,11 +223,11 @@ In sections _04.6 Internal validation: Model-predicted outputs vs. targets_, we 
 
 
 ### 05: Analysis
-The analysis component is where the elements in components 1-4 are combined to answer the question(s) of interest given current information adn to quantify the value of potential further research. Our framework separates the analysis in three subcomponents, subcomponents: _05a Deterministic analysis_, _05b Uncertainty analysis_ and _05c Value of information analysis_. For the Sick-Sicker case-study, we use all three subcomponents to conduct the CEA adn to quantify the uncertainty of our decision. For procedures in the cost-effectiveness analyses, we rely on the R package `dampack`, which is available here: 
-  <https://github.com/DARTH-git/dampack>. Instructions for installing dampack are described in Appendix A. provided in the framework *app0_packages-setup.R script*.
+The analysis component is where the elements in components 1-4 are combined to answer the question(s) of interest given current information and to quantify the value of potential further research. Our framework separates the analysis in three subcomponents, subcomponents: _05a Deterministic analysis_, _05b Uncertainty analysis_ and _05c Value of information analysis_. For the Sick-Sicker case-study, we use all three subcomponents to conduct the CEA and to quantify the uncertainty of our decision. For procedures in the cost-effectiveness analyses, we rely on the `R` package `dampack`, which is available here: 
+  <https://github.com/DARTH-git/dampack>. Instructions for installing `dampack` are described in Appendix A. provided in the framework *app0_packages-setup.R script*.
 
 ####05a Deterministic analysis
-In this subcomponent, we perform a deterministic CEA, followed by some deterministic sensitivity analysis, including one-way, two-way and tornado sensitivity analyses. The function script of this subcomponent, *05a_deterministic-analysis_function.R* contains the function `f.calculate_ce_out`. This functions calculates costs and effects for a given vector of parameters using a simulation model. Our initial parameter values are stored in the list `l.params.all` which we created in component 1, while our calibrated values are stored in the vector `v.calib.post.map`. We want to run the simulation model using the calibrated parameter values and this means we need to upload the list created in component 1. We uplead this list by using the function `f.update_param_list` genereated by the *00_general_functions.R* folder. 
+In this subcomponent, we perform a deterministic CEA, followed by some deterministic sensitivity analysis, including one-way, two-way and tornado sensitivity analyses. The function script of this subcomponent, *05a_deterministic-analysis_function.R* contains the function `f.calculate_ce_out`. This functions calculates costs and effects for a given vector of parameters using a simulation model. Our initial parameter values are stored in the list `l.params.all` which we created in component 1, while our calibrated values are stored in the vector `v.calib.post.map`. We want to run the simulation model using the calibrated parameter values and this means we need to upload the list created in component 1. We upload this list by using the function `f.update_param_list` genereated by the *00_general_functions.R* folder. 
 
 ```{r}
 print.function(f.update_param_list)
@@ -237,12 +235,12 @@ print.function(f.update_param_list)
 
 The first argument of the function, called `l.params.all` is a list with all the parameters of decision model. The second argument, `params.updated`, is an object with parameters for which values need to be updated. The function returns the list `l.params.all`, but now with updated values. 
 
-In the  *05a_deterministic-analysis.R* script we run this function for our case-study, resulting in  the list `l.params.basecase` where the placeholder values for `p.S1S2`, `hr.S1` and `hr.S2` are replaced by the calibration estimates. 
+In the *05a_deterministic-analysis.R* script we run this function for our case-study, resulting in  the list `l.params.basecase` where the placeholder values for `p.S1S2`, `hr.S1` and `hr.S2` are replaced by the calibration estimates. 
 
 ```{r, eval = FALSE, echo = TRUE}
 l.params.basecase <- f.update_param_list(l.params.all, v.calib.post.map) 
 ```
-We use this new generated list as an argumnet in the `f.calculate_ce_out` function. We also need to specify the willingness-to-pay (WTP) threshold value using the `n.wtp` argument of this function. This WTP value is used to compute a net monetary benefit (NMB) value. If the users does not specify the WTP, a default value of $100,000/QALY will be used by the function. 
+We use this new generated list as an argument in the `f.calculate_ce_out` function. We also need to specify the willingness-to-pay (WTP) threshold value using the `n.wtp` argument of this function. This WTP value is used to compute a net monetary benefit (NMB) value. If the users does not specify the WTP, a default value of $100,000/QALY will be used by the function. 
 
 ```{r}
 df.out.ce <- f.calculate_ce_out(l.params.all = l.params.basecase, 
@@ -257,7 +255,7 @@ In the second part of the function we create multiple vectors for both the cost 
 df.out.ce # print the dataframe 
 ```
 
-This matrix is the result of the function. This compact matrix with the CE results can be used as an argumnet in the `calculate_icers` function from the `dampack` package to calculate the incremental cost-effectiveness ratios (ICERs) and noting which strategies are weakly and strongly dominated. 
+This matrix is the result of the function. This compact matrix with the CE results can be used as an argument in the `calculate_icers` function from the `dampack` package to calculate the incremental cost-effectiveness ratios (ICERs) and noting which strategies are weakly and strongly dominated. 
 
 ![One-way sensitivity analysis results for the parameters c.Trt, p.HS1, u.S1 and u.Trt \label{fig:05a_owsa-nmb}](../figs/05a_cea-frontier.png)
 
@@ -279,11 +277,11 @@ We then conduct a series of deterministic sensitivity analysis. First, we conduc
 
 
 ####05b Uncertainty analysis 
-In this subsection, we evaluate decision uncertainty by propagating the uncertainty through the CEA using probabilistic sensitiviy analysis (PSA). Until now we used the parameter values as described in Table \ref{tab:parameters}. However, we are uncertain about these values. Most of these input parameters are defined by probability distribution as described in Table \ref{tab:parameters PSA}. 
+In this subsection, we evaluate decision uncertainty by propagating the uncertainty through the CEA using probabilistic sensitivity analysis (PSA). Until now we used the parameter values as described in Table \ref{tab:parameters}. However, we are uncertain about these values. Most of these input parameters are defined by probability distribution as described in Table \ref{tab:parameters PSA}. 
 
 Table: \label{tab:parameters PSA} Description of parameters with their R name and distribition.
 
-|           **Parameter**         |  **R name** |   **Distribtion**   |
+|           **Parameter**         |  **R name** |   **Distribution**   |
   |:--------------------------------|:-----------:|:-------------:|
   | Annual transition probabilities |           |               |
   | - Disease onset (H to S1)       | `p.HS1`     |  `beta(30, 170)`        |
@@ -306,7 +304,7 @@ Table: \label{tab:parameters PSA} Description of parameters with their R name an
 print.function(f.generate_psa_params) # print the function 
 ```
 
-The function returns a dataframe with a PSA datasef of the input parameters, that will be used to produce distributions of costs, effectiveness and NMB.
+The function returns a dataframe with a PSA dataset of the input parameters, that will be used to produce distributions of costs, effectiveness and NMB.
 
 **[FAE:Add and describe uncertainty analysis figures]**
 
