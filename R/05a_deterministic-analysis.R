@@ -6,6 +6,7 @@
 #   00_general_functions.R                                                     #
 #   01_model-inputs.R                                                          #
 #   02_simulation-model_functions.R                                            #
+#   05a_deterministic-analysis_functions.R                                     #
 #                                                                              # 
 # Authors:                                                                     #
 #     - Fernando Alarid-Escudero, PhD, <fernando.alarid@cide.edu>              # 
@@ -55,6 +56,9 @@ df.cea.det <- calculate_icers(cost = df.out.ce$Cost,
                               effect = df.out.ce$Effect, 
                               strategies = v.names.str)
 df.cea.det
+### Save CEA table with ICERs
+save(df.cea.det, 
+     file = "tables/05a_deterministic-cea-results.RData")
 
 #### 05a.5 Plot cost-effectiveness frontier ####
 plot(df.cea.det)

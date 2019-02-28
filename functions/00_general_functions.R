@@ -1,6 +1,6 @@
-#-----------------------------------------------------#
-#### Function to update param list with new values ####
-#-----------------------------------------------------#
+#----------------------------------------------------------#
+#### Function to update parameters list with new values ####
+#----------------------------------------------------------#
 f.update_param_list <- function(l.params.all, params.updated){
   ### Definition:
   ##   Updates list of all parameters with new values for specific parameters
