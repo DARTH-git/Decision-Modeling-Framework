@@ -357,7 +357,7 @@ Next, we perform a CEA using the previously used `calculate_icers` functions fro
 
 
 ####05c Value of information
-In the VOI component, the results from the PSA generated in the probabilistic analysis subcomponent are used to determine whether further potential research is needed. We use the `calc_evpi` function from the `dampack` package to calculate the expected value of perfect information (EVPI). Figure \ref{fig:05c_evpi} shows the EVPI for the different WTP values.
+In the VOI component, the results from the PSA generated in the probabilistic analysis subcomponent are used to determine whether further potential research is needed. We use the `calc_evpi` function from the `dampack` package to calculate the expected value of perfect information (EVPI). Figure \ref{fig:05c_evpi} shows the EVPI for the different WTP thresholds.
 
 ```{r, eval = FALSE, echo = TRUE}
 evpi <- calc_evpi(wtp = v.wtp, psa = l.psa)
