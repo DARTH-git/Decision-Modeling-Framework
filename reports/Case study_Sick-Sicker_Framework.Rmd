@@ -1,6 +1,6 @@
 ---
-title: "Sick-Sicker case-study - Supplementary Material to: A need for change! A coding framework for improving transparency in decision modeling"
-author: "Fernando Alarid-Escudero, Eline Krijkamp, Petros Pechlivanoglou, Hawre Jalal and Eva A. Enns"
+title: "**Sick-Sicker case-study** \\ Supplementary Material to: *A need for change! A coding framework for improving transparency in decision modeling*"
+author: "Fernando Alarid-Escudero, PhD, Eline Krijkamp, MSc, Petros Pechlivanoglou, PhD, Hawre Jalal, PhD and Eva A. Enns, PhD"
 output: 
   pdf_document: default
     #fig_caption: yes
@@ -45,9 +45,9 @@ In this case-study, we perform a cost-effectiveness analysis (CEA) using a previ
 
 ![State-transition diagram of the Sick-Sicker model. Healthy individuals can get Sick, die or stay healthy. Sick individuals can recover, transitioning back to healthy, can die, or stay sick. Once individuals are Sicker, they stay Sicker until they die. \label{fig:STM Sick-Sicker}](../figs/Sick-Sicker figure.png)
 
-Two alternative strategies exist for this hypothetical disease: a no-treatment and a treatment strategy. Under the treatment strategy, Sick and Sicker individuals receive treatment and continue doing so until they recover or die. The cost of the treatment is additional to the cost of being Sick or Sicker for one year. The treatment improves QoL for those individuals who are Sick but has no effect on the QoL of those who are sicker. To evaluate these two alternative strategies, we perform a cost-effectiveness analysis (CEA).
+Two alternative strategies exist for this hypothetical disease: a no-treatment and a treatment strategy. Under the treatment strategy, Sick and Sicker individuals receive treatment and continue doing so until they recover or die. The cost of the treatment is additional to the cost of being Sick or Sicker for one year. The treatment improves QoL for those individuals who are Sick but has no effect on the QoL of those who are sicker. To evaluate these two alternative strategies, we perform a CEA.
 
-We assume that most of the parameters of the Sick-Sicker model and their uncertainty have been previously estimated and are known to the analyst. However, while we can identify those who are afflicted with the illness through obvious symptoms, we can not easily distinguish those in the Sick state from the those in the Sicker state. Thus, we can not directly estimate state-specific mortality hazard rate ratios, nor do we know the transition probability of progressing from Sick to Sicker. Therefore, we calibrate the model to different epidemiological data. We internally validated the calibrated model by comparing the predicted outputs from the model evaluated at the calibrated parameters against the calibration targets [@Eddy2012, @Goldhaber-Fiebert2010]. 
+We assume that most of the parameters of the Sick-Sicker model and their uncertainty have been previously estimated and are known to the analyst. However, while we can identify those who are afflicted with the illness through obvious symptoms, we can not easily distinguish those in the Sick state from the those in the Sicker state. Thus, we can not directly estimate state-specific mortality hazard rate ratios, nor do we know the transition probability of progressing from Sick to Sicker. Therefore, we calibrate the model to different epidemiological data. We internally validated the calibrated model by comparing the predicted outputs from the model evaluated at the calibrated parameters against the calibration targets [@Eddy2012, @Goldhaber_Fiebert2010]. 
 
 As part of the CEA, we conducted different deterministic sensitivity analysis (SA), including one-way and two-way SA, and tornado plots. To quantify the effect of parameter uncertainty on decision uncertainty, we conducted a probabilistic sensitivity analysis (PSA) and reported our uncertainty analysis results with a cost-effectiveness acceptability curve (CEAC), cost-effectiveness acceptability frontier (CEAF) and expected loss curves (ELC) [@Alarid-Escudero2019]. We also conducted a value of information (VOI) analysis to determine whether potential future research is needed to reduce parameter uncertainty. All steps of the CEA will be described using the different components of the framework. 
 
@@ -199,9 +199,6 @@ In section _03.4.2 Visualization of posterior distribution_, we generate a pairw
 
 Finally, the posterior distribution and MAP estimate from the IMIS calibration are stored in the file *03_imis-output.RData*. Storing this data as an .Rdata file allows to import the data in following sections without needing to re-run the calibration component. 
 
-
-
-
 ###04 Validation
 In this section, we check the internal validity of our Sick-Sicker model before we move on to the analysis components. To internally validate the Sick-Sicker model, we compare the model-predicted output evaluated at posterior parameters against the calibration targets. This is all done in the *04_validation.R* script by loading all previously described functions and the generated calibration targets. 
 
@@ -328,7 +325,7 @@ for(i in 1:n.sim){
 }
 ``` 
 
-By restructuring these PSA results, we can plot the results using the `plot` function from `dampack`. Figure \ref{fig:05b_CEAplane} shows the CE scatter plot with the joint distribution of costs and effects for each strategy and their corresponding 95\% confidence ellipse. 
+By restructuring these PSA results, we can plot the results using the `plot` function from `dampack`. Figure \ref{fig:05b_CEAplane} shows the CE scatter plot with the joint distribution of costs and effects for each strategy and their corresponding 95% confidence ellipse. 
 
 ![The cost-effectiveness plane graph showing the results of the probabilistic sensitivity analysis for the Sick-Sicker case-study. \label{fig:05b_CEAplane}](../figs/05b_cea-plane-scatter.png)
 
@@ -338,7 +335,7 @@ By restructuring these PSA results, we can plot the results using the `plot` fun
 load("tables/05b_probabilistic-cea-results.RData")
 kable(df.cea.psa[, -7], caption = "Probabilistic cost-effectiveness analysis results of the Sick-Sicker model comparing no treatment with treatment. \\label{tab:df.cea.prob}") # create a table 
 ``` 
-Next, we perform a CEA using the previously used `calculate_icers` functions from `dampack`. Table \ref{tab:df.cea.prob} shows the results of the probabilistic CEA. In addition, we plot a cost-effectiveness frontier, cost-effectiveness acceptability curves (CEACs) and frontier (CEAF), Expected Loss Curves (ELCs) (Figure \ref{fig:05b_cea-frontier-psa} - \ref{fig:05b_elc}) [@Alarid-Escudero2019]. Followed by creating linear regression metamodeling sensitivity analysis graphs (Figure \ref{fig:05b_owsa-lrm-nmb} - \ref{fig:05b_twsa-lrm-uS1-uTrt-nmb}). All generated figures are shown below and stored to the *figs* folder. 
+Next, we perform a CEA using the previously used `calculate_icers` functions from `dampack`. Table \ref{tab:df.cea.prob} shows the results of the probabilistic CEA. In addition, we plot a cost-effectiveness frontier (CEAF), cost-effectiveness acceptability curves (CEACs) with frontier, expected Loss curves (ELCs) (Figure \ref{fig:05b_cea-frontier-psa} - \ref{fig:05b_elc}) [@Alarid-Escudero2019]. Followed by creating linear regression metamodeling sensitivity analysis graphs (Figure \ref{fig:05b_owsa-lrm-nmb} - \ref{fig:05b_twsa-lrm-uS1-uTrt-nmb}). All generated figures are shown below and stored to the *figs* folder. 
 
 ![Cost-effectiveness frontier\label{fig:05b_cea-frontier-psa}](../figs/05b_cea-frontier-psa.png)
 
@@ -364,6 +361,10 @@ evpi <- calc_evpi(wtp = v.wtp, psa = l.psa)
 ```
 
 ![Expected value of perfect information \label{fig:05c_evpi}](../figs/05c_evpi.png)
+
+
+
+\newpage
 
 ### References 
 
