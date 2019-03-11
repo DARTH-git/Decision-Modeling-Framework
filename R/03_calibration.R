@@ -132,8 +132,13 @@ df.posterior.summ <- data.frame(
 df.posterior.summ
 
 ### Save summary statistics of posterior distribution
+## As .RData
 save(df.posterior.summ, 
      file = "tables/03_summary-posterior.RData")
+## As .csv
+write.csv(df.posterior.summ, 
+          file = "tables/03_summary-posterior.csv", 
+          row.names = FALSE)
 
 #### 03.4.2 Visualization of posterior distribution ####
 ### Rescale posterior to plot density of plots
