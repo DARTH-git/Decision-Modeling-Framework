@@ -33,9 +33,10 @@ f.install_and_load <- function(packages) {
 ### Install packages from CRAN
 v.packages.to.install <- c("dplyr", "truncnorm", 
                            "lhs", "IMIS", "matrixStats",
-                           "plotrix", "psych",
+                           "plotrix", "psych", "survival",
                            "scatterplot3d", "reshape2",
-                           "BiocManager", "devtools")
+                           "BiocManager", "devtools",
+                           "shiny", "rstudioapi")
 
 f.install_and_load(v.packages.to.install)
 

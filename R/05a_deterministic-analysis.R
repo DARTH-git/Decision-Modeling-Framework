@@ -57,8 +57,12 @@ df.cea.det <- calculate_icers(cost = df.out.ce$Cost,
                               strategies = v.names.str)
 df.cea.det
 ### Save CEA table with ICERs
+## As .RData
 save(df.cea.det, 
      file = "tables/05a_deterministic-cea-results.RData")
+## As .csv
+write.csv(df.cea.det, 
+          file = "tables/05a_deterministic-cea-results.csv")
 
 #### 05a.5 Plot cost-effectiveness frontier ####
 plot(df.cea.det)

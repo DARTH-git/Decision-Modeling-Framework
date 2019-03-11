@@ -21,7 +21,8 @@
 
 #### 02.1 Load packages and functions ####
 #### 02.1.1 Load packages and functions ####
-library(dplyr) # For data manipulation
+library(dplyr)    # For data manipulation
+library(survival) # For plotting state-transition diagram
 
 #### 02.1.2 Load inputs ####
 source("R/01_model-inputs.R")
@@ -32,8 +33,17 @@ source("functions/02_simulation-model_functions.R")
 #### 02.2 Run STM ####
 ### Create list of model output
 l.out.stm <- f.decision_model(l.params.all = l.params.all)
+
 ### Plot Markov cohort trace
-matplot(l.out.stm$m.M,
-        xlab = "Cycle", ylab = "Proportion")
-legend("right", legend = l.params.all$v.n, 
-       pch = as.character(1:4), col = 1:4)
+png("figs/02_trace-plot.png")
+  matplot(l.out.stm$m.M,
+          xlab = "Cycle", ylab = "Proportion")
+  legend("right", legend = l.params.all$v.n, 
+         pch = as.character(1:4), col = 1:4)
+dev.off()
+
+### Plot state-transition diagram
+png("figs/02_model-diagram.png")
+  connect <- (l.out.stm$a.P[,,1] > 0)
+  survival::statefig(layout = c(2, 2), connect = connect )
+dev.off()

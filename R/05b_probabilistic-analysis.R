@@ -105,8 +105,12 @@ df.cea.psa <- calculate_icers(cost = df.out.ce.psa$meanCost,
                               strategies = df.out.ce.psa$Strategy)
 df.cea.psa
 ### Save CEA table with ICERs
+## As .RData
 save(df.cea.psa, 
      file = "tables/05b_probabilistic-cea-results.RData")
+## As .csv
+write.csv(df.cea.psa, 
+          file = "tables/05b_probabilistic-cea-results.csv")
 
 #### 05a.6.3 Plot cost-effectiveness frontier ####
 plot(df.cea.psa)
