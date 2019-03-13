@@ -310,7 +310,7 @@ In a PSA we sample the input parameter values from these distributions and we th
 print.function(f.generate_psa_params) # print the function 
 ```
 
-The function returns a dataframe with a PSA dataset, called `df.psa.input` of the input parameters. We can now run the PSA to produce distributions of costs, effectiveness and NMB. The PSA is performed by the  *05b_probabilistic-analysis.R* script. As shown in the code below, the `df.psa.input` dataframe is used by the `f.update_param_list` function to generate the corresponding list of parameters for the PSA. For each simulation, the list of parameters is updated by the `f.update_param_list` function, the model is executed by the `f.calculate_ce_out` function using the updated parameter list and the dataframes `df.c` and `df.e` store the estimated cost and effects, respectively. The final part of this loop is to satisfy the modeler when waiting on the results, by displaying the simulation progress.  
+The function returns the `df.psa.input` dataframe with a PSA dataset of the input parameters. With this dataframe we can run the PSA to produce distributions of costs, effectiveness and NMB. The PSA is performed by the  *05b_probabilistic-analysis.R* script. As shown in the code below, the `df.psa.input` dataframe is used by the `f.update_param_list` function to generate the corresponding list of parameters for the PSA. For each simulation, we perfrom three steps. First, the list of parameters is updated by the `f.update_param_list` function. Second, the model is executed by the `f.calculate_ce_out` function using the updated parameter list and third, the dataframes `df.c` and `df.e` store the estimated cost and effects, respectively. The final part of this loop is to satisfy the modeler when waiting on the results, by displaying the simulation progress.  
 
 ```{r, eval = FALSE, echo = TRUE}
 for(i in 1:n.sim){ 
@@ -325,17 +325,15 @@ for(i in 1:n.sim){
 }
 ``` 
 
-By restructuring these PSA results, we can plot the results using the `plot` function from `dampack`. Figure \ref{fig:05b_CEAplane} shows the CE scatter plot with the joint distribution of costs and effects for each strategy and their corresponding 95% confidence ellipse. 
+We can plot the results using the `plot` function from `dampack`. Figure \ref{fig:05b_CEAplane} shows the CE scatter plot with the joint distribution of costs and effects for each strategy and their corresponding 95% confidence ellipse. 
 
 ![The cost-effectiveness plane graph showing the results of the probabilistic sensitivity analysis for the Sick-Sicker case-study. \label{fig:05b_CEAplane}](../figs/05b_cea-plane-scatter.png)
-
- 
 
 ```{r, eval = TRUE, echo = FALSE}
 load("tables/05b_probabilistic-cea-results.RData")
 kable(df.cea.psa[, -7], caption = "Probabilistic cost-effectiveness analysis results of the Sick-Sicker model comparing no treatment with treatment. \\label{tab:df.cea.prob}") # create a table 
 ``` 
-Next, we perform a CEA using the previously used `calculate_icers` functions from `dampack`. Table \ref{tab:df.cea.prob} shows the results of the probabilistic CEA. In addition, we plot a cost-effectiveness frontier (CEAF), cost-effectiveness acceptability curves (CEACs) with frontier, expected Loss curves (ELCs) (Figure \ref{fig:05b_cea-frontier-psa} - \ref{fig:05b_elc}) [@Alarid-Escudero2019]. Followed by creating linear regression metamodeling sensitivity analysis graphs (Figure \ref{fig:05b_owsa-lrm-nmb} - \ref{fig:05b_twsa-lrm-uS1-uTrt-nmb}). All generated figures are shown below and stored to the *figs* folder. 
+Next, we perform a CEA using the previously used `calculate_icers` functions from `dampack`. Table \ref{tab:df.cea.prob} shows the results of the probabilistic CEA. In addition, we plot a cost-effectiveness plane with the frontier, the cost-effectiveness acceptability curves (CEACs) and frontier (CEAF), expected Loss curves (ELCs) (Figure \ref{fig:05b_cea-frontier-psa} - \ref{fig:05b_elc}) [@Alarid-Escudero2019]. Followed by creating linear regression metamodeling sensitivity analysis graphs (Figure \ref{fig:05b_owsa-lrm-nmb} - \ref{fig:05b_twsa-lrm-uS1-uTrt-nmb}). All generated figures are shown below and stored to the *figs* folder [@Jalal2013]. 
 
 ![Cost-effectiveness frontier\label{fig:05b_cea-frontier-psa}](../figs/05b_cea-frontier-psa.png)
 
