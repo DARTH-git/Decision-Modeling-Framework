@@ -13,7 +13,7 @@ f.generate_psa_params <- function(n.sim, seed = 20190220){ # User defined
   ##
   
   ## Load calibrated parameters
-  load("output/03_imis-output.rData")
+  load("output/03_imis-output.RData")
   n.sim <- nrow(m.calib.post)
   set.seed <- seed
   df.psa.params <- data.frame(
