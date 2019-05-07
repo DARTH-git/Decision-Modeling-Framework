@@ -6,7 +6,7 @@ f.calculate_ce_out <- function(l.params.all, n.wtp = 100000){ # User defined
   ##   Calculates costs and effects for a given vector of parameters using a 
   ##   simulation model.
   ### Arguments:  
-  ##   v.params: vector of parameters to run the simulation model on
+  ##   l.params.all: List with all parameters of decision model
   ##   n.wtp: Willingness-to-pay threshold to compute net benefits
   ### Returns:
   ##   df.ce: Dataframe with discounted costs, effectiveness and NMB
