@@ -11,12 +11,14 @@ output:
 bibliography: references.bib
 ---
 
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 # Set working directory via relative path to root from Rmd
 # to avoid issue with the Markdown 
 # http://pbahr.github.io/tips/2016/04/16/fix_rmarkdown_working_directory_issue
-knitr::opts_knit$set(root.dir = '~/Dropbox (Persoonlijk)/03_Onderzoek/DARTH framework/Decision-Modeling-Framework')
+                     
+knitr::opts_knit$set(root.dir = '..')
 ```
 
 
