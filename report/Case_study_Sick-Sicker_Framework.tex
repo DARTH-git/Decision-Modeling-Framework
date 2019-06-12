@@ -378,7 +378,7 @@ list that contains all parameters and their values.
 ##     })
 ##     l.params.all <- c(l.params.all, df.params.init)
 ## }
-## <bytecode: 0x7fb5f0afdb58>
+## <bytecode: 0x7fa0766ce748>
 \end{verbatim}
 
 The \texttt{f.load\_all\_params} function is informed by the arguments
@@ -512,7 +512,7 @@ function.
 ##         return(list(a.P = a.P, m.M = m.M))
 ##     })
 ## }
-## <bytecode: 0x7fb5f60e7c58>
+## <bytecode: 0x7fa0793befa8>
 \end{verbatim}
 
 The \texttt{f.decision\_model} function is informed by the argument
@@ -842,7 +842,7 @@ outputs into different summary statistics.
 ##     data_sum <- plyr::rename(data_sum, c(mean = varname))
 ##     return(data_sum)
 ## }
-## <bytecode: 0x7fb5f2455768>
+## <bytecode: 0x7fa075c4b468>
 \end{verbatim}
 
 This function is informed by three arguments, \texttt{data},
@@ -929,7 +929,7 @@ some specific parameters.
 ##     l.params.all <- modifyList(l.params.all, params.updated)
 ##     return(l.params.all)
 ## }
-## <bytecode: 0x7fb5f0b3e840>
+## <bytecode: 0x7fa07670eb38>
 \end{verbatim}
 
 The first argument of the function, called \texttt{l.params.all}, is a
@@ -995,7 +995,7 @@ the function.
 ##         return(df.ce)
 ##     })
 ## }
-## <bytecode: 0x7fb5f9303000>
+## <bytecode: 0x7fa07eb31068>
 \end{verbatim}
 
 After calculating the discount weights, this function runs the
@@ -1274,7 +1274,7 @@ specifying a seed to allow reproducibility of the results.
 ##             b = 1))
 ##     return(df.psa.params)
 ## }
-## <bytecode: 0x7fb5f9cd9f10>
+## <bytecode: 0x7fa07ef88e80>
 \end{verbatim}
 
 The function returns the \texttt{df.psa.input} dataframe with a PSA
@@ -1328,9 +1328,9 @@ probabilistic sensitivity analysis for the Sick-Sicker case-study.
 \hline
 Strategy & Cost & Effect & Inc\_Cost & Inc\_Effect & ICER\\
 \hline
-No\_Treatment & 115713.4 & 19.90750 & NA & NA & NA\\
+No\_Treatment & 115562.1 & 19.91203 & NA & NA & NA\\
 \hline
-Treatment & 214607.7 & 20.60602 & 98894.33 & 0.6985245 & 141576\\
+Treatment & 214583.9 & 20.60653 & 99021.74 & 0.6944993 & 142580\\
 \hline
 \end{tabular}
 \end{table}

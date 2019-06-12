@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018) (preloaded format=pdflatex 2018.10.1)  12 JUN 2019 14:29
+This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018) (preloaded format=pdflatex 2019.6.12)  12 JUN 2019 14:57
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -583,8 +583,8 @@ Enter file name:
 l.134 \usepackage
                  {wrapfig}^^M 
 Here is how much of TeX's memory you used:
- 10361 strings out of 494585
- 145372 string characters out of 6174649
+ 10359 strings out of 494585
+ 145239 string characters out of 6176525
  215856 words of memory out of 5000000
  13933 multiletter control sequences out of 15000+600000
  4403 words of font info for 15 fonts, out of 8000000 for 9000
