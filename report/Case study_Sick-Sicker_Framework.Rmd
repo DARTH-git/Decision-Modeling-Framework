@@ -218,7 +218,7 @@ In sections _04.6 Internal validation: Model-predicted outputs vs. targets_, we 
 ![Proportion who are Sicker, among all those afflicted (Sick + Sicker): Model-predicted output \label{fig:04_proportion}](../figs/04_posterior-vs-targets-proportion-sicker.png)
 
 
-### 05: Analysis
+### 05 Analysis
 The analysis component is where the elements in components 1-4 are combined to answer the question(s) of interest given current information and to quantify the value of potential further research. Our framework separates the analysis in three subcomponents: _05a Deterministic analysis_, _05b Uncertainty analysis_ and _05c Value of information analysis_. For the Sick-Sicker case-study, we use all three subcomponents to conduct the CEA and to quantify the uncertainty of our decision. For procedures in the CEA, we rely on the `R` package `dampack`, which is available here: 
   <https://github.com/DARTH-git/dampack>. Instructions for installing `dampack` are described in Appendix 0 provided in the *app0_packages-setup.R* script.
 
