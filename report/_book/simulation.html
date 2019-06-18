@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 2 Simulation | Sick-Sicker case study</title>
+  <meta name="description" content="Chapter 2 Simulation | Sick-Sicker case study" />
+  <meta name="generator" content="bookdown 0.11 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 2 Simulation | Sick-Sicker case study" />
+  <meta property="og:type" content="book" />
+  
+  
+  
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 2 Simulation | Sick-Sicker case study" />
+  
+  
+  
+
+<meta name="author" content="DARTH workgroup" />
+
+
+<meta name="date" content="2019-06-18" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="model.html">
+<link rel="next" href="calibration.html">
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+</style>
+
+<link rel="stylesheet" href="darth.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">Sick-Sicker case study</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>The Sick-Sicker model</a><ul>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#set-up"><i class="fa fa-check"></i>Set-up</a></li>
+</ul></li>
+<li class="chapter" data-level="1" data-path="model.html"><a href="model.html"><i class="fa fa-check"></i><b>1</b> Define model inputs</a></li>
+<li class="chapter" data-level="2" data-path="simulation.html"><a href="simulation.html"><i class="fa fa-check"></i><b>2</b> Simulation</a></li>
+<li class="chapter" data-level="3" data-path="calibration.html"><a href="calibration.html"><i class="fa fa-check"></i><b>3</b> Model calibration</a></li>
+<li class="chapter" data-level="4" data-path="validation.html"><a href="validation.html"><i class="fa fa-check"></i><b>4</b> Validation</a></li>
+<li class="chapter" data-level="5" data-path="analysis.html"><a href="analysis.html"><i class="fa fa-check"></i><b>5</b> Analysis</a></li>
+<li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Sick-Sicker case study</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="simulation" class="section level1">
+<h1><span class="header-section-number">Chapter 2</span> Simulation</h1>
+<p>In this second component, we build the backbone of the decision analysis: the implementation of the model. This component is performed by the <em>02_simulation-model.R</em> script. This file itself is not very large. It simply loads some packages, sources the input from component 01, sources the function <code>f.decision_model</code> that is used the capture the dynamic process of the Sick-Sicker example, runs this function and stores the output. The output of the model is the traditional cohort trace, describing how the cohort is distributed among the different health states over time, which is plotted at the end of this script. This trace will be used in many of the other components.</p>
+<p>The function <code>f.decision_model</code> is defined in the <em>02_simulation-model_functions.R file</em>. As described in the paper, constructing a model as a function at this stage facilitates subsequent stages of the model development and analysis, as these processes will all call the same model function, but pass different parameter values and/or calculate different final outcomes based on the model outputs. In the next part, we will describe the code within the function.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">print.function</span>(f.decision_model) <span class="co"># print the code of the function</span></code></pre></div>
+<pre><code>## function (l.params.all, verbose = FALSE) 
+## {
+##     with(as.list(l.params.all), {
+##         p.HDage &lt;- 1 - exp(-v.r.mort_by_age[(n.age.init + 1) + 
+##             0:(n.t - 1)])
+##         p.S1Dage &lt;- 1 - exp(-v.r.mort_by_age[(n.age.init + 1) + 
+##             0:(n.t - 1)] * hr.S1)
+##         p.S2Dage &lt;- 1 - exp(-v.r.mort_by_age[(n.age.init + 1) + 
+##             0:(n.t - 1)] * hr.S2)
+##         a.P &lt;- array(0, dim = c(n.states, n.states, n.t), dimnames = list(v.n, 
+##             v.n, 0:(n.t - 1)))
+##         a.P[&quot;H&quot;, &quot;H&quot;, ] &lt;- (1 - p.HDage) * (1 - p.HS1)
+##         a.P[&quot;H&quot;, &quot;S1&quot;, ] &lt;- (1 - p.HDage) * p.HS1
+##         a.P[&quot;H&quot;, &quot;D&quot;, ] &lt;- p.HDage
+##         a.P[&quot;S1&quot;, &quot;H&quot;, ] &lt;- (1 - p.S1Dage) * p.S1H
+##         a.P[&quot;S1&quot;, &quot;S1&quot;, ] &lt;- (1 - p.S1Dage) * (1 - (p.S1S2 + 
+##             p.S1H))
+##         a.P[&quot;S1&quot;, &quot;S2&quot;, ] &lt;- (1 - p.S1Dage) * p.S1S2
+##         a.P[&quot;S1&quot;, &quot;D&quot;, ] &lt;- p.S1Dage
+##         a.P[&quot;S2&quot;, &quot;S2&quot;, ] &lt;- 1 - p.S2Dage
+##         a.P[&quot;S2&quot;, &quot;D&quot;, ] &lt;- p.S2Dage
+##         a.P[&quot;D&quot;, &quot;D&quot;, ] &lt;- 1
+##         m.indices.notvalid &lt;- arrayInd(which(a.P &lt; 0 | a.P &gt; 
+##             1), dim(a.P))
+##         try(if (dim(m.indices.notvalid)[1] != 0) {
+##             v.rows.notval &lt;- rownames(a.P)[m.indices.notvalid[, 
+##                 1]]
+##             v.cols.notval &lt;- colnames(a.P)[m.indices.notvalid[, 
+##                 2]]
+##             v.cycles.notval &lt;- dimnames(a.P)[[3]][m.indices.notvalid[, 
+##                 3]]
+##             df.notvalid &lt;- data.frame(`Transition probabilities not valid:` = matrix(paste0(paste(v.rows.notval, 
+##                 v.cols.notval, sep = &quot;-&gt;&quot;), &quot;; at cycle &quot;, v.cycles.notval), 
+##                 ncol = 1), check.names = FALSE)
+##             if (verbose) {
+##                 message(&quot;Not valid transition probabilities&quot;)
+##                 stop(print(df.notvalid), call. = FALSE)
+##             }
+##         })
+##         valid &lt;- apply(a.P, 3, function(x) all.equal(sum(rowSums(x)), 
+##             n.states))
+##         if (!isTRUE(all.equal(as.numeric(sum(valid)), as.numeric(n.t)))) {
+##             if (verbose) {
+##                 stop(&quot;This is not a valid transition Matrix&quot;)
+##             }
+##         }
+##         m.M &lt;- matrix(0, nrow = (n.t + 1), ncol = n.states, dimnames = list(0:n.t, 
+##             v.n))
+##         m.M[1, ] &lt;- v.s.init
+##         for (t in 1:n.t) {
+##             m.M[t + 1, ] &lt;- m.M[t, ] %*% a.P[, , t]
+##         }
+##         return(list(a.P = a.P, m.M = m.M))
+##     })
+## }
+## &lt;bytecode: 0x7fd8f16ee810&gt;</code></pre>
+<p>The <code>f.decision_model</code> function is informed by the argument <code>l.params.all</code>. Via this argument we give the function a list with all parameters of the decision model. For the Sick-Sicker model, these parameters are stored in the list <code>l.params.all</code>, which we passed into the function as shown below.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">l.out.stm &lt;-<span class="st"> </span><span class="kw">f.decision_model</span>(<span class="dt">l.params.all =</span> l.params.all) <span class="co"># run the function</span></code></pre></div>
+<p>This function itself has all the mathematical equations of the decision models coded inside. It starts by calculating the age-specific transition probabilities from all non-dead states based on the vector of age-specific mortality rates <code>v.r.asr</code>. These parameters will become vectors of length <code>n.t</code>, describing the probability to die for all ages from all non-dead states.</p>
+<p>The next part of the function, creates an array that stores the age-specific transition probability matrices in each of the third dimension. The transition probability matrix is a core component of a state-transition cohort model <span class="citation">(Iskandar <a href="#ref-Iskandar2018">2018</a>)</span>. This matrix contains the probabilities of transitioning from the current health state, indicated by the rows, to the other health states, specified by the columns. Since we have age-specific transition probabilities, the transition probability matrix is different at each cycle. These probabilities are only depending on the age of the cohort, and not on other events; therefore, we can generate all matrices at the start of the model. This results in <code>n.t</code> different age-specific matrices that are stored in an array, called <code>a.P</code>, of dimensions <code>n.s</code> x <code>n.s</code> x <code>n.t</code>. After initializing the array, it is filled with the transition probability stored in the list. When running the model, we can index the correct transition probability matrix corresponding with the current age of the cohort. We then added some sanity checks to make sure that the transition matrices and the transition probabilities are valid. The transition probability matrices stored in the array <code>a.P</code>, for the first three and last cycle, are shown below.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">l.out.stm<span class="op">$</span>a.P[, , <span class="dv">1</span><span class="op">:</span><span class="dv">3</span>] <span class="co"># show the first three time-points of a.P</span></code></pre></div>
+<pre><code>## , , 0
+## 
+##            H        S1        S2           D
+## H  0.8491385 0.1498480 0.0000000 0.001013486
+## S1 0.4984813 0.3938002 0.1046811 0.003037378
+## S2 0.0000000 0.0000000 0.9899112 0.010088764
+## D  0.0000000 0.0000000 0.0000000 1.000000000
+## 
+## , , 1
+## 
+##            H        S1        S2            D
+## H  0.8491513 0.1498502 0.0000000 0.0009985012
+## S1 0.4985037 0.3938180 0.1046858 0.0029925135
+## S2 0.0000000 0.0000000 0.9900597 0.0099402657
+## D  0.0000000 0.0000000 0.0000000 1.0000000000
+## 
+## , , 2
+## 
+##            H        S1        S2           D
+## H  0.8490910 0.1498396 0.0000000 0.001069428
+## S1 0.4983976 0.3937341 0.1046635 0.003204853
+## S2 0.0000000 0.0000000 0.9893570 0.010642959
+## D  0.0000000 0.0000000 0.0000000 1.000000000</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">l.out.stm<span class="op">$</span>a.P[, , l.params.all<span class="op">$</span>n.t] <span class="co"># show it for the last cycle</span></code></pre></div>
+<pre><code>##            H        S1         S2         D
+## H  0.6055199 0.1068564 0.00000000 0.2876237
+## S1 0.1807584 0.1427991 0.03795926 0.6384833
+## S2 0.0000000 0.0000000 0.03365849 0.9663415
+## D  0.0000000 0.0000000 0.00000000 1.0000000</code></pre>
+<p>By comparing these probability matrices, we observe an increase in the probabilities of transitioning to death from all health states.</p>
+<p>After the array is filled, the cohort trace matrix, <code>m.M</code>, of dimensions <code>n.t</code> x <code>n.s</code> is initialized. This matrix will store the state occupation at each point in time. The first row of the matrix is informed by the initial state vector <code>v.s.init</code>. For the remaining points in time, we iteratively multiply the cohort trace with the age-specific transition probability matrix corresponding to the specific cycle obtained by indexing the array <code>a.P</code> appropriately. All the outputs and relevant elements of the decision model are stored in a list, called <code>l.out.stm</code>. This list contains the array of the transition probability matrix for all cycles <code>t</code> and the cohort trace <code>m.M</code>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(l.out.stm<span class="op">$</span>m.M)    <span class="co"># show the top part of the cohort trace</span></code></pre></div>
+<pre><code>##           H        S1         S2           D
+## 0 1.0000000 0.0000000 0.00000000 0.000000000
+## 1 0.8491385 0.1498480 0.00000000 0.001013486
+## 2 0.7957468 0.1862564 0.01568695 0.002309774
+## 3 0.7684912 0.1925699 0.03501425 0.003924648
+## 4 0.7484793 0.1909659 0.05478971 0.005765035
+## 5 0.7306193 0.1873106 0.07413838 0.007931783</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">tail</span>(l.out.stm<span class="op">$</span>m.M)    <span class="co"># show the bottom part of the cohort trace</span></code></pre></div>
+<pre><code>##              H           S1           S2         D
+## 70 0.009928317 0.0022433565 2.035951e-04 0.9876247
+## 71 0.007153415 0.0015935925 1.311619e-04 0.9911218
+## 72 0.005058845 0.0011174473 8.674540e-05 0.9937370
+## 73 0.003460336 0.0007552206 5.436484e-05 0.9957301
+## 74 0.002289594 0.0004937081 3.298632e-05 0.9971837
+## 75 0.001475636 0.0003151589 1.985106e-05 0.9981894</code></pre>
+<p>Using the code below, we can graphically show the model dynamics by plotting the cohort trace. Figure  shows the distribution of the cohort among the different health states at each time point.</p>
+<div class="figure"><span id="fig:Sick-Sicker-Trace"></span>
+<img src="Framework_files/figure-html/Sick-Sicker-Trace-1.png" alt="Cohort trace of the Sick-Sicker cohort model\label{fig:Sick-Sicker-Trace}" width="672" />
+<p class="caption">
+Figure 2.1: Cohort trace of the Sick-Sicker cohort model
+</p>
+</div>
+
+</div>
+<h3>References</h3>
+<div id="refs" class="references">
+<div id="ref-Iskandar2018">
+<p>Iskandar, R. 2018. “A theoretical foundation for state-transition cohort models in health decision analysis.” <em>PloS One</em> 13 (12). Public Library of Science: e0205543–e0205543. doi:<a href="https://doi.org/10.1371/journal.pone.0205543">10.1371/journal.pone.0205543</a>.</p>
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="model.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="calibration.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"google": false,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"download": ["Framework.pdf", "Framework.epub"],
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+</body>
+
+</html>
