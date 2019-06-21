@@ -6,8 +6,8 @@
 #                                                                              # 
 # Depends on:                                                                  #
 #   00_general_functions.R                                                     #
-#   01_model-inputs.R                                                          #
-#   02_simulation-model_functions.R                                            #
+#   01_model_inputs.R                                                          #
+#   02_simulation_model_functions.R                                            #
 #   03_calibration_functions.R                                                 #
 #   04_validation_functions.R                                                  #
 #                                                                              # 
@@ -31,81 +31,81 @@ library(reshape2) # to reshape data from wide to long
 library(plotrix)  # plots with lower and upper error bands
 
 #### 04.1.2 Load inputs ####
-source("analysis/01_model-inputs.R")
+source("analysis/01_model_inputs.R")
 
 #### 04.1.3 Load functions ####
 source("R/00_general_functions.R")
-source("R/02_simulation-model_functions.R")
+source("R/02_simulation_model_functions.R")
 source("R/03_calibration_functions.R")
-source("R/04_validation-functions.R")
+source("R/04_validation_functions.R")
 
 #### 04.1.4 Load targets and calibrated parameters ####
-load("data/03_calibration-targets.RData")
-load("output/03_imis-output.RData")
+load("data/03_calibration_targets.RData")
+load("output/03_imis_output.RData")
 
 #### 04.2 Compute model-predicted outputs ####
 #### 04.2.1 Compute model-predicted outputs for each sample of posterior distribution ####
 ### Number of posterior samples
-n.samp <- nrow(m.calib.post)
+n_samp <- nrow(m_calib_post)
 
 ### Define matrices to store model outputs
-m.out.surv <- matrix(NA, nrow = n.samp, ncol = nrow(SickSicker.targets$Surv))
-colnames(m.out.surv) <- SickSicker.targets$Surv$Time
-m.out.prev <- matrix(NA, nrow = n.samp, ncol = nrow(SickSicker.targets$Prev))
-colnames(m.out.prev) <- SickSicker.targets$Prev$Time
-m.out.prop <- matrix(NA, nrow = n.samp, ncol = nrow(SickSicker.targets$PropSicker))
-colnames(m.out.prop) <- SickSicker.targets$PropSicker$Time
+m_out_surv <- matrix(NA, nrow = n_samp, ncol = nrow(SickSicker.targets$Surv))
+colnames(m_out_surv) <- SickSicker.targets$Surv$Time
+m_out_prev <- matrix(NA, nrow = n_samp, ncol = nrow(SickSicker.targets$Prev))
+colnames(m_out_prev) <- SickSicker.targets$Prev$Time
+m_out_prop <- matrix(NA, nrow = n_samp, ncol = nrow(SickSicker.targets$PropSicker))
+colnames(m_out_prop) <- SickSicker.targets$PropSicker$Time
 
 ### Evaluate model at each posterior sample and store results
 for(i in 1:n.samp){ # i = 1
-  l.out.post <- f.calibration_out(v.params.calib = m.calib.post[i, ], 
-                                  l.params.all = l.params.all)
-  m.out.surv[i, ] <- l.out.post$Surv
-  m.out.prev[i, ] <- l.out.post$Prev
-  m.out.prop[i, ] <- l.out.post$PropSicker
-  cat('\r', paste(round(i/n.samp * 100), "% done", sep = " ")) # display progress
+  l_out_post <- calibration_out(v_params_calib = m_calib_post[i, ], 
+                                  l_params_all = l_params_all)
+  m_out_surv[i, ] <- l_out_post$Surv
+  m_out_prev[i, ] <- l_out_post$Prev
+  m_out_prop[i, ] <- l_out_post$PropSicker
+  cat('\r', paste(round(i/n_samp * 100), "% done", sep = " ")) # display progress
 }
 
 ### Create data frames with model predicted outputs
-df.out.surv <- data.frame(Type = "Model", 
+df_out_surv <- data.frame(Type = "Model", 
                           Target = "Survival",
-                          m.out.surv, 
+                          m_out_surv, 
                           check.names = FALSE)
-df.out.prev <- data.frame(Type = "Model", 
+df_out_prev <- data.frame(Type = "Model", 
                           Target = "Prevalence",
-                          m.out.prev, 
+                          m_out_prev, 
                           check.names = FALSE)
-df.out.prop <- data.frame(Type = "Model", 
+df_out_prop <- data.frame(Type = "Model", 
                           Target = "Proportion of Sicker",
-                          m.out.prop, 
+                          m_out_prop, 
                           check.names = FALSE)
 
 ### Transform data frames to long format
-df.out.surv.lng <- reshape2::melt(df.out.surv, 
-                     id.vars = c("Type", "Target"), 
-                     variable.name = "Time")
-df.out.prev.lng <- reshape2::melt(df.out.prev, 
-                        id.vars = c("Type", "Target"), 
-                        variable.name = "Time")
-df.out.prop.lng <- reshape2::melt(df.out.prop, 
-                        id.vars = c("Type", "Target"), 
-                        variable.name = "Time")
+df_out_surv_lng <- reshape2::melt(df_out_surv, 
+                         id.vars = c("Type", "Target"), 
+                         variable.name = "Time")
+df_out_prev_lng <- reshape2::melt(df_out_prev, 
+                         id.vars = c("Type", "Target"), 
+                         variable.name = "Time")
+df_out_prop_lng <- reshape2::melt(df_out_prop, 
+                         id.vars = c("Type", "Target"), 
+                         variable.name = "Time")
 
 ### Compute posterior model-predicted 95% CI
-df.out.surv.sum <- f.data_summary(df.out.surv.lng, varname = "value",
-                             groupnames = c("Type", "Target", "Time"))
-df.out.prev.sum <- f.data_summary(df.out.prev.lng, varname = "value",
+df_out_surv_sum <- data_summary(df_out_surv_lng, varname = "value",
                                 groupnames = c("Type", "Target", "Time"))
-df.out.prop.sum <- f.data_summary(df.out.prop.lng, varname = "value",
+df_out_prev_sum <- data_summary(df_out_prev_lng, varname = "value",
+                                groupnames = c("Type", "Target", "Time"))
+df_out_prop_sum <- data_summary(df_out_prop_lng, varname = "value",
                                 groupnames = c("Type", "Target", "Time"))
 
 #### 04.3.2 Compute model-predicted outputs at MAP estimate ####
-l.out.calib.map <- f.calibration_out(v.params.calib = v.calib.post.map, 
-                                     l.params.all = l.params.all)
+l_out_calib_map <- calibration_out(v_params_calib = v_calib_post_map, 
+                                   l_params_all = l_params_all)
 
 #### 04.4 Internal validation: Model-predicted outputs vs. targets ####
 ### TARGET 1: Survival ("Surv")
-png("figs/04_posterior-vs-targets-survival.png", 
+png("figs/04_posterior_vs_targets_survival.png", 
     width = 8, height = 6, units = 'in', res = 300)
 plotrix::plotCI(x = SickSicker.targets$Surv$Time, y = SickSicker.targets$Surv$value, 
                 ui = SickSicker.targets$Surv$ub,
@@ -113,11 +113,11 @@ plotrix::plotCI(x = SickSicker.targets$Surv$Time, y = SickSicker.targets$Surv$va
                 ylim = c(0, 1), 
                 xlab = "Time", ylab = "Pr(Alive)")
 lines(x = SickSicker.targets$Surv$Time,
-      y = df.out.surv.sum$lb, col = "red", lty = 2)
+      y = df_out_surv_sum$lb, col = "red", lty = 2)
 lines(x = SickSicker.targets$Surv$Time,
-      y = df.out.surv.sum$ub, col = "red", lty = 2)
+      y = df_out_surv_sum$ub, col = "red", lty = 2)
 points(x = SickSicker.targets$Surv$Time, 
-       y = l.out.calib.map$Surv, 
+       y = l_out_calib_map$Surv, 
        pch = 8, col = "red")
 legend("bottomright", 
        legend = c("Target", 
@@ -129,7 +129,7 @@ legend("bottomright",
 dev.off()
 
 ### TARGET 2: Prevalence ("Prev")
-png("figs/04_posterior-vs-targets-prevalence.png", 
+png("figs/04_posterior_vs_targets_prevalence.png", 
     width = 8, height = 6, units = 'in', res = 300)
 plotrix::plotCI(x = SickSicker.targets$Prev$Time, y = SickSicker.targets$Prev$value, 
                 ui = SickSicker.targets$Prev$ub,
@@ -137,11 +137,11 @@ plotrix::plotCI(x = SickSicker.targets$Prev$Time, y = SickSicker.targets$Prev$va
                 ylim = c(0, 1), 
                 xlab = "Time", ylab = "Pr(Sick+Sicker)")
 lines(x = SickSicker.targets$Prev$Time,
-      y = df.out.prev.sum$lb, col = "red", lty = 2)
+      y = df_out_prev_sum$lb, col = "red", lty = 2)
 lines(x = SickSicker.targets$Prev$Time,
-      y = df.out.prev.sum$ub, col = "red", lty = 2)
+      y = df_out_prev_sum$ub, col = "red", lty = 2)
 points(x = SickSicker.targets$Prev$Time, 
-       y = l.out.calib.map$Prev, 
+       y = l_out_calib_map$Prev, 
        pch = 8, col = "red")
 legend("bottomright", 
        legend = c("Target", 
@@ -153,7 +153,7 @@ legend("bottomright",
 dev.off()
 
 ### TARGET 3: Proportion who are Sicker ("PropSicker"), among all those afflicted (Sick+Sicker)
-png("figs/04_posterior-vs-targets-proportion-sicker.png", 
+png("figs/04_posterior_vs_targets_proportion_sicker.png", 
     width = 8, height = 6, units = 'in', res = 300)
 plotrix::plotCI(x = SickSicker.targets$PropSick$Time, y = SickSicker.targets$PropSick$value, 
                 ui = SickSicker.targets$PropSick$ub,
@@ -161,11 +161,11 @@ plotrix::plotCI(x = SickSicker.targets$PropSick$Time, y = SickSicker.targets$Pro
                 ylim = c(0, 1), 
                 xlab = "Time", ylab = "Pr(Sicker | Sick+Sicker)")
 lines(x = SickSicker.targets$PropSicker$Time,
-      y = df.out.prop.sum$lb, col = "red", lty = 2)
+      y = df_out_prop_sum$lb, col = "red", lty = 2)
 lines(x = SickSicker.targets$PropSicker$Time,
-      y = df.out.prop.sum$ub, col = "red", lty = 2)
+      y = df_out_prop.sum$ub, col = "red", lty = 2)
 points(x = SickSicker.targets$PropSicker$Time, 
-       y = l.out.calib.map$PropSicker, 
+       y = l_out_calib_map$PropSicker, 
        pch = 8, col = "red")
 legend("bottomright", 
        legend = c("Target", 

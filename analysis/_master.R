@@ -18,13 +18,13 @@
 
 #### 00 Install and load packages ####
 ### Uncomment if you don't have all required packages installed
-# source("analysis/app0_packages-setup.R", echo = TRUE) 
+# source("analysis/app0_package_setup.R", echo = TRUE) 
 
 #### 01 Load inputs ####
-source("analysis/01_model-inputs.R", echo = TRUE)
+source("analysis/01_model_inputs.R", echo = TRUE)
 
 #### 02 Load simulation model and test it ####
-source("analysis/02_simulation-model.R", echo = TRUE)
+source("analysis/02_simulation_model.R", echo = TRUE)
 
 #### 03 Calibrate simulation model ####
 ### Uncomment if you want to rerun the calibration component 
@@ -35,10 +35,10 @@ source("analysis/03_calibration.R", echo = TRUE)
 source("analysis/04_validation.R", echo = TRUE)
 
 #### 05a Conduct deterministic analysis ####
-source("analysis/05a_deterministic-analysis.R", echo = TRUE)
+source("analysis/05a_deterministic_analysis.R", echo = TRUE)
 
 #### 05b Conduct probabilistic analysis ####
-source("analysis/05b_probabilistic-analysis.R", echo = TRUE )
+source("analysis/05b_probabilistic_analysis.R", echo = TRUE )
 
 #### 06 Conduct value of information analysis ####
-source("analysis/05c_value-of-information.R", echo = TRUE )
+source("analysis/05c_value_of_information.R", echo = TRUE )

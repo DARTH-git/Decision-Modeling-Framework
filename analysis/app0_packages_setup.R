@@ -7,7 +7,7 @@
 ################################################################################ 
 
 ### Function to check if packages are installed and if not, install them
-f.install_and_load <- function(packages) {
+install_and_load <- function(packages) {
   # Modified from https://www.listendata.com/2018/12/install-load-multiple-r-packages.html
   # The function below performs the following operations -
   #  - First it finds all the already installed R packages
@@ -31,14 +31,14 @@ f.install_and_load <- function(packages) {
 }
 
 ### Install packages from CRAN
-v.packages.to.install <- c("dplyr", "truncnorm", 
+v_packages_to_install <- c("dplyr", "truncnorm", 
                            "lhs", "IMIS", "matrixStats",
                            "plotrix", "psych", "survival",
                            "scatterplot3d", "reshape2",
                            "BiocManager", "devtools",
                            "shiny", "rstudioapi", 'nlme')
 
-f.install_and_load(v.packages.to.install)
+install_and_load(v_packages_to_install)
 
 ### Install genefilter from Bioconductor package needed for modeest
 BiocManager::install("genefilter", version = "3.9")
