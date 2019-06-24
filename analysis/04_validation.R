@@ -57,7 +57,7 @@ m_out_prop <- matrix(NA, nrow = n_samp, ncol = nrow(SickSicker.targets$PropSicke
 colnames(m_out_prop) <- SickSicker.targets$PropSicker$Time
 
 ### Evaluate model at each posterior sample and store results
-for(i in 1:n.samp){ # i = 1
+for(i in 1:n_samp){ # i = 1
   l_out_post <- calibration_out(v_params_calib = m_calib_post[i, ], 
                                   l_params_all = l_params_all)
   m_out_surv[i, ] <- l_out_post$Surv

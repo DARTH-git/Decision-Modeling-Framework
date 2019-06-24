@@ -132,7 +132,7 @@ ggsave("figs/05b_elc.png", width = 8, height = 6)
 
 #### 05b.7 Create linear regression metamodeling sensitivity analysis graphs ####
 #### 05a.7.1 One-way sensitivity analysis (OWSA) ####
-owsa.lrm.nmb <- owsa(l_psa, parms = c("c_Trt", "p_HS1", "u_S1", "u_Trt"),
+owsa_lrm_nmb <- owsa(l_psa, parms = c("c_Trt", "p_HS1", "u_S1", "u_Trt"),
                      outcome = "nmb", wtp = 150000)
 plot(owsa_lrm_nmb, txtsize = 16, n_x_ticks = 5, 
      facet_scales = "free") +
@@ -148,7 +148,7 @@ owsa_tornado(owsa = owsa_lrm_nmb, strategy = "Treatment")
 ggsave("figs/05b_tornado_lrm_Treatment_nmb.png", width = 8, height = 6)
 
 #### 05a.7.4 Two-way sensitivity analysis (TWSA) ####
-twsa.lrm.nmb <- twsa(l_psa, parm1 = "u_S1", parm2 = "u_Trt",
+twsa_lrm_nmb <- twsa(l_psa, parm1 = "u_S1", parm2 = "u_Trt",
            outcome = "nmb", wtp = 150000)
 plot(twsa_lrm_nmb)
 ggsave("figs/05b_twsa_lrm_uS1_uTrt_nmb.png", width = 8, height = 6)  

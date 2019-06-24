@@ -88,7 +88,7 @@ plot(owsa_nmb, txtsize = 16, n_x_ticks = 5,
 ggsave("figs/05a_owsa_nmb.png", width = 10, height = 6)
 
 #### 05a.6.1 Optimal strategy with OWSA ####
-owsa_opt_strat(owsa = owsa.nmb)
+owsa_opt_strat(owsa = owsa_nmb)
 ggsave("figs/05a_optimal_owsa_nmb.png", width = 8, height = 6)
 
 #### 05a.6.3 Tornado plot ####
