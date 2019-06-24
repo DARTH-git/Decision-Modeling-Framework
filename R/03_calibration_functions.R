@@ -112,12 +112,12 @@ likelihood <- function(v_params){
   return(v_like)
 }
 # test if it works
-# likelihood(v_params = sample_prior(2))
+# likelihood(v_params = sample.prior(2))
 
 #----------------------------------------------------------------------------#
 #### Function to sample from prior distributions of calibrated parameters ####
 #----------------------------------------------------------------------------#
-sample_prior <- function(n_samp){
+sample.prior <- function(n_samp){
   ### Definition:
   ##  Generates a sample of parameter sets from their prior distribution
   ### Arguments:  
@@ -140,7 +140,7 @@ sample_prior <- function(n_samp){
   return(m_param_samp)
 }
 # test if it works
-# pairs.panels(sample_prior(1000))
+# pairs.panels(sample.prior(1000))
 
 #--------------------------------------------------------------------------#
 #### Functions to evaluate log-prior and prior of calibrated parameters ####
@@ -174,7 +174,7 @@ log_prior <- function(v_params){
   return(lprior)
 }
 # test if it works
-# log_prior(v_params = sample_prior(5))
+# log_prior(v_params = sample.prior(5))
 
 prior <- function(v_params) { 
   ### Definition:
@@ -189,7 +189,7 @@ prior <- function(v_params) {
   return(v_prior)
 }
 # test if it works
-# prior(v_params = sample_prior(5))
+# prior(v_params = sample.prior(5))
 
 #----------------------------------------------------------------------------------#
 #### Functions to evaluate log-posterior and posterior of calibrated parameters ####
@@ -208,4 +208,4 @@ log_post <- function(v_params) {
    return(v_lpost) 
 }
 # test if it works
-# log_post(v_params = sample_prior(5))
+# log_post(v_params = sample.prior(5))

@@ -35,15 +35,15 @@ source("R/02_simulation_model_functions.R")
 l_out_stm <- decision_model(l_params_all = l_params_all)
 
 ### Plot Markov cohort trace
-png("figs/02_trace-plot.png")
-  matplot(l_out_stm$m.M,
+png("figs/02_trace_plot.png")
+  matplot(l_out_stm$m_M,
           xlab = "Cycle", ylab = "Proportion")
-  legend("right", legend = l_params_all$v.n, 
+  legend("right", legend = l_params_all$v_n, 
          pch = as.character(1:4), col = 1:4)
 dev.off()
 
 ### Plot state-transition diagram
 png("figs/02_model_diagram.png")
-  connect <- (l_out_stm$a.P[,,1] > 0)
+  connect <- (l_out_stm$a_P[,,1] > 0)
   survival::statefig(layout = c(2, 2), connect = connect )
 dev.off()

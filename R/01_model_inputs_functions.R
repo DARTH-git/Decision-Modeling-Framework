@@ -34,7 +34,7 @@ load_all_params <- function(file.init = "data/01_init_params.csv",
   ##
   
   #### Load initial set of initial parameters form .csv file ####
-  df_params_init  <- read.csv(file = file.init)
+  df_params_init  <- read.csv(file = file.init, stringsAsFactors = F)
   
   #### All-cause age-specific mortality from .csv file ####
   v_r_mort_by_age <- load_mort_data(file = file.mort)

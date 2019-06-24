@@ -97,7 +97,7 @@ n_target       <- length(v_target_names)
 
 #### 03.3.2 Run IMIS algorithm ####
 l_fit_imis <- IMIS(B = 1000, # incremental sample size at each iteration of IMIS
-                   B.re = n.resamp, # desired posterior sample size
+                   B.re = n_resamp, # desired posterior sample size
                    number_k = 10, # maximum number of iterations in IMIS
                    D = 0)
 ### Obtain posterior
