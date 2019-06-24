@@ -47,27 +47,27 @@ load("data/03_calibration_targets.RData")
 
 #### 03.2 Visualize targets ####
 ### TARGET 1: Survival ("Surv")
-plotrix::plotCI(x = SickSicker.targets$Surv$Time, 
-                y = SickSicker.targets$Surv$value, 
-                ui = SickSicker.targets$Surv$ub,
-                li = SickSicker.targets$Surv$lb,
+plotrix::plotCI(x    = SickSicker_targets$Surv$Time, 
+                y    = SickSicker_targets$Surv$value, 
+                ui   = SickSicker_targets$Surv$ub,
+                li   = SickSicker_targets$Surv$lb,
                 ylim = c(0, 1), 
                 xlab = "Time", ylab = "Pr(Alive)")
 
 ### TARGET 2: Prevalence ("Prev")
-plotrix::plotCI(x = SickSicker.targets$Prev$Time, 
-                y = SickSicker.targets$Prev$value, 
-                ui = SickSicker.targets$Prev$ub,
-                li = SickSicker.targets$Prev$lb,
+plotrix::plotCI(x    = SickSicker_targets$Prev$Time, 
+                y    = SickSicker_targets$Prev$value, 
+                ui   = SickSicker_targets$Prev$ub,
+                li   = SickSicker_targets$Prev$lb,
                 ylim = c(0, 1), 
                 xlab = "Time", ylab = "Pr(Sick+Sicker)")
 
 ### TARGET 3: Proportion who are Sicker ("PropSicker"), among all those 
 ###           afflicted (Sick+Sicker)
-plotrix::plotCI(x = SickSicker.targets$PropSick$Time, 
-                y = SickSicker.targets$PropSick$value, 
-                ui = SickSicker.targets$PropSick$ub,
-                li = SickSicker.targets$PropSick$lb,
+plotrix::plotCI(x    = SickSicker_targets$PropSick$Time, 
+                y    = SickSicker_targets$PropSick$value, 
+                ui   = SickSicker_targets$PropSick$ub,
+                li   = SickSicker_targets$PropSick$lb,
                 ylim = c(0, 1), 
                 xlab = "Time", ylab = "Pr(Sicker | Sick+Sicker)")
 
@@ -84,8 +84,8 @@ set.seed(072218)
 n_resamp <- 1000
 
 ### Names and number of input parameters to be calibrated
-v_param_names <- c("p_S1S2", "hr_S1", "hr_S2")
-n_param       <- length(v_param_names)
+v_param_names  <- c("p_S1S2", "hr_S1", "hr_S2")
+n_param        <- length(v_param_names)
 
 ### Vector with range on input search space
 v_lb <- c(p_S1S2 = 0.01, hr_S1 = 1.0, hr_S2 = 5)  # lower bound
@@ -96,10 +96,10 @@ v_target_names <- c("Surv", "Prev", "PropSick")
 n_target       <- length(v_target_names)
 
 #### 03.3.2 Run IMIS algorithm ####
-l_fit_imis <- IMIS(B = 1000, # incremental sample size at each iteration of IMIS
-                   B.re = n_resamp, # desired posterior sample size
-                   number_k = 10, # maximum number of iterations in IMIS
-                   D = 0)
+l_fit_imis <- IMIS(B        =  1000,      # incremental sample size at each iteration of IMIS
+                   B.re     =  n_resamp,  # desired posterior sample size
+                   number_k =  10,        # maximum number of iterations in IMIS
+                   D        =  0)
 ### Obtain posterior
 m_calib_post <- l_fit_imis$resample
 
@@ -116,10 +116,10 @@ v_calib_post_mode <- apply(m_calib_post, 2,
                            function(x) as.numeric(mlv(x, method = "shorth")[1]))
 
 # Compute posterior values for draw
-v_calib_post <- exp(log_post(m_calib_post))
+v_calib_post      <- exp(log_post(m_calib_post))
 
 # Compute maximum-a-posteriori (MAP)
-v_calib_post_map <- m_calib_post[which.max(v_calib_post), ]
+v_calib_post_map  <- m_calib_post[which.max(v_calib_post), ]
 
 # Summary statistics
 df_posterior_summ <- data.frame(
@@ -133,8 +133,8 @@ df_posterior_summ
 
 ### Save summary statistics of posterior distribution
 ## As .RData
-save(df_posterior_summ, 
-     file = "tables/03_summary_posterior.RData")
+  save(df_posterior_summ, 
+       file = "tables/03_summary_posterior.RData")
 ## As .csv
 write.csv(df_posterior_summ, 
           file = "tables/03_summary_posterior.csv", 

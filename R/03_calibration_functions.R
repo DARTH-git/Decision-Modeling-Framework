@@ -31,8 +31,8 @@ calibration_out <- function(v_params_calib, l_params_all){ # User defined
   
   ####### Return Output ###########################################
   l_out <- list(Surv = v_os[c(11, 21, 31)],
-              Prev = v_prev[c(11, 21, 31)],
-              PropSicker = v_prop_S2[c(11, 21, 31)])
+                Prev = v_prev[c(11, 21, 31)],
+                PropSicker = v_prop_S2[c(11, 21, 31)])
   return(l_out)
 }
 
@@ -58,37 +58,37 @@ log_lik <- function(v_params){ # User defined
   v_llik_overall <- numeric(n_samp)
   for(j in 1:n_samp) { # j=1
     jj <- tryCatch( { 
-    ###   Run model for parametr set "v_params" ###
-    l_model_res <- calibration_out(v_params_calib = v_params[j, ], 
-                                     l_params_all = l_params_all)
-  
-    ###  Calculate log-likelihood of model outputs to targets  ###
-    ## TARGET 1: Survival ("Surv")
-    ## Normal log-likelihood  
-    v_llik[j, "Surv"] <- sum(dnorm(x = SickSicker.targets$Surv$value,
-                                   mean = l.model.res$Surv,
-                                   sd = SickSicker.targets$Surv$se,
-                                   log = T))
-    
-    ## TARGET 2: Prevalence ("Prev")
-    ## Normal log-likelihood
-    v_llik[j, "Prev"] <- sum(dnorm(x = SickSicker.targets$Prev$value,
-                                   mean = l_model_res$Prev,
-                                   sd = SickSicker.targets$Prev$se,
-                                   log = T))
-    
-    ## TARGET 3: Proportion Sick+Sicker who are Sick ("PropSick")
-    ## Normal log-likelihood
-    v_llik[j, "PropSick"] <- sum(dnorm(x = SickSicker.targets$PropSick$value,
-                                       mean = l_model_res$PropSick,
-                                       sd = SickSicker.targets$PropSick$se,
-                                       log = T))
-    
-    ## OVERALL
-    ## can give different targets different weights (user must change this)
-    v_weights <- rep(1, n_target)
-    ## weighted sum
-    v_llik_overall[j] <- v_llik[j, ] %*% v_weights
+      ###   Run model for parametr set "v_params" ###
+      l_model_res <- calibration_out(v_params_calib = v_params[j, ], 
+                                       l_params_all = l_params_all)
+      
+      ###  Calculate log-likelihood of model outputs to targets  ###
+      ## TARGET 1: Survival ("Surv")
+      ## Normal log-likelihood  
+      v_llik[j, "Surv"] <- sum(dnorm(x = SickSicker_targets$Surv$value,
+                                     mean = l_model_res$Surv,
+                                     sd = SickSicker_targets$Surv$se,
+                                     log = T))
+      
+      ## TARGET 2: Prevalence ("Prev")
+      ## Normal log-likelihood
+      v_llik[j, "Prev"] <- sum(dnorm(x = SickSicker_targets$Prev$value,
+                                     mean = l_model_res$Prev,
+                                     sd = SickSicker_targets$Prev$se,
+                                     log = T))
+      
+      ## TARGET 3: Proportion Sick+Sicker who are Sick ("PropSick")
+      ## Normal log-likelihood
+      v_llik[j, "PropSick"] <- sum(dnorm(x = SickSicker_targets$PropSick$value,
+                                         mean = l_model_res$PropSick,
+                                         sd = SickSicker_targets$PropSick$se,
+                                         log = T))
+      
+      ## OVERALL
+      ## can give different targets different weights (user must change this)
+      v_weights <- rep(1, n_target)
+      ## weighted sum
+      v_llik_overall[j] <- v_llik[j, ] %*% v_weights
     }, error = function(e) NA) 
     if(is.na(jj)) { v_llik_overall <- -Inf }
   } ## End loop over sampled parameter sets
@@ -99,20 +99,20 @@ log_lik <- function(v_params){ # User defined
 # test if it works
 # log_lik(v_params = sample.prior(n_samp = 2))
 
-likelihood <- function(v_params){ 
+likelihood <- function(v.params){ 
   ### Definition:
   ##  Computes a likelihood value for one (or multiple) parameter set(s)
   ### Arguments:  
-  ##   v_params: Vector (or matrix) of model parameters 
+  ##   v.params: Vector (or matrix) of model parameters 
   ### Returns:
-  ##   v_like: Scalar (or vector) with likelihood values
+  ##   v.like: Scalar (or vector) with likelihood values
   ##
-  v_like <- exp(log_lik(v_params)) 
+  v.like <- exp(log_lik(v.params)) 
   
-  return(v_like)
+  return(v.like)
 }
 # test if it works
-# likelihood(v_params = sample.prior(2))
+# likelihood(v.params = sample.prior(2))
 
 #----------------------------------------------------------------------------#
 #### Function to sample from prior distributions of calibrated parameters ####
@@ -140,7 +140,6 @@ sample.prior <- function(n_samp){
   return(m_param_samp)
 }
 # test if it works
-# pairs.panels(sample.prior(1000))
 
 #--------------------------------------------------------------------------#
 #### Functions to evaluate log-prior and prior of calibrated parameters ####
@@ -204,8 +203,8 @@ log_post <- function(v_params) {
   ##   v_lpost: Scalar (or vector) with log-posterior values
   ##
   v_lpost <- log_prior(v_params) + log_lik(v_params)
- 
-   return(v_lpost) 
+  
+  return(v_lpost) 
 }
 # test if it works
 # log_post(v_params = sample.prior(5))

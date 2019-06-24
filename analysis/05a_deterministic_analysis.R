@@ -52,14 +52,14 @@ df_out_ce
 
 #### 05a.4 Conduct CEA with deterministic output ####
 ### Calculate incremental cost-effectiveness ratios (ICERs)
-df_cea_det <- calculate_icers(cost = df_out_ce$Cost, 
-                              effect = df_out_ce$Effect, 
+df_cea_det <- calculate_icers(cost       = df_out_ce$Cost, 
+                              effect     = df_out_ce$Effect, 
                               strategies = v_names_str)
 df_cea_det
 ### Save CEA table with ICERs
 ## As .RData
 save(df_cea_det, 
-     file = "tables/05a_deterministic_cea_results.RData")
+          file = "tables/05a_deterministic_cea_results.RData")
 ## As .csv
 write.csv(df_cea_det, 
           file = "tables/05a_deterministic_cea_results.csv")
@@ -84,7 +84,7 @@ owsa_nmb <- owsa_det(parms = c("c_Trt", "p_HS1", "u_S1", "u_Trt"), # parameter n
                      )
 plot(owsa_nmb, txtsize = 16, n_x_ticks = 5, 
      facet_scales = "free") +
-  theme(legend.position = "bottom")
+     theme(legend.position = "bottom")
 ggsave("figs/05a_owsa_nmb.png", width = 10, height = 6)
 
 #### 05a.6.1 Optimal strategy with OWSA ####

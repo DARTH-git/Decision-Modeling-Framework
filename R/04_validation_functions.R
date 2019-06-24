@@ -1,7 +1,7 @@
 #-------------------------------------------------# 
 #### Function to summarize posterior output  ######
 #-------------------------------------------------# 
-f.data_summary <- function(data, varname, groupnames){
+data_summary <- function(data, varname, groupnames){
   #+++++++++++++++++++++++++
   # Function to calculate the mean, standard deviation and 95% Credible Interval
   # for each group

@@ -38,7 +38,7 @@ source("analysis/04_validation.R", echo = TRUE)
 source("analysis/05a_deterministic_analysis.R", echo = TRUE)
 
 #### 05b Conduct probabilistic analysis ####
-source("analysis/05b_probabilistic_analysis.R", echo = TRUE )
+source("analysis/05b_probabilistic_analysis.R", echo = TRUE)
 
 #### 06 Conduct value of information analysis ####
-source("analysis/05c_value_of_information.R", echo = TRUE )
+source("analysis/05c_value_of_information.R", echo = TRUE)

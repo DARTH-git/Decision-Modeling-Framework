@@ -103,7 +103,7 @@ df_out_ce_psa <- summary(l_psa)
 df_cea_psa <- calculate_icers(cost = df_out_ce_psa$meanCost, 
                               effect = df_out_ce_psa$meanEffect,
                               strategies = df_out_ce_psa$Strategy)
-df.cea.psa
+df_cea_psa
 ### Save CEA table with ICERs
 ## As .RData
 save(df_cea_psa, 

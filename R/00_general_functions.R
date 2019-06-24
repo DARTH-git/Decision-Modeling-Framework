@@ -64,12 +64,12 @@ owsa_det <- function(parms, ranges, nsamps = 100, params_basecase, FUN, outcome,
   }
   
   jj <- tryCatch({
-    funtest <- FUN(params.basecase, ...)  
+    funtest <- FUN(params_basecase, ...)  
   }, error = function(e) NA)
   if(is.na(sum(is.na(jj)))){
     stop("FUN is not well defined by 'params_basecase' and ...")
   }
-  funtest <- FUN(params.basecase, ...)
+  funtest <- FUN(params_basecase, ...)
   if(is.null(strategies)){
     strategies <- funtest[, 1]
     n_str <- length(strategies) 
@@ -88,7 +88,7 @@ owsa_det <- function(parms, ranges, nsamps = 100, params_basecase, FUN, outcome,
     ### Generate matrix of inputs
     v_owsa_input <- seq(ranges[[i]][1], 
                         ranges[[i]][2], 
-                        length_out = nsamps)
+                        length.out = nsamps)
     ### Initialize matrix to store outcomes from a OWSA of the CEA
     m_out_owsa <- matrix(0, 
                          nrow = length(v_owsa_input), 
@@ -132,8 +132,8 @@ owsa_det <- function(parms, ranges, nsamps = 100, params_basecase, FUN, outcome,
 #' range is determined by \code{nsamp}
 #' @param nsamps number of parameter values. If NULL, 100 parameter values are 
 #' used
-#' @param params.basecase List with parameters for the base case
-#' @param FUN Function that takes \code{params.basecase} and \code{...} and 
+#' @param params_basecase List with parameters for the base case
+#' @param FUN Function that takes \code{params_basecase} and \code{...} and 
 #' produces \code{outcome} of interest
 #' @param outcome String with the outcome of interest produced by \code{nsamp}
 #' @param strategies vector of strategy names. The default (NULL) will use 
@@ -146,11 +146,11 @@ owsa_det <- function(parms, ranges, nsamps = 100, params_basecase, FUN, outcome,
 #' FUN must return a dataframe where the first column are the strategy names
 #' and the rest of teh columns must be outcomes.
 #'
-twsa_det <- function(parm1, parm2, ranges, nsamps = 40, params.basecase, FUN, outcome, 
+twsa_det <- function(parm1, parm2, ranges, nsamps = 40, params_basecase, FUN, outcome, 
                      strategies = NULL, ...){
   ### Check for errors
   if(sum(c(parm1, parm2) %in% names(params_basecase)) != 2){
-    stop("parm1 and parm2 should be in names of params.basecase")
+    stop("parm1 and parm2 should be in names of params_basecase")
   }
   
   if(typeof(ranges)!="list"){
@@ -162,7 +162,7 @@ twsa_det <- function(parm1, parm2, ranges, nsamps = 40, params.basecase, FUN, ou
   }
   
   jj <- tryCatch({
-    funtest <- FUN(params.basecase, ...)  
+    funtest <- FUN(params_basecase, ...)  
   }, error = function(e) NA)
   if(is.na(sum(is.na(jj)))){
     stop("FUN is not well defined by 'params_basecase' and ...")

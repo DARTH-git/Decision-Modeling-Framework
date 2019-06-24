@@ -49,12 +49,12 @@ load("output/03_imis_output.RData")
 n_samp <- nrow(m_calib_post)
 
 ### Define matrices to store model outputs
-m_out_surv <- matrix(NA, nrow = n_samp, ncol = nrow(SickSicker.targets$Surv))
-colnames(m_out_surv) <- SickSicker.targets$Surv$Time
-m_out_prev <- matrix(NA, nrow = n_samp, ncol = nrow(SickSicker.targets$Prev))
-colnames(m_out_prev) <- SickSicker.targets$Prev$Time
-m_out_prop <- matrix(NA, nrow = n_samp, ncol = nrow(SickSicker.targets$PropSicker))
-colnames(m_out_prop) <- SickSicker.targets$PropSicker$Time
+m_out_surv <- matrix(NA, nrow = n_samp, ncol = nrow(SickSicker_targets$Surv))
+colnames(m_out_surv) <- SickSicker_targets$Surv$Time
+m_out_prev <- matrix(NA, nrow = n_samp, ncol = nrow(SickSicker_targets$Prev))
+colnames(m_out_prev) <- SickSicker_targets$Prev$Time
+m_out_prop <- matrix(NA, nrow = n_samp, ncol = nrow(SickSicker_targets$PropSicker))
+colnames(m_out_prop) <- SickSicker_targets$PropSicker$Time
 
 ### Evaluate model at each posterior sample and store results
 for(i in 1:n_samp){ # i = 1
@@ -107,16 +107,16 @@ l_out_calib_map <- calibration_out(v_params_calib = v_calib_post_map,
 ### TARGET 1: Survival ("Surv")
 png("figs/04_posterior_vs_targets_survival.png", 
     width = 8, height = 6, units = 'in', res = 300)
-plotrix::plotCI(x = SickSicker.targets$Surv$Time, y = SickSicker.targets$Surv$value, 
-                ui = SickSicker.targets$Surv$ub,
-                li = SickSicker.targets$Surv$lb,
+plotrix::plotCI(x = SickSicker_targets$Surv$Time, y = SickSicker_targets$Surv$value, 
+                ui = SickSicker_targets$Surv$ub,
+                li = SickSicker_targets$Surv$lb,
                 ylim = c(0, 1), 
                 xlab = "Time", ylab = "Pr(Alive)")
-lines(x = SickSicker.targets$Surv$Time,
+lines(x = SickSicker_targets$Surv$Time,
       y = df_out_surv_sum$lb, col = "red", lty = 2)
-lines(x = SickSicker.targets$Surv$Time,
+lines(x = SickSicker_targets$Surv$Time,
       y = df_out_surv_sum$ub, col = "red", lty = 2)
-points(x = SickSicker.targets$Surv$Time, 
+points(x = SickSicker_targets$Surv$Time, 
        y = l_out_calib_map$Surv, 
        pch = 8, col = "red")
 legend("bottomright", 
@@ -131,16 +131,16 @@ dev.off()
 ### TARGET 2: Prevalence ("Prev")
 png("figs/04_posterior_vs_targets_prevalence.png", 
     width = 8, height = 6, units = 'in', res = 300)
-plotrix::plotCI(x = SickSicker.targets$Prev$Time, y = SickSicker.targets$Prev$value, 
-                ui = SickSicker.targets$Prev$ub,
-                li = SickSicker.targets$Prev$lb,
+plotrix::plotCI(x = SickSicker_targets$Prev$Time, y = SickSicker_targets$Prev$value, 
+                ui = SickSicker_targets$Prev$ub,
+                li = SickSicker_targets$Prev$lb,
                 ylim = c(0, 1), 
                 xlab = "Time", ylab = "Pr(Sick+Sicker)")
-lines(x = SickSicker.targets$Prev$Time,
+lines(x = SickSicker_targets$Prev$Time,
       y = df_out_prev_sum$lb, col = "red", lty = 2)
-lines(x = SickSicker.targets$Prev$Time,
+lines(x = SickSicker_targets$Prev$Time,
       y = df_out_prev_sum$ub, col = "red", lty = 2)
-points(x = SickSicker.targets$Prev$Time, 
+points(x = SickSicker_targets$Prev$Time, 
        y = l_out_calib_map$Prev, 
        pch = 8, col = "red")
 legend("bottomright", 
@@ -155,16 +155,16 @@ dev.off()
 ### TARGET 3: Proportion who are Sicker ("PropSicker"), among all those afflicted (Sick+Sicker)
 png("figs/04_posterior_vs_targets_proportion_sicker.png", 
     width = 8, height = 6, units = 'in', res = 300)
-plotrix::plotCI(x = SickSicker.targets$PropSick$Time, y = SickSicker.targets$PropSick$value, 
-                ui = SickSicker.targets$PropSick$ub,
-                li = SickSicker.targets$PropSick$lb,
+plotrix::plotCI(x = SickSicker_targets$PropSick$Time, y = SickSicker_targets$PropSick$value, 
+                ui = SickSicker_targets$PropSick$ub,
+                li = SickSicker_targets$PropSick$lb,
                 ylim = c(0, 1), 
                 xlab = "Time", ylab = "Pr(Sicker | Sick+Sicker)")
-lines(x = SickSicker.targets$PropSicker$Time,
+lines(x = SickSicker_targets$PropSicker$Time,
       y = df_out_prop_sum$lb, col = "red", lty = 2)
-lines(x = SickSicker.targets$PropSicker$Time,
-      y = df_out_prop.sum$ub, col = "red", lty = 2)
-points(x = SickSicker.targets$PropSicker$Time, 
+lines(x = SickSicker_targets$PropSicker$Time,
+      y = df_out_prop_sum$ub, col = "red", lty = 2)
+points(x = SickSicker_targets$PropSicker$Time, 
        y = l_out_calib_map$PropSicker, 
        pch = 8, col = "red")
 legend("bottomright", 
