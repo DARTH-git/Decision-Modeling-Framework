@@ -5,8 +5,8 @@
 #                                                                              # 
 # Depends on:                                                                  #
 #   00_general_functions.R                                                     #
-#   01_model-inputs.R                                                          #
-#   02_simulation-model_functions.R                                            #
+#   01_model_inputs.R                                                          #
+#   02_simulation_model_functions.R                                            #
 #   03_calibration_functions.R                                                 #
 #                                                                              # 
 # Authors:                                                                     #
@@ -35,130 +35,130 @@ library(psych)         # pairwise histograms
 library(scatterplot3d) # 3D scatterplots
 
 #### 03.1.2 Load inputs ####
-source("analysis/01_model-inputs.R")
+source("analysis/01_model_inputs.R")
 
 #### 03.1.3 Load functions ####
 source("R/00_general_functions.R")
-source("R/02_simulation-model_functions.R")
+source("R/02_simulation_model_functions.R")
 source("R/03_calibration_functions.R")
 
 #### 03.1.4 Load calibration targets ####
-load("data/03_calibration-targets.RData")
+load("data/03_calibration_targets.RData")
 
 #### 03.2 Visualize targets ####
 ### TARGET 1: Survival ("Surv")
-plotrix::plotCI(x = SickSicker.targets$Surv$Time, 
-                y = SickSicker.targets$Surv$value, 
-                ui = SickSicker.targets$Surv$ub,
-                li = SickSicker.targets$Surv$lb,
+plotrix::plotCI(x    = SickSicker_targets$Surv$Time, 
+                y    = SickSicker_targets$Surv$value, 
+                ui   = SickSicker_targets$Surv$ub,
+                li   = SickSicker_targets$Surv$lb,
                 ylim = c(0, 1), 
                 xlab = "Time", ylab = "Pr(Alive)")
 
 ### TARGET 2: Prevalence ("Prev")
-plotrix::plotCI(x = SickSicker.targets$Prev$Time, 
-                y = SickSicker.targets$Prev$value, 
-                ui = SickSicker.targets$Prev$ub,
-                li = SickSicker.targets$Prev$lb,
+plotrix::plotCI(x    = SickSicker_targets$Prev$Time, 
+                y    = SickSicker_targets$Prev$value, 
+                ui   = SickSicker_targets$Prev$ub,
+                li   = SickSicker_targets$Prev$lb,
                 ylim = c(0, 1), 
                 xlab = "Time", ylab = "Pr(Sick+Sicker)")
 
 ### TARGET 3: Proportion who are Sicker ("PropSicker"), among all those 
 ###           afflicted (Sick+Sicker)
-plotrix::plotCI(x = SickSicker.targets$PropSick$Time, 
-                y = SickSicker.targets$PropSick$value, 
-                ui = SickSicker.targets$PropSick$ub,
-                li = SickSicker.targets$PropSick$lb,
+plotrix::plotCI(x    = SickSicker_targets$PropSick$Time, 
+                y    = SickSicker_targets$PropSick$value, 
+                ui   = SickSicker_targets$PropSick$ub,
+                li   = SickSicker_targets$PropSick$lb,
                 ylim = c(0, 1), 
                 xlab = "Time", ylab = "Pr(Sicker | Sick+Sicker)")
 
 #### 03.3 Run calibration algorithms ####
 # Check that it works
-v.params.calib = c(p.S1S2 = 0.105, hr.S1 = 3, hr.S2 = 10)
-f.calibration_out(v.params.calib = v.params.calib, l.params.all = l.params.all)
+v_params_calib = c(p_S1S2 = 0.105, hr_S1 = 3, hr_S2 = 10)
+calibration_out(v_params_calib = v_params_calib, l_params_all = l_params_all)
 
 #### 03.3.1 Specify calibration parameters ####
 ### Specify seed (for reproducible sequence of random numbers)
 set.seed(072218)
 
 ### Number of random samples to obtain from the posterior distribution 
-n.resamp <- 1000
+n_resamp <- 1000
 
 ### Names and number of input parameters to be calibrated
-v.param.names <- c("p.S1S2", "hr.S1", "hr.S2")
-n.param       <- length(v.param.names)
+v_param_names  <- c("p_S1S2", "hr_S1", "hr_S2")
+n_param        <- length(v_param_names)
 
 ### Vector with range on input search space
-v.lb <- c(p.S1S2 = 0.01, hr.S1 = 1.0, hr.S2 = 5)  # lower bound
-v.ub <- c(p.S1S2 = 0.50, hr.S1 = 4.5, hr.S2 = 15) # upper bound
+v_lb <- c(p_S1S2 = 0.01, hr_S1 = 1.0, hr_S2 = 5)  # lower bound
+v_ub <- c(p_S1S2 = 0.50, hr_S1 = 4.5, hr_S2 = 15) # upper bound
 
 ### Number of calibration targets
-v.target.names <- c("Surv", "Prev", "PropSick")
-n.target       <- length(v.target.names)
+v_target_names <- c("Surv", "Prev", "PropSick")
+n_target       <- length(v_target_names)
 
 #### 03.3.2 Run IMIS algorithm ####
-l.fit.imis <- IMIS(B = 1000, # incremental sample size at each iteration of IMIS
-                   B.re = n.resamp, # desired posterior sample size
-                   number_k = 10, # maximum number of iterations in IMIS
-                   D = 0)
+l_fit_imis <- IMIS(B        =  1000,      # incremental sample size at each iteration of IMIS
+                   B.re     =  n_resamp,  # desired posterior sample size
+                   number_k =  10,        # maximum number of iterations in IMIS
+                   D        =  0)
 ### Obtain posterior
-m.calib.post <- l.fit.imis$resample
+m_calib_post <- l_fit_imis$resample
 
 #### 03.4 Exploring posterior distribution ####
 #### 03.4.1 Summary statistics of posterior distribution ####
 ### Compute posterior mean
-v.calib.post.mean <- colMeans(m.calib.post)
+v_calib_post_mean <- colMeans(m_calib_post)
 
 ### Compute posterior median and 95% credible interval
-m.calib.post.95cr <- colQuantiles(m.calib.post, probs = c(0.025, 0.5, 0.975))
+m_calib_post_95cr <- colQuantiles(m_calib_post, probs = c(0.025, 0.5, 0.975))
 
 ### Compute posterior mode
-v.calib.post.mode <- apply(m.calib.post, 2, 
+v_calib_post_mode <- apply(m_calib_post, 2, 
                            function(x) as.numeric(mlv(x, method = "shorth")[1]))
 
 # Compute posterior values for draw
-v.calib.post <- exp(f.log_post(m.calib.post))
+v_calib_post      <- exp(log_post(m_calib_post))
 
 # Compute maximum-a-posteriori (MAP)
-v.calib.post.map <- m.calib.post[which.max(v.calib.post), ]
+v_calib_post_map  <- m_calib_post[which.max(v_calib_post), ]
 
 # Summary statistics
-df.posterior.summ <- data.frame(
-  Parameter = v.param.names,
-  Mean      = v.calib.post.mean,
-  m.calib.post.95cr,
-  Mode      = v.calib.post.mode,
-  MAP       = v.calib.post.map,
+df_posterior_summ <- data.frame(
+  Parameter = v_param_names,
+  Mean      = v_calib_post_mean,
+  m_calib_post_95cr,
+  Mode      = v_calib_post_mode,
+  MAP       = v_calib_post_map,
   check.names = FALSE)
-df.posterior.summ
+df_posterior_summ
 
 ### Save summary statistics of posterior distribution
 ## As .RData
-save(df.posterior.summ, 
-     file = "tables/03_summary-posterior.RData")
+  save(df_posterior_summ, 
+       file = "tables/03_summary_posterior.RData")
 ## As .csv
-write.csv(df.posterior.summ, 
-          file = "tables/03_summary-posterior.csv", 
+write.csv(df_posterior_summ, 
+          file = "tables/03_summary_posterior.csv", 
           row.names = FALSE)
 
 #### 03.4.2 Visualization of posterior distribution ####
 ### Rescale posterior to plot density of plots
-v.calib.alpha <- scales::rescale(v.calib.post)
+v_calib_alpha <- scales::rescale(v_calib_post)
 
 ### Plot the 1000 draws from the posterior
-png("figs/03_posterior-distribution-joint.png", 
+png("figs/03_posterior_distribution_joint.png", 
     width = 8, height = 6, units = 'in', res = 300)
-  s3d <- scatterplot3d(x = m.calib.post[, 1],
-                       y = m.calib.post[, 2],
-                       z = m.calib.post[, 3],
-                       color = scales::alpha("black", v.calib.alpha),
-                       xlim = c(v.lb[1], v.ub[1]), 
-                       ylim = c(v.lb[2], v.ub[2]), 
-                       zlim = c(v.lb[3], v.ub[3]),
-                       xlab = v.param.names[1], 
-                       ylab = v.param.names[2], 
-                       zlab = v.param.names[3])
+  s3d <- scatterplot3d(x = m_calib_post[, 1],
+                       y = m_calib_post[, 2],
+                       z = m_calib_post[, 3],
+                       color = scales::alpha("black", v_calib_alpha),
+                       xlim = c(v_lb[1], v_ub[1]), 
+                       ylim = c(v_lb[2], v_ub[2]), 
+                       zlim = c(v_lb[3], v_ub[3]),
+                       xlab = v_param_names[1], 
+                       ylab = v_param_names[2], 
+                       zlab = v_param_names[3])
   ## Add center of Gaussian components
-  s3d$points3d(l.fit.imis$center, col = "red", pch = 8)
+  s3d$points3d(l_fit_imis$center, col = "red", pch = 8)
   ## Add legend
   legend(s3d$xyz.convert(0.05, 1.0, 5), 
          col = c("black", "red"), 
@@ -168,12 +168,12 @@ png("figs/03_posterior-distribution-joint.png",
 dev.off()
 
 ### Plot the 1000 draws from the posterior with marginal histograms
-png("figs/03_posterior-distribution-marginal.png", 
+png("figs/03_posterior_distribution_marginal.png", 
     width = 8, height = 6, units = 'in', res = 300)
-  pairs.panels(m.calib.post)
+  pairs.panels(m_calib_post)
 dev.off()
 
 #### 03.5 Store posterior and MAP from IMIS calibration ####
-save(m.calib.post,
-     v.calib.post.map,
-     file = "output/03_imis-output.RData")
+save(m_calib_post,
+     v_calib_post_map,
+     file = "output/03_imis_output.RData")
