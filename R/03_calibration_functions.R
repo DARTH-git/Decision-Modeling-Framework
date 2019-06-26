@@ -1,17 +1,15 @@
 #-------------------------------------------------------------------#
 #### Generate model outputs for calibration from a parameter set ####
 #-------------------------------------------------------------------#
+#' Generate model outputs for calibration from a parameter set
+#'
+#' \code{calibration_out} computes model outputs to be used for calibration routines.
+#'
+#' @param v_params_calib Vector of parameters that need to be calibrated
+#' @param l_params_all List with all parameters of the decision model
+#' @return A list with Survival (Surv), Prevalence of Sick and Sicker (Prev), and proportion of Sicker (PropSicker) out of all sick (Sick+Sicker) individuals.
+#' 
 calibration_out <- function(v_params_calib, l_params_all){ # User defined
-  ### Definition:
-  ##   Computes model outputs to be used for calibration routines
-  ### Arguments:  
-  ##   v_params_calib: vector of parameters that need to be calibrated
-  ##   l_params_all: List with all parameters of the decision model
-  ### Returns:
-  ##   l_out: List with Survival (Surv), Prevalence of Sick and Sicker (Prev), 
-  ##          and proportion of Sicker (PropSicker) out of all sick 
-  ##          (Sick+Sicker) individuals
-  ##
   # Substitute values of calibrated parameters in base-case with 
   # calibrated values
   l_params_all <- update_param_list(l_params_all = l_params_all, params_updated = v_params_calib)
@@ -39,15 +37,14 @@ calibration_out <- function(v_params_calib, l_params_all){ # User defined
 #-------------------------------------------------------------------#
 #### Likelihood and log-likelihood functions for a parameter set ####
 #-------------------------------------------------------------------#
+#' Log-likelihood function for a parameter set
+#'
+#' \code{log_lik} computes a log-likelihood value for one (or multiple) parameter set(s).
+#'
+#' @param v_params Vector (or matrix) of model parameters 
+#' @return A scalar (or vector) with log-likelihood values.
+#' 
 log_lik <- function(v_params){ # User defined
-  ### Definition:
-  ##  Computes a log-likelihood value for one (or multiple) parameter set(s)
-  ##  using the simulation model and likelihood functions
-  ### Arguments:  
-  ##   v_params: Vector (or matrix) of model parameters 
-  ### Returns:
-  ##   v_llik_overall: Scalar (or vector) with log-likelihood values
-  ##
   if(is.null(dim(v_params))) { # If vector, change to matrix
     v_params <- t(v_params) 
   }
@@ -99,32 +96,30 @@ log_lik <- function(v_params){ # User defined
 # test if it works
 # log_lik(v_params = sample.prior(n_samp = 2))
 
-likelihood <- function(v.params){ 
-  ### Definition:
-  ##  Computes a likelihood value for one (or multiple) parameter set(s)
-  ### Arguments:  
-  ##   v.params: Vector (or matrix) of model parameters 
-  ### Returns:
-  ##   v.like: Scalar (or vector) with likelihood values
-  ##
-  v.like <- exp(log_lik(v.params)) 
-  
-  return(v.like)
+#' Likelihood
+#'
+#' \code{likelihood} computes a likelihood value for one (or multiple) parameter set(s).
+#'
+#' @param v_params Vector (or matrix) of model parameters 
+#' @return A scalar (or vector) with likelihood values.
+#' 
+likelihood <- function(v_params){ 
+  v_like <- exp(log_lik(v_params)) 
+  return(v_like)
 }
 # test if it works
-# likelihood(v.params = sample.prior(2))
+# likelihood(v_params = sample.prior(2))
 
 #----------------------------------------------------------------------------#
 #### Function to sample from prior distributions of calibrated parameters ####
 #----------------------------------------------------------------------------#
+#' Sample from prior distributions of calibrated parameters
+#'
+#' \code{sample.prior} generates a sample of parameter sets from their prior distribution.
+#' @param n_samp Number of samples
+#' @return A matrix with a sample of parameter sets.
+#' 
 sample.prior <- function(n_samp){
-  ### Definition:
-  ##  Generates a sample of parameter sets from their prior distribution
-  ### Arguments:  
-  ##   n_samp: Number of samples
-  ### Returns:
-  ##   m_param_samp: Matrix with a sample of parameter sets
-  ##
   m_lhs_unit   <- randomLHS(n = n_samp, k = n_param)
   m_param_samp <- matrix(nrow = n_samp, ncol = n_param)
   colnames(m_param_samp) <- v_param_names
@@ -144,15 +139,13 @@ sample.prior <- function(n_samp){
 #--------------------------------------------------------------------------#
 #### Functions to evaluate log-prior and prior of calibrated parameters ####
 #--------------------------------------------------------------------------#
+#' Evaluate log-prior of calibrated parameters
+#'
+#' \code{log_prior} computes a log-prior value for one (or multiple) parameter set(s) based on their prior distributions.
+#' @param v_params Vector (or matrix) of model parameters 
+#' @return A scalar (or vector) with log-prior values.
+#' 
 log_prior <- function(v_params){
-  ### Definition:
-  ##  Computes a log-prior value for one (or multiple) parameter set(s) based on
-  ##  their prior distributions
-  ### Arguments:  
-  ##   v_params: Vector (or matrix) of model parameters 
-  ### Returns:
-  ##   lprior: Scalar (or vector) with log-prior values
-  ##
   if(is.null(dim(v_params))) { # If vector, change to matrix
     v_params <- t(v_params) 
   }
@@ -175,16 +168,14 @@ log_prior <- function(v_params){
 # test if it works
 # log_prior(v_params = sample.prior(5))
 
+#' Evaluate prior of calibrated parameters
+#'
+#' \code{prior} computes a prior value for one (or multiple) parameter set(s).
+#' @param v_params Vector (or matrix) of model parameters 
+#' @return A scalar (or vector) with prior values.
+#' 
 prior <- function(v_params) { 
-  ### Definition:
-  ##  Computes a prior value for one (or multiple) parameter set(s)
-  ### Arguments:  
-  ##   v_params: Vector (or matrix) of model parameters 
-  ### Returns:
-  ##   v_prior: Scalar (or vector) with prior values
-  ##
   v_prior <- exp(log_prior(v_params)) 
-  
   return(v_prior)
 }
 # test if it works
@@ -193,18 +184,28 @@ prior <- function(v_params) {
 #----------------------------------------------------------------------------------#
 #### Functions to evaluate log-posterior and posterior of calibrated parameters ####
 #----------------------------------------------------------------------------------#
+#' Evaluate log-posterior of calibrated parameters
+#'
+#' \code{log_post} Computes a log-posterior value for one (or multiple) parameter set(s) based on the simulation model, likelihood functions and prior distributions.
+#' @param v_params Vector (or matrix) of model parameters 
+#' @return A scalar (or vector) with log-posterior values.
+#' 
 log_post <- function(v_params) { 
-  ### Definition:
-  ##  Computes a log-posterior value for one (or multiple) parameter set(s) based on
-  ##  the simulation model, likelihood functions and prior distributions
-  ### Arguments:  
-  ##   v_params: Vector (or matrix) of model parameters 
-  ### Returns:
-  ##   v_lpost: Scalar (or vector) with log-posterior values
-  ##
   v_lpost <- log_prior(v_params) + log_lik(v_params)
-  
   return(v_lpost) 
 }
 # test if it works
 # log_post(v_params = sample.prior(5))
+
+#' Evaluate posterior of calibrated parameters
+#'
+#' \code{posterior} computes a posterior value for one (or multiple) parameter set(s).
+#' @param v_params Vector (or matrix) of model parameters 
+#' @return A scalar (or vector) with posterior values.
+#' 
+posterior <- function(v_params) { 
+  v_posterior <- exp(log_post(v_params)) 
+  return(v_posterior)
+}
+# test if it works
+# posterior(v_params = sample.prior(5))

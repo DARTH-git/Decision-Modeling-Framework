@@ -1,17 +1,14 @@
 #---------------------------------------------------#
 #### Generate PSA dataset of CEA parameters ####
 #---------------------------------------------------#
+#' Generate PSA dataset of CEA parameters
+#'
+#' \code{generate_psa_params} generates PSA input dataset by sampling decision model parameters from their distributions.
+#' @param n_sim Number of PSA samples
+#' @param seed Seed for reproducibility of Monte Carlo sampling
+#' @return A data frame with samples of parameters for PSA.
+#' 
 generate_psa_params <- function(n_sim, seed = 20190220){ # User defined
-  ### Definition:
-  ##   Generates PSA input dataset by sampling decision model parameters from
-  ##   their distributions
-  ### Arguments:  
-  ##   n_sim: Number of PSA samples
-  ##   seed:  Seed for reproducibility of Monte Carlo sampling
-  ### Returns:
-  ##   df_psa_params: Dataframe with samples of parameters for PSA
-  ##
-  
   ## Load calibrated parameters
   load("output/03_imis_output.RData")
   n_sim <- nrow(m_calib_post)

@@ -1,17 +1,16 @@
 #-------------------------------------------------# 
 #### Function to summarize posterior output  ######
 #-------------------------------------------------# 
+#' Summarize posterior output
+#'
+#' \code{data_summary} is used to to calculate the mean, standard deviation and 95% Credible Interval.
+#' @param data Data frame
+#' @param varname Name of a column containing the variable
+#' @param groupnames Vector of column names to be used as grouping variables
+#' @return A data frame containing the posterior output.
+#' 
+
 data_summary <- function(data, varname, groupnames){
-  #+++++++++++++++++++++++++
-  # Function to calculate the mean, standard deviation and 95% Credible Interval
-  # for each group
-  # Source: http://www.sthda.com/english/wiki/ggplot2-error-bars-quick-start-guide-r-software-and-data-visualization
-  #+++++++++++++++++++++++++
-  # data : a data frame
-  # varname : the name of a column containing the variable
-  #to be summarized
-  # groupnames : vector of column names to be used as
-  # grouping variables
   require(plyr)
   summary_func <- function(x, col){
     c(mean = mean(x[[col]], na.rm = TRUE),

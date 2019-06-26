@@ -1,16 +1,14 @@
 #---------------------------------------------#
 #### Calculate cost-effectiveness outcomes ####
 #---------------------------------------------#
+#' Calculate cost-effectiveness outcomes
+#'
+#' \code{calculate_ce_out} calculates costs and effects for a given vector of parameters using a simulation model.
+#' @param l_params_all List with all parameters of decision model
+#' @param n_wtp Willingness-to-pay threshold to compute net benefits
+#' @return A data frame with discounted costs, effectiveness and NMB.
+#' 
 calculate_ce_out <- function(l_params_all, n_wtp = 100000){ # User defined
-  ### Definition:
-  ##   Calculates costs and effects for a given vector of parameters using a 
-  ##   simulation model_
-  ### Arguments:  
-  ##   l_params_all: List with all parameters of decision model
-  ##   n_wtp: Willingness-to-pay threshold to compute net benefits
-  ### Returns:
-  ##   df_ce: Dataframe with discounted costs, effectiveness and NMB
-  ##
   with(as.list(l_params_all), {
     ## Create discounting vectors
     v_dwc <- 1 / ((1 + d_e) ^ (0:(n_t))) # vector with discount weights for costs
