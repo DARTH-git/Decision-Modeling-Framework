@@ -149,6 +149,6 @@ ggsave("figs/05b_tornado_lrm_Treatment_nmb.png", width = 8, height = 6)
 
 #### 05a.7.4 Two-way sensitivity analysis (TWSA) ####
 twsa_lrm_nmb <- twsa(l_psa, parm1 = "u_S1", parm2 = "u_Trt",
-           outcome = "nmb", wtp = 150000)
+                     outcome = "nmb", wtp = 150000)
 plot(twsa_lrm_nmb)
 ggsave("figs/05b_twsa_lrm_uS1_uTrt_nmb.png", width = 8, height = 6)  
