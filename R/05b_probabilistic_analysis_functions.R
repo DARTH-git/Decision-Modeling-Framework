@@ -13,7 +13,7 @@ generate_psa_params <- function(n_sim, seed = 20190220){ # User defined
   load("output/03_imis_output.RData")
   n_sim <- nrow(m_calib_post)
   set_seed <- seed
-  psa_params <- data.frame(
+  df_psa_params <- data.frame(
     ### Calibrated parameters
     m_calib_post,
     
@@ -35,5 +35,5 @@ generate_psa_params <- function(n_sim, seed = 20190220){ # User defined
     u_D   = 0                                               , # utility when dead
     u_Trt = rtruncnorm(n_sim, mean = 0.95, sd = 0.02, b = 1)  # utility when being treated
   )
-  return(dpsa_params)
+  return(df_psa_params)
 }
