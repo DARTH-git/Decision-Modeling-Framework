@@ -75,6 +75,9 @@ owsa_det <- function(parms, ranges, nsamps = 100, params_basecase, FUN, outcome,
     strategies <- funtest[, 1]
     n_str <- length(strategies) 
   }
+  else{
+    n_str <- length(strategies)
+  }
   if(length(strategies)!=length(funtest[, 1])){
     stop("Number of strategies not the same as in FUN")
   }
@@ -172,6 +175,9 @@ twsa_det <- function(parm1, parm2, ranges, nsamps = 40, params_basecase, FUN, ou
   if(is.null(strategies)){
     strategies <- funtest[,1]
     n_str <- length(strategies) 
+  }
+  else{
+    n_str <- length(strategies)
   }
   if(length(strategies)!=length(funtest[, 1])){
     stop("Number of strategies not the same as in FUN")
