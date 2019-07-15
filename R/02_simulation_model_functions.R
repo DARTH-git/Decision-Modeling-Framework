@@ -46,35 +46,8 @@ decision_model <- function(l_params_all, verbose = FALSE){ # User defined
     # From D
     a_P["D", "D", ] <- 1
     
-    # Check if transition probabilities are valid (i.e., in [0, 1])
-    m_indices_notvalid <- arrayInd(which(a_P < 0 | a_P > 1), 
-                                   dim(a_P))
-    try(
-    if(dim(m_indices_notvalid)[1] != 0){
-      v_rows_notval   <- rownames(a_P)[m_indices_notvalid[, 1]]
-      v_cols_notval   <- colnames(a_P)[m_indices_notvalid[, 2]]
-      v_cycles_notval <- dimnames(a_P)[[3]][m_indices_notvalid[, 3]]
-      
-      df_notvalid <- data.frame(`Transition probabilities not valid:` = 
-                                  matrix(paste0(paste(v_rows_notval, v_cols_notval, sep = "->"),
-                                                "; at cycle ",
-                                                v_cycles_notval), ncol = 1), 
-                                check.names = FALSE)
-      if(verbose){
-        message("Not valid transition probabilities")
-        # print(df_notvalid)
-        stop(print(df_notvalid), call. = FALSE)
-      } #else stop()
-    }
-    )
-    
-    # Check if transition probability array is valid
-    valid <- apply(a_P, 3, function(x) all.equal(sum(rowSums(x)), n_states))
-    if (!isTRUE(all_equal(as.numeric(sum(valid)), as.numeric(n_t)))) {
-      if(verbose){
-        stop("This is not a valid transition Matrix")
-      } #else stop()
-    }
+    #### Check if transition array is valid ####
+    check_transition_array(a_P, n_states, n_t, verbose = verbose)
     
     #### Compute cohort trace matrix and transition array for age-dependent STM ####
     # Initialize cohort trace matrix
@@ -92,4 +65,54 @@ decision_model <- function(l_params_all, verbose = FALSE){ # User defined
                 m_M = m_M))
   }
   )
+}
+
+#' Check if transition array is valid
+#'
+#' \code{check_transition_array} checks if transition probabilities are valid. 
+#' This checks that each of the rows of the transition matrices sum to one and 
+#' that each of its entries are in \[0, 1\].
+#'
+#' @param a_P A transition probability array.
+#' @param n_states Number of health states.
+#' @param n_t Number of cycles.
+#' @param verbose Logical variable to indicate print out of messages. 
+#' Default = TRUE
+#'
+#' @return
+#' This function stops if transition probability array is not valid and shows 
+#' what are the entries that are not valid
+#' @export
+check_transition_array <- function(a_P,
+                                   n_states,
+                                   n_t, 
+                                   verbose = TRUE){
+  m_indices_notvalid <- arrayInd(which(a_P < 0 | a_P > 1), 
+                                 dim(a_P))
+  try(
+    if(dim(m_indices_notvalid)[1] != 0){
+      v_rows_notval   <- rownames(a_P)[m_indices_notvalid[, 1]]
+      v_cols_notval   <- colnames(a_P)[m_indices_notvalid[, 2]]
+      v_cycles_notval <- dimnames(a_P)[[3]][m_indices_notvalid[, 3]]
+      
+      df_notvalid <- data.frame(`Transition probabilities not valid:` = 
+                                  matrix(paste0(paste(v_rows_notval, v_cols_notval, sep = "->"),
+                                                "; at cycle ",
+                                                v_cycles_notval), ncol = 1), 
+                                check.names = FALSE)
+      if(verbose){
+        message("Not valid transition probabilities")
+        # print(df_notvalid)
+        stop(print(df_notvalid), call. = FALSE)
+      } #else stop()
+    }
+  )
+  
+  # Check if transition probability array is valid
+  valid <- apply(a_P, 3, function(x) all.equal(sum(rowSums(x)), n_states))
+  if (!isTRUE(dplyr::all_equal(as.numeric(sum(valid)), as.numeric(n_t)))) {
+    if(verbose){
+      stop("This is not a valid transition Matrix")
+    } #else stop()
+  }
 }
