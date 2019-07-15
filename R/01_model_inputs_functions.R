@@ -1,13 +1,11 @@
-#----------------------------------------#
-#### Load Mortality Data              ####
-#----------------------------------------#
 #' Load mortality data
 #'
 #' \code{load_mort_data} is used to load age-specific mortality from .csv file into vector.
 #'
 #' @param file String with the location and name of the file with mortality data
-#' @return A vector with mortality by age.
-#' 
+#' @return 
+#' A vector with mortality by age.
+#' @export
 load_mort_data <- function(file = "data/01_all_cause_mortality.csv"){
   df_r_mort_by_age <- read.csv(file = file)
   v_r_mort_by_age  <- df_r_mort_by_age %>%
@@ -16,17 +14,15 @@ load_mort_data <- function(file = "data/01_all_cause_mortality.csv"){
   return(v_r_mort_by_age)
 }
 
-#-----------------------------------------#
-#### Load all parameters               ####
-#-----------------------------------------#
 #' Load all parameters
 #'
 #' \code{load_all_params} loads all parameters for the decision model from multiple sources and creates a list.
 #'
 #' @param file.init String with the location and name of the file with initial set of parameters
 #' @param file.mort String with the location and name of the file with mortality data
-#' @return A list with all parameters used for the decision model.
-#' 
+#' @return 
+#' A list of all parameters used for the decision model.
+#' @export
 load_all_params <- function(file.init = "data/01_init_params.csv",
                             file.mort = "data/01_all_cause_mortality.csv"){ # User defined
   #### Load initial set of initial parameters form .csv file ####

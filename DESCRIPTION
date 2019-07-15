@@ -1,0 +1,45 @@
+Package: darthpack
+Type: Package
+Title: Decision Modeling Coding Framework
+Version: 0.1.0
+Authors@R: c(
+  person("Fernando", "Alarid-Escudero", email="fernando.alarid@cide.edu",
+    role = c("aut", "cre")),
+  person("Eline", "Krijkamp", email="elinekrijkamp@gmail.com",
+    role = "aut"),
+  person("Petros", "Pechlivanoglou", email="petros.pechlivanoglou@sickkids.ca",
+    role = "aut"),
+  person("Hawre", "Jalal", email="hjalal@pitt.edu",
+    role = "aut"),
+  person("Szu-Yu", "Kao", email="kaoxx085@umn.edu",
+    role = "aut"),
+  person("Alan", "Yang", email="alan.yang@sickkids.ca",
+    role = "aut"),  
+  person("Eva", "Enns", email="eenns@umn.edu",
+    role = "aut")
+  )
+Maintainer: The package maintainer <yourself@somewhere.net>
+Description: More about what it does (maybe more than one line)
+    Use four spaces when indenting paragraphs within the Description.
+License: file LICENSE
+Encoding: UTF-8
+Depends:
+    R (>= 3.5.0),
+    ggplot2
+Imports:
+    dplyr,
+    truncnorm,
+    lhs,
+    IMIS,
+    matrixStats,
+    plotrix,
+    psych,
+    survival,
+    scatterplot3d,
+    reshape2,
+    devtools,
+    shiny,
+    rstudioapi,
+    nlme   
+LazyData: true
+RoxygenNote: 6.1.0

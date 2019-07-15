@@ -1,14 +1,12 @@
-#-----------------------------------------#
-####          Decision Model           ####
-#-----------------------------------------#
 #' Decision Model
 #'
 #' \code{decision_model} implements the decision model used.
 #'
 #' @param l_params_all List with all parameters of decision model
 #' @param verbose Logical variable to indicate print out of messages
-#' @return The transition probability array and the cohort trace matrix.
-#' 
+#' @return 
+#' The transition probability array and the cohort trace matrix.
+#' @export
 decision_model <- function(l_params_all, verbose = FALSE){ # User defined
   ### Definition:
   ##   Decision model implementation function
