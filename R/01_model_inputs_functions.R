@@ -33,6 +33,8 @@ load_all_params <- function(file.init = "data/01_init_params.csv",
   
   l_params_all <- with(as.list(df_params_init), {
     #### General setup ####
+    v_names_str <- c("No Treatment", "Treatment")  # CEA strategies
+    n_str       <- length(v_names_str) # Number of strategies
     v_age_names <- n_age_init:(n_age_init + n_t - 1) # vector with age names
     v_n <- c("H", "S1", "S2", "D")  # vector with the 4 health states of the model:
                                     # Healthy (H), Sick (S1), Sicker (S2), Dead (D)
@@ -40,6 +42,8 @@ load_all_params <- function(file.init = "data/01_init_params.csv",
     v_s_init <- c(H = 1, S1 = 0, S2 = 0, D = 0) # initial state vector
     #### Create list with all parameters ####
     l_params_all <- list(
+      v_names_str = v_names_str, 
+      n_str       = n_str      , 
       n_age_init  = n_age_init, 
       n_t         = n_t       , 
       v_age_names = v_age_names,

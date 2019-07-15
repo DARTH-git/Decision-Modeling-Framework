@@ -38,7 +38,7 @@ load("output/03_imis_output.RData")
 
 #### 05a.2 Cost-effectiveness analysis parameters ####
 ### Strategy names
-v_names_str <- c("No Treatment", "Treatment")  
+v_names_str <- l_params_all$v_names_str
 ### Number of strategies
 n_str <- length(v_names_str)
 ### Parameters for base-case CEA
