@@ -73,7 +73,7 @@ plotrix::plotCI(x    = SickSicker_targets$PropSick$Time,
 
 #### 03.3 Run calibration algorithms ####
 # Check that it works
-v_params_calib = c(p_S1S2 = 0.105, hr_S1 = 3, hr_S2 = 10)
+v_params_calib <- c(p_S1S2 = 0.105, hr_S1 = 3, hr_S2 = 10)
 calibration_out(v_params_calib = v_params_calib, l_params_all = l_params_all)
 
 #### 03.3.1 Specify calibration parameters ####
@@ -133,8 +133,8 @@ df_posterior_summ
 
 ### Save summary statistics of posterior distribution
 ## As .RData
-  save(df_posterior_summ, 
-       file = "tables/03_summary_posterior.RData")
+save(df_posterior_summ, 
+     file = "tables/03_summary_posterior.RData")
 ## As .csv
 write.csv(df_posterior_summ, 
           file = "tables/03_summary_posterior.csv", 
