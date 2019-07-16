@@ -31,6 +31,7 @@ test_that("invalid initial states", {
 })
 
 test_that("reproducing error message invalid transition probabiliies", {
+  # generate testing data
   for (i in 1:length(l_params_all)) {
     assign(names(l_params_all)[[i]], l_params_all[[i]])
   }
@@ -60,8 +61,11 @@ test_that("reproducing error message invalid transition probabiliies", {
   # From D
   a_P["D", "D", ] <- 1
   
+  # check if the correct input might produce unintended message
   expect_silent(check_transition_array(a_P, n_state = 4, n_t = 75, verbose = F))
+  expect_silent(check_transition_array(a_P, n_state = 4, n_t = 75, verbose = T))
   
+  # check error messages
   a_P2 <- a_P
   a_P2["S2", "S2", ] <- -0.03
   expect_error(check_transition_array(a_P2, n_state = 4, n_t = 75, verbose = F), 

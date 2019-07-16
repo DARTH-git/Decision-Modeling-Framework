@@ -24,9 +24,12 @@ df_out_ce <- calculate_ce_out(l_params_all = l_params_basecase,
                               n_wtp = 150000)
 
 test_that("check icer table", {
+  # generate testing data
   df_cea_det <- calculate_icers(cost       = df_out_ce$Cost, 
                                 effect     = df_out_ce$Effect, 
                                 strategies = v_names_str)
+  
+  # check data formate
   expect_equal(nrow(df_cea_det), 2)
   expect_equal(df_cea_det$Strategy, v_names_str)
   expect_true(all(is.na(df_cea_det[1, c("Inc_Cost", "Inc_Effect", "ICER")])))
@@ -34,6 +37,7 @@ test_that("check icer table", {
 
 
 test_that("check one-way sensitivity output", {
+  # generate testing data
   parms <- c("c_Trt", "p_HS1", "u_S1", "u_Trt")
   ranges <- list("c_Trt" = c(6000, 13000),
                  "p_HS1" = c(0.01, 0.50),
@@ -83,13 +87,11 @@ test_that("check one-way sensitivity output", {
   # check outcome_val
   expect_true(all(is.numeric(owsa_nmb$outcome_val)))
   expect_false(any(is.na(owsa_nmb$outcome_val)))
-  
-  # check samples 
-  
 })
 
 
 test_that("check two-way sensitivity output", {
+  # generate testing data
   parm1 <- "u_S1"
   parm2 <- "u_Trt"
   ranges <- list("u_S1"  = c(0.70, 0.80),
@@ -119,6 +121,10 @@ test_that("check two-way sensitivity output", {
   
   # check strategies
   expect_true(all(unique(as.character(twsa_nmb$strategy)) %in% v_names_str))
+  
+  # check outcome_val
+  expect_true(all(is.numeric(twsa_nmb$outcome_val)))
+  expect_false(any(is.na(twsa_nmb$outcome_val)))
 })
 
 
