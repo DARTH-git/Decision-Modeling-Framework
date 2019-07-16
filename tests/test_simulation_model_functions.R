@@ -62,20 +62,33 @@ test_that("reproducing error message invalid transition probabiliies", {
   a_P["D", "D", ] <- 1
   
   # check if the correct input might produce unintended message
-  expect_silent(check_transition_array(a_P, n_state = 4, n_t = 75, verbose = F))
-  expect_silent(check_transition_array(a_P, n_state = 4, n_t = 75, verbose = T))
+  expect_silent(check_transition_probability(a_P, err_stop = F, verbose = F))
+  expect_silent(check_transition_probability(a_P, err_stop = F, verbose = T))
+  expect_silent(check_transition_probability(a_P, err_stop = T, verbose = F))
+  expect_silent(check_transition_probability(a_P, err_stop = T, verbose = T))
   
-  # check error messages
+  # check error messages of "check_transition_probability"
   a_P2 <- a_P
   a_P2["S2", "S2", ] <- -0.03
-  expect_error(check_transition_array(a_P2, n_state = 4, n_t = 75, verbose = F), 
-               "Not valid transition probabilities")
+  expect_warning(check_transition_probability(a_P2, err_stop = F, verbose = T))
+  expect_error(check_transition_probability(a_P2, err_stop = T, verbose = F))
+  expect_error(check_transition_probability(a_P2, err_stop = T, verbose = T))
   
-  expect_error(check_transition_array(a_P, n_state = 4, n_t = 60, verbose = F), "")
+  # check error messages of "check_sum_of_transition_array"
+  a_P2 <- a_P
+  a_P2["S2", "S2", ] <- -0.03
+  expect_warning(check_sum_of_transition_array(a_P2, n_states, n_t, err_stop = F, verbose = T))  
+  expect_error(check_sum_of_transition_array(a_P2, n_states, n_t, err_stop = T, verbose = T)) 
+  
+  # check the decision_model function
+  l_params_all2 <- l_params_all
+  l_params_all2$p_S1S2 <- -0.105
+  expect_silent(decision_model(l_params_all2, err_stop = F, verbose = F))
+  expect_error(decision_model(l_params_all2, err_stop = T, verbose = F))
 })
 
 test_that("correct outputs", {
-  output <- decision_model(l_params_all, verbose = F)
+  output <- decision_model(l_params_all, err_stop = F, verbose = F)
   
   # checking overall outputs
   expect_equal(length(output), 2)
@@ -93,4 +106,6 @@ test_that("correct outputs", {
                c(l_params_all$n_t + 1, l_params_all$n_states))
   expect_true(all(round(rowSums(output[[2]]) * 100) / 100 == 1))
   expect_true(all(output[[2]] >= 0))
+  
+  output <- decision_model(l_params_all, err_stop = T, verbose = F)
 })
