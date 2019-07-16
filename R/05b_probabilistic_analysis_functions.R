@@ -1,14 +1,19 @@
-#---------------------------------------------------#
-#### Generate PSA dataset of CEA parameters ####
-#---------------------------------------------------#
 #' Generate PSA dataset of CEA parameters
 #'
-#' \code{generate_psa_params} generates PSA input dataset by sampling decision model parameters from their distributions.
-#' @param n_sim Number of PSA samples
-#' @param seed Seed for reproducibility of Monte Carlo sampling
-#' @return A data frame with samples of parameters for PSA.
-#' 
-generate_psa_params <- function(n_sim, seed = 20190220){ # User defined
+#' \code{generate_psa_params} generates PSA input dataset by sampling decision 
+#' model parameters from their distributions. The sample of the calibrated
+#' parameters is a draw from their posterior distribution obtained with the
+#' IMIS algorithm.
+#' @param n_sim Number of PSA samples.
+#' @param seed Seed for reproducibility of Monte Carlo sampling.
+#' @return 
+#' A data frame with \code{n_sim} rows and 15 columns of parameters for PSA. 
+#' Each row is a parameter set sampled from distributions that characterize 
+#' their uncertainty.
+#' @examples
+#' generate_psa_params()
+#' @export
+generate_psa_params <- function(n_sim = 1000, seed = 20190220){ # User defined
   ## Load calibrated parameters
   load("output/03_imis_output.RData")
   n_sim <- nrow(m_calib_post)
@@ -29,11 +34,11 @@ generate_psa_params <- function(n_sim, seed = 20190220){ # User defined
     c_Trt = rgamma(n_sim, shape = 73.5, scale = 163.3), # cost of treatment (per cycle)
     c_D   = 0                                         , # cost of being in the death state
     ## Utilities
-    u_H   = rtruncnorm(n_sim, mean =    1, sd = 0.01, b = 1), # utility when healthy
-    u_S1  = rtruncnorm(n_sim, mean = 0.75, sd = 0.02, b = 1), # utility when sick
-    u_S2  = rtruncnorm(n_sim, mean = 0.50, sd = 0.03, b = 1), # utility when sicker
+    u_H   = truncnorm::rtruncnorm(n_sim, mean =    1, sd = 0.01, b = 1), # utility when healthy
+    u_S1  = truncnorm::rtruncnorm(n_sim, mean = 0.75, sd = 0.02, b = 1), # utility when sick
+    u_S2  = truncnorm::rtruncnorm(n_sim, mean = 0.50, sd = 0.03, b = 1), # utility when sicker
     u_D   = 0                                               , # utility when dead
-    u_Trt = rtruncnorm(n_sim, mean = 0.95, sd = 0.02, b = 1)  # utility when being treated
+    u_Trt = truncnorm::rtruncnorm(n_sim, mean = 0.95, sd = 0.02, b = 1)  # utility when being treated
   )
   return(df_psa_params)
 }
