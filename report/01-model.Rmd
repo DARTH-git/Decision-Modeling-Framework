@@ -34,30 +34,30 @@ Table: \label{tab:parameters} Description of the initial parameters with their `
 
 |           **Parameter**            |  **R name** |   **Value**   |
 |:-----------------------------------|:-----------:|:-------------:|
-| Time horizon ($n_t$)               | `n.t`       | `r l.params.all$n.t` years |
-| Names of health states ($n$)       | `v.n`       | H, S1, S2, D  |
-| Annual discount rate (costs/QALYs) | `d.c`/`d.e` |  3%           |
+| Time horizon ($n_t$)               | `n_t`       | `r l.params.all$n_t` years |
+| Names of health states ($n$)       | `v_n`       | H, S1, S2, D  |
+| Annual discount rate (costs/QALYs) | `d_c`/`d_e` |  3%           |
 | Annual transition probabilities    |             |               |
-| - Disease onset (H to S1)          | `p.HS1`     |  `r l.params.all$p.HS1`         |
-| - Recovery (S1 to H)               | `p.S1H`     |  `r l.params.all$p.S1H`          |
-| - Disease progression (S1 to S2)  in the time-homogenous model   | `p.S1S2`    |  `r l.params.all$p.S1S2`        |
+| - Disease onset (H to S1)          | `p_HS1`     |  `r l.params.all$p_HS1`         |
+| - Recovery (S1 to H)               | `p_S1H`     |  `r l.params.all$p_S1H`          |
+| - Disease progression (S1 to S2)  in the time-homogenous model   | `p_S1S2`    |  `r l.params.all$p_S1S2`        |
 | Annual mortality                   |             |               |
-| - All-cause mortality (H to D)     | `p.HD`      |  age-specific |
-| - Hazard rate ratio of death in S1 vs H | `hr.S1`     |  `r l.params.all$hr.S1`            |
-| - Hazard rate ratio of death in S2 vs H | `hr.S2`     |  `r l.params.all$hr.S1`           |
+| - All-cause mortality (H to D)     | `p_HD`      |  age-specific |
+| - Hazard rate ratio of death in S1 vs H | `hr_S1`     |  `r l.params.all$hr_S1`            |
+| - Hazard rate ratio of death in S2 vs H | `hr_S2`     |  `r l.params.all$hr_S1`           |
 | Annual costs                       |             |               |
-| - Healthy individuals              | `c.H`       |  $2,000       |
-| - Sick individuals in S1           | `c.S1`      |  $4,000       |
-| - Sick individuals in S2           | `c.S2`      |  $15,000      |
-| - Dead individuals                 | `c.D`       |  $0           |
-| - Additional costs of sick individuals treated in S1 or S2           | `c.Trt`     |  $12,000      |
+| - Healthy individuals              | `c_H`       |  $2,000       |
+| - Sick individuals in S1           | `c_S1`      |  $4,000       |
+| - Sick individuals in S2           | `c_S2`      |  $15,000      |
+| - Dead individuals                 | `c_D`       |  $0           |
+| - Additional costs of sick individuals treated in S1 or S2           | `c_Trt`     |  $12,000      |
 | Utility weights                    |             |               |
-| - Healthy individuals              | `u.H`       |  1.00         |
-| - Sick individuals in S1           | `u.S1`      |  0.75         |
-| - Sick individuals in S2           | `u.S2`      |  0.50         |
-| - Dead individuals                 | `u.D`       |  0.00         |
+| - Healthy individuals              | `u_H`       |  1.00         |
+| - Sick individuals in S1           | `u_S1`      |  0.75         |
+| - Sick individuals in S2           | `u_S2`      |  0.50         |
+| - Dead individuals                 | `u_D`       |  0.00         |
 | Intervention effect                |             |               |
-| - Utility for treated individuals in S1 | `u.Trt` |  0.95        |
+| - Utility for treated individuals in S1 | `u_Trt` |  0.95        |
 
 Age-specific background mortality for healthy individuals is represented by the US population in 2015 and obtained from the [Human Mortality database](https://www.mortality.org). This information is stored in the *01_all-cause-mortality.csv* file in the *data* directory. Based on this .csv file a vector with mortality rates by age is created using the `f.load_mort_data` function in the *01_model-inputs_functions.R* script. This function gives us the flexibility to easily import data from other countries or years. 
 
