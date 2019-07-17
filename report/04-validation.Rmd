@@ -18,31 +18,36 @@ knitr::opts_knit$set(root.dir = '..')
 ```
 
 ```{r, include = FALSE}
-source("analysis/01_model-inputs.R")
-source("analysis/02_simulation-model.R")
+source("analysis/01_model_inputs.R")
+source("analysis/02_simulation_model.R")
 #source("analysis/03_calibration.R")
 source("analysis/04_validation.R")
-#source("analysis/05a_deterministic-analysis.R")
-#source("analysis/05b_probabilistic-analysis.R")
 ```
 
 # Validation  {#validation}
 
 In this forth component, we check the internal validity of our Sick-Sicker model before we move on to the analysis components. To internally validate the Sick-Sicker model, we compare the model-predicted output evaluated at posterior parameters against the calibration targets. This is all done in the *04_validation.R* script by loading all previously described functions and the generated calibration targets. 
 
-In section _04.2 Compute model-predicted outputs_, we compute the model-predicted outputs for each sample of posterior distribution as well as for the MAP estimate. We then use the function `f.data_summary` to summarize the model-predicted posterior outputs into different summary statistics. 
+In section _04.2 Compute model-predicted outputs_, we compute the model-predicted outputs for each sample of posterior distribution as well as for the MAP estimate. We then use the function `data_summary` to summarize the model-predicted posterior outputs into different summary statistics. 
 ```{r}
-print.function(f.data_summary)
+print.function(data_summary)
 ```
 This function is informed by three arguments, `data`, `varname` and `groupnames`. 
 
-The computation of the model-predicted outputs using the MAP estimate is done by inserting the `v.calib.post.map` data into the previously described `f.calibration_out` function. This function creates a list including the estimated values for survival, prevalence and the proportion of sicker individuals at cycles 10, 20 and 30. 
+The computation of the model-predicted outputs using the MAP estimate is done by inserting the `v_calib_post_map` data into the previously described `calibration_out` function. This function creates a list including the estimated values for survival, prevalence and the proportion of sicker individuals at cycles 10, 20 and 30. 
 
-In sections _04.6 Internal validation: Model-predicted outputs vs. targets_, we check the internal validation by plotting the model-predicted outputs against the calibration targets (Figure \ref{fig:04_surv}-\ref{fig:04_proportion}). The generated plots are saved as .png files, which could be used in reports later on without the need of re-running the code. 
+In sections _04.6 Internal validation: Model-predicted outputs vs. targets_, we check the internal validation by plotting the model-predicted outputs against the calibration targets (Figure \@ref(fig:04_surv)-\@ref(fig:04_proportion). The generated plots are saved as .png files, which could be used in reports later on without the need of re-running the code. 
 
-![Survival data: Model-predicted outputs vs targets  \label{fig:04_surv}](figs/04_posterior-vs-targets-survival.png)
+```{r 04_surv, fig.cap="Survival data: Model-predicted outputs vs targets.", echo = FALSE }
+knitr::include_graphics("figs/04_posterior_vs_targets_survival.png")
+```
 
-![Prevalence data of sick individuals: Model-predicted output vs targets  \label{fig:04_p}](figs/04_posterior-vs-targets-prevalence.png)
+```{r 04_prevalence, fig.cap = "Prevalence data of sick individuals: Model-predicted output vs targets.", echo=FALSE}
+knitr::include_graphics("figs/04_posterior_vs_targets_prevalence.png")
+```
 
-![Proportion who are Sicker, among all those afflicted (Sick + Sicker): Model-predicted output \label{fig:04_proportion}](figs/04_posterior-vs-targets-proportion-sicker.png)
+```{r 04_proportion, fig.cap="Proportion who are Sicker, among all those afflicted (Sick + Sicker): Model-predicted output.", eval = FALSE}
+
+knitr::include_graphics("figs/04_posterior_vs_targets_proportion_sicker.png")
+```
 
