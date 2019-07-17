@@ -1,6 +1,6 @@
 context("testing 02_simulation_model_functions.R")
 
-library(testthat)
+# library(testthat)
 library(dplyr)    # For data manipulation
 
 workdir <- getwd()
@@ -15,17 +15,16 @@ source(paste0(workdir, "/analysis/01_model_inputs.R"))
 source(paste0(workdir, "/R/02_simulation_model_functions.R"))
 
 #### Unit tests start ####
-test_that("invalid number of cycles", {
+test_that("invalid inputs", {
   l_params_all$n_t <- 90
   
-  expect_error(decision_model(l_params_all, verbose = F), 
+  expect_error(decision_model(l_params_all), 
                "Not all the age in the age range have a corresponding mortality rate")
-})
-
-test_that("invalid initial states", {
+  
+  l_params_all$n_t <- 75
   l_params_all$v_s_init <- c(H = -1, S1 = 0, S2 = 0, D = 0)
   
-  expect_error(decision_model(l_params_all, verbose = F), 
+  expect_error(decision_model(l_params_all), 
                "vector of initial states \\(v_s_init\\) is not valid")
 })
 
