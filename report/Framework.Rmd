@@ -2,19 +2,15 @@
 title: "Sick-Sicker case study"
 author: "DARTH workgroup"
 date: "`r Sys.Date()`"
-output:
-  pdf_document: default
-  html_document:
-    pdf_print: paged
-description: 'test'
-documentclass: book
-bibliography:
--book.bib
--packages.bib
 site: bookdown::bookdown_site
-subtitle: "Supplementary Material to, A need for change! A coding framework for improving transparency in decision modeling""
+output: bookdown::gitbook
+documentclass: book
+bibliography: [book.bib, packages.bib]
 biblio-style: apalike
 link-citations: yes
+description: "Supplementary Material to, A need for change! A coding framework for improving transparency in decision modeling."
+
+
 ---
 
 ```{r load_packages, include = FALSE, warning = FALSE}
@@ -50,7 +46,7 @@ In this case-study, we perform a cost-effectiveness analysis (CEA) using a previ
 
 
 ```{r STM_Sick_Sicker, out.width=75%, fig.cap="State-transition diagram of the Sick-Sicker model. Healthy individuals can get Sick, die or stay healthy. Sick individuals can recover, transitioning back to healthy, can die, or stay sick. Once individuals are Sicker, they stay Sicker until they die."}
-knitr::include_graphics("figs/Sick_Sicker_STM.png")
+#knitr::include_graphics("figs/Sick_Sicker_figure.png")
 ```
 
 Two alternative strategies exist for this hypothetical disease: a no-treatment and a treatment strategy. Under the treatment strategy, Sick and Sicker individuals receive treatment and continue doing so until they recover or die. The cost of the treatment is additional to the cost of being Sick or Sicker for one year. The treatment improves QoL for those individuals who are Sick but has no effect on the QoL of those who are sicker. To evaluate these two alternative strategies, we perform a CEA.
@@ -89,4 +85,58 @@ knitr::write_bib(c(
                            "shiny", "rstudioapi", 'nlme'
 ), 'packages.bib')
 ```
+
+
+<!--chapter:end:index.Rmd-->
+
+
+# Define model inputs {#model}
+
+Placeholder
+
+
+
+<!--chapter:end:01-model.Rmd-->
+
+
+# Simulation {#simulation}
+
+Placeholder
+
+
+
+<!--chapter:end:02-simulation.Rmd-->
+
+
+# Model calibration {#calibration}
+
+Placeholder
+
+
+
+<!--chapter:end:03-calibration.Rmd-->
+
+
+# Validation  {#validation}
+
+Placeholder
+
+
+
+<!--chapter:end:04-validation.Rmd-->
+
+
+# Analysis  {#analysis}
+
+Placeholder
+
+
+
+<!--chapter:end:05-analysis.Rmd-->
+
+`r if (knitr::is_html_output()) '
+# References {-}
+'`
+
+<!--chapter:end:06-references.Rmd-->
 
