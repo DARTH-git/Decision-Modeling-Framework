@@ -299,7 +299,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 ##     })
 ##     l_params_all &lt;- c(l_params_all, df_params_init)
 ## }
-## &lt;bytecode: 0x7ff3d8514448&gt;</code></pre>
+## &lt;bytecode: 0x7f8aba89dee0&gt;</code></pre>
 <p>The <code>load_all_params</code> function is informed by the arguments <code>file.init</code> and <code>file.mort</code>. The <code>file.init</code> argument is a string with the location and name of the file with initial set of parameters. The initial parameter values for our case-study are stored in the <em>01_init_params.csv</em> file located in the <em>data</em> directory. The <code>load_all_params</code> function read this .csv file into the function environment as a dataframe called, <code>df_params_init</code>.</p>
 <p>The <code>file.mort</code> argument is a string with the location and name of the file with mortality data. As described before, in our case-study this is the <em>01_all_cause_mortality.csv</em> file. Within the <code>load_all_parms</code> function, the <code>load_mort_data</code> function is used to create a vector with mortality rates from the .csv data.</p>
 <p>After loading all the information, the <code>load_all_params</code> generates a list called,<code>l_params_all</code>, including all parameters for the model including the general setup parameters and the vector of mortality rates. The function also stores the dataframe <code>df_params_init</code> with the initial set of parameters in the list. This is all executed in the in the <em>01_model_inputs.R</em> script by running the code below.</p>
