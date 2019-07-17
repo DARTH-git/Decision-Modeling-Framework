@@ -32,7 +32,7 @@ calculate_ce_out <- function(l_params_all, n_wtp = 100000){ # User defined
     v_c_no_trt <- c(c_H, c_S1, c_S2, c_D)
     v_c_trt    <- c(c_H, c_S1 + c_Trt, c_S2 + c_Trt, c_D)
     
-    ## Mean Costs and QALYs for Treatment and NO Treatment
+    ## Mean Costs and QALYs for Treatment and No Treatment
     v_tu_no_trt <- m_M_no_trt %*% v_u_no_trt
     v_tu_trt    <- m_M_trt %*% v_u_trt
     

@@ -47,3 +47,4 @@ png("figs/02_model_diagram.png")
   connect <- (l_out_stm$a_P[, , 1] > 0)
   survival::statefig(layout = c(2, 2), connect = connect )
 dev.off()
+

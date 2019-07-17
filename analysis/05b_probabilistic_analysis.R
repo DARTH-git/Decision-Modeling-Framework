@@ -66,12 +66,12 @@ colnames(df_e) <- v_names_str
 ### Run decision model on each parameter set of PSA input dataset to produce
 ### PSA outputs for cost and effects
 for(i in 1:n_sim){ # i <- 1
-  l_psa_input <- update_param_list(l_params_all, df_psa_input[i,])
+  l_psa_input <- update_param_list(l_params_all, df_psa_input[i, ])
   df_out_temp <- calculate_ce_out(l_psa_input)
   df_c[i, ] <- df_out_temp$Cost
   df_e[i, ] <- df_out_temp$Effect
   # Display simulation progress
-  if(i/(n_sim/10) == round(i/(n_sim/10),0)) {
+  if(i/(n_sim/10) == round(i/(n_sim/10), 0)) {
     cat('\r', paste(i/n_sim * 100, "% done", sep = " "))
   }
 }

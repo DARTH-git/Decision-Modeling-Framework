@@ -12,7 +12,7 @@
 update_param_list <- function(l_params_all, params_updated){
 
   if (typeof(params_updated)!="list"){
-    params_updated <- split(unname(params_updated),names(params_updated)) #converte the named vector to a list
+    params_updated <- split(unname(params_updated), names(params_updated)) #converte the named vector to a list
   }
   l_params_all <- modifyList(l_params_all, params_updated) #update the values
   return(l_params_all)
@@ -206,12 +206,12 @@ twsa_det <- function(parm1, parm2, ranges, nsamps = 40, params_basecase, FUN, ou
   ### Run model and capture outcome
   l_twsa_input <- params_basecase
   for (i in 1:n_rows){ # i <- 1
-    l_twsa_input[names(l_twsa_input) == parm1] <- df_twsa_params[i,1]
-    l_twsa_input[names(l_twsa_input) == parm2] <- df_twsa_params[i,2]
+    l_twsa_input[names(l_twsa_input) == parm1] <- df_twsa_params[i, 1]
+    l_twsa_input[names(l_twsa_input) == parm2] <- df_twsa_params[i, 2]
     m_out_twsa[i, ] <- FUN(l_twsa_input, ...)[[outcome]]
     
     ## Display simulation progress
-    if(i/(n_rows/10) == round(i/(n_rows/10),0)) {
+    if(i/(n_rows/10) == round(i/(n_rows/10), 0)) {
       cat('\r', paste(i/n_rows * 100, "% done", sep = " "))
     }
   }
