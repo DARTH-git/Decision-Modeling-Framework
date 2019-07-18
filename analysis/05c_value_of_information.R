@@ -5,11 +5,11 @@
 # (PSA) dataset                                                                #
 #                                                                              # 
 # Depends on:                                                                  #
-#   05c_value_of_information_functions.R                                        #
+#   05c_value_of_information_functions.R                                       #
 #                                                                              # 
 # Authors:                                                                     #
 #     - Fernando Alarid-Escudero, PhD, <fernando.alarid@cide.edu>              # 
-#     - Eline Krijkamp, MS                                                     #
+#     - Eline Krijkamp, MSc                                                    #
 #     - Petros Pechlivanoglou, PhD                                             #
 #     - Hawre Jalal, MD, PhD                                                   #
 #     - Eva A. Enns, PhD                                                       # 
@@ -17,7 +17,6 @@
 # The structure of this code is according to the DARTH framework               #
 # https://github.com/DARTH-git/Decision-Modeling-Framework                     #
 ################################################################################
-# rm(list = ls()) # to clean the workspace
 
 #### 05c.1 Load packages, functions and data ####
 #### 05c.1.1 Load packages ####

@@ -140,10 +140,9 @@ for(i in 1:n_sim){
 
 We can plot the results using the `plot` function from `dampack`. Figure \@ref(fig:05b_CEAplane) shows the CE scatter plot with the joint distribution of costs and effects for each strategy and their corresponding 95% confidence ellipse. 
 
-
-
-
-![The cost-effectiveness plane graph showing the results of the probabilistic sensitivity analysis for the Sick-Sicker case-study. \label{fig:05b_CEAplane}](../figs/05b_cea_plane_scatter.png)
+```{r 05b_CEAplane, fig.cap="The cost-effectiveness plane graph showing the results of the probabilistic sensitivity analysis for the Sick-Sicker case-study.", echo=FALSE}
+knitr::include_graphics("05b_cea_plane_scatter.png")
+```
 
 ```{r, eval = TRUE, echo = FALSE}
 load("tables/05b_probabilistic_cea_results.RData")
@@ -151,30 +150,46 @@ kable(df_cea_psa[, -7], caption = "Probabilistic cost-effectiveness analysis res
 ``` 
 Next, we perform a CEA using the previously used `calculate_icers` functions from `dampack`. Table \@ref(tab:df_cea_prob) shows the results of the probabilistic CEA. In addition, we plot a cost-effectiveness plane with the frontier, the cost-effectiveness acceptability curves (CEACs) and frontier (CEAF), expected Loss curves (ELCs) (Figure \@ref(fig:05b_cea_frontier_psa) - \@ref(fig:05b_elc) [@Alarid-Escudero2019]. Followed by creating linear regression metamodeling sensitivity analysis graphs (Figure \@ref(fig:05b_owsa_lrm_nmb) - \@ref(fig:05b_twsa_lrm_uS1_uTrt_nmb)). All generated figures are shown below and stored to the *figs* folder [@Jalal2013]. 
 
-![Cost-effectiveness frontier\label{fig:05b_cea-frontier-psa}](figs/05b_cea_frontier_psa.png)
+```{r 05b_cea_frontier_psa, fig.cap = "Cost-effectiveness frontier", echo = FALSE }
+knitr::include_graphics("figs/05b_cea_frontier_psa.png")
+```
 
-![Cost-effectiveness acceptability curves (CEACs) and frontier (CEAF)\label{fig:05b_ceac_ceaf}](figs/05b_ceac_ceaf.png)
+```{r 05b_ceac_ceaf, fig.cap= "Cost-effectiveness acceptability curves (CEACs) and frontier (CEAF)", echo = FALSE}
+knitr::include_graphics("figs/05b_ceac_ceaf.png")
+```
 
-![Expected Loss Curves \label{fig:05b_elc}](figs/05b_elc.png)
+```{r fig:05b_elc, fig.cap="Expected Loss Curves", echo = FALSE}
+knitr::include_graphics("figs/05b_elc.png")
+```
 
-![One-way sensitivity analysis (OWSA)  \label{fig:05b_owsa_lrm_nmb}](figs/05b_owsa_lrm_nmb.png)
+```{r 05b_owsa_lrm_nmb, fig.cap = "One-way sensitivity analysis (OWSA)", echo = FALSE}
+knitr::include_graphics("figs/05b_owsa_lrm_nmb.png")
+```
 
-![Optimal strategy with OWSA \label{fig:05b_optimal_owsa_lrm_nmb}](figs/05b_optimal_owsa_lrm_nmb.png)
+```{r 05b_optimal_owsa_lrm_nmb,fig.cap = "Optimal strategy with OWSA", echo=FALSE}
+knitr::include_graphics("figs/05b_optimal_owsa_lrm_nmb.png")
+```
 
-![Tornado plot \label{fig:05b_tornado_lrm_Treatment_nmb}](../figs/05b_tornado_lrm_Treatment_nmb.png)
+```{r 05b_tornado_lrm_Treatment_nmb, fig.cap="Tornado plot", echo=FALSE}
+knitr::include_graphics("05b_tornado_lrm_Treatment_nmb.png")
+``` 
 
+```{r 05b_twsa_lrm_uS1_uTrt_nmb, fig.cap="Two-way sensitivity analysis (TWSA)", echo=FALSE}
+knitr::include_graphics("figs/05b_twsa_lrm_uS1_uTrt_nmb.png")
+```
 
-![Two-way sensitivity analysis (TWSA) \label{fig:05b_twsa_lrm_uS1_uTrt_nmb}](figs/05b_twsa_lrm_uS1_uTrt_nmb.png)
 
 
 ##05c Value of information
-In the VOI component, the results from the PSA generated in the probabilistic analysis subcomponent are used to determine whether further potential research is needed. We use the `calc_evpi` function from the `dampack` package to calculate the expected value of perfect information (EVPI). Figure \ref{fig:05c_evpi} shows the EVPI for the different WTP values.
+In the VOI component, the results from the PSA generated in the probabilistic analysis subcomponent are used to determine whether further potential research is needed. We use the `calc_evpi` function from the `dampack` package to calculate the expected value of perfect information (EVPI). Figure \@ref(fig:05c_evpi) shows the EVPI for the different WTP values.
 
 ```{r, eval = FALSE, echo = TRUE}
-evpi <- calc_evpi(wtp = v_wtp, psa = l.psa)
+evpi <- calc_evpi(wtp = v_wtp, psa = l_psa)
 ```
 
-![Expected value of perfect information \label{fig:05c_evpi}](figs/05c_evpi.png)
+```{r 05c_evpi, fig.cap="Expected value of perfect information", echo=FALSE}
+knitr::include_graphics("figs/05c_evpi.png")
+```
 
 
 

@@ -24,7 +24,7 @@
 <meta name="author" content="DARTH workgroup" />
 
 
-<meta name="date" content="2019-06-18" />
+<meta name="date" content="2019-07-17" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -87,7 +87,7 @@ code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* Com
 code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
 </style>
 
-<link rel="stylesheet" href="darth.css" type="text/css" />
+<link rel="stylesheet" href="default.css" type="text/css" />
 </head>
 
 <body>
@@ -134,11 +134,11 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
             <section class="normal" id="section-">
 <div id="model" class="section level1">
 <h1><span class="header-section-number">Chapter 1</span> Define model inputs</h1>
-<p>As described in the main manuscript, in this first component we declare all model input variables and set their values. The <code>R</code> script running the analysis of this component is the <em>01_model-inputs.R</em> file in the <code>R</code> directory.</p>
+<p>As described in the main manuscript, in this first component we declare all model input variables and set their values. The <code>R</code> script running the analysis of this component is the <em>01_model_inputs.R</em> file in the <code>R</code> directory.</p>
 <p>The input to inform the values is divided in three categories: external, estimated, and calibrated. The majority of the Sick-Sicker model parameters are informed by external data. Only three parameter values need to be estimated using model calibration.</p>
-<p>In this component, we start with the general setup of the model, specifying among others the time horizon, name and number of health states, proportion of the cohort in each of the different health states at the start of the simulation and discount rates. The next step is to specify the external parameters. The initial model parameter values and <code>R</code> variable names are presented in Table .</p>
+<p>In this component, we start with the general setup of the model, specifying among others the time horizon, name and number of health states, proportion of the cohort in each of the different health states at the start of the simulation and discount rates. The next step is to specify the external parameters. The initial model parameter values and <code>R</code> variable names are presented in Table <a href="#tab:parameters"><strong>??</strong></a>.</p>
 <table>
-<caption> Description of the initial parameters with their <code>R</code> name and value of the Sick-Sicker model.</caption>
+<caption>(tab:parameters) Description of the initial parameters with their <code>R</code> name and value of the Sick-Sicker model.</caption>
 <thead>
 <tr class="header">
 <th align="left"><strong>Parameter</strong></th>
@@ -149,17 +149,17 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <tbody>
 <tr class="odd">
 <td align="left">Time horizon (<span class="math inline">\(n_t\)</span>)</td>
-<td align="center"><code>n.t</code></td>
+<td align="center"><code>n_t</code></td>
 <td align="center">75 years</td>
 </tr>
 <tr class="even">
 <td align="left">Names of health states (<span class="math inline">\(n\)</span>)</td>
-<td align="center"><code>v.n</code></td>
+<td align="center"><code>v_n</code></td>
 <td align="center">H, S1, S2, D</td>
 </tr>
 <tr class="odd">
 <td align="left">Annual discount rate (costs/QALYs)</td>
-<td align="center"><code>d.c</code>/<code>d.e</code></td>
+<td align="center"><code>d_c</code>/<code>d_e</code></td>
 <td align="center">3%</td>
 </tr>
 <tr class="even">
@@ -169,17 +169,17 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </tr>
 <tr class="odd">
 <td align="left">- Disease onset (H to S1)</td>
-<td align="center"><code>p.HS1</code></td>
+<td align="center"><code>p_HS1</code></td>
 <td align="center">0.15</td>
 </tr>
 <tr class="even">
 <td align="left">- Recovery (S1 to H)</td>
-<td align="center"><code>p.S1H</code></td>
+<td align="center"><code>p_S1H</code></td>
 <td align="center">0.5</td>
 </tr>
 <tr class="odd">
 <td align="left">- Disease progression (S1 to S2) in the time-homogenous model</td>
-<td align="center"><code>p.S1S2</code></td>
+<td align="center"><code>p_S1S2</code></td>
 <td align="center">0.105</td>
 </tr>
 <tr class="even">
@@ -189,17 +189,17 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </tr>
 <tr class="odd">
 <td align="left">- All-cause mortality (H to D)</td>
-<td align="center"><code>p.HD</code></td>
+<td align="center"><code>p_HD</code></td>
 <td align="center">age-specific</td>
 </tr>
 <tr class="even">
 <td align="left">- Hazard rate ratio of death in S1 vs H</td>
-<td align="center"><code>hr.S1</code></td>
+<td align="center"><code>hr_S1</code></td>
 <td align="center">3</td>
 </tr>
 <tr class="odd">
 <td align="left">- Hazard rate ratio of death in S2 vs H</td>
-<td align="center"><code>hr.S2</code></td>
+<td align="center"><code>hr_S2</code></td>
 <td align="center">3</td>
 </tr>
 <tr class="even">
@@ -209,27 +209,27 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </tr>
 <tr class="odd">
 <td align="left">- Healthy individuals</td>
-<td align="center"><code>c.H</code></td>
+<td align="center"><code>c_H</code></td>
 <td align="center">$2,000</td>
 </tr>
 <tr class="even">
 <td align="left">- Sick individuals in S1</td>
-<td align="center"><code>c.S1</code></td>
+<td align="center"><code>c_S1</code></td>
 <td align="center">$4,000</td>
 </tr>
 <tr class="odd">
 <td align="left">- Sick individuals in S2</td>
-<td align="center"><code>c.S2</code></td>
+<td align="center"><code>c_S2</code></td>
 <td align="center">$15,000</td>
 </tr>
 <tr class="even">
 <td align="left">- Dead individuals</td>
-<td align="center"><code>c.D</code></td>
+<td align="center"><code>c_D</code></td>
 <td align="center">$0</td>
 </tr>
 <tr class="odd">
 <td align="left">- Additional costs of sick individuals treated in S1 or S2</td>
-<td align="center"><code>c.Trt</code></td>
+<td align="center"><code>c_Trt</code></td>
 <td align="center">$12,000</td>
 </tr>
 <tr class="even">
@@ -239,22 +239,22 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </tr>
 <tr class="odd">
 <td align="left">- Healthy individuals</td>
-<td align="center"><code>u.H</code></td>
+<td align="center"><code>u_H</code></td>
 <td align="center">1.00</td>
 </tr>
 <tr class="even">
 <td align="left">- Sick individuals in S1</td>
-<td align="center"><code>u.S1</code></td>
+<td align="center"><code>u_S1</code></td>
 <td align="center">0.75</td>
 </tr>
 <tr class="odd">
 <td align="left">- Sick individuals in S2</td>
-<td align="center"><code>u.S2</code></td>
+<td align="center"><code>u_S2</code></td>
 <td align="center">0.50</td>
 </tr>
 <tr class="even">
 <td align="left">- Dead individuals</td>
-<td align="center"><code>u.D</code></td>
+<td align="center"><code>u_D</code></td>
 <td align="center">0.00</td>
 </tr>
 <tr class="odd">
@@ -264,45 +264,48 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </tr>
 <tr class="even">
 <td align="left">- Utility for treated individuals in S1</td>
-<td align="center"><code>u.Trt</code></td>
+<td align="center"><code>u_Trt</code></td>
 <td align="center">0.95</td>
 </tr>
 </tbody>
 </table>
-<p>Age-specific background mortality for healthy individuals is represented by the US population in 2015 and obtained from the <a href="https://www.mortality.org">Human Mortality database</a>. This information is stored in the <em>01_all-cause-mortality.csv</em> file in the <em>data</em> directory. Based on this .csv file a vector with mortality rates by age is created using the <code>f.load_mort_data</code> function in the <em>01_model-inputs_functions.R</em> script. This function gives us the flexibility to easily import data from other countries or years.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">print.function</span>(f.load_mort_data) <span class="co"># print the function</span></code></pre></div>
-<pre><code>## function (file = &quot;data/01_all-cause-mortality.csv&quot;) 
+<p>Age-specific background mortality for healthy individuals is represented by the US population in 2015 and obtained from the <a href="https://www.mortality.org">Human Mortality database</a>. This information is stored in the <em>01_all_cause_mortality.csv</em> file in the <em>data</em> directory. Based on this .csv file a vector with mortality rates by age is created using the <code>load_mort_data</code> function in the <em>01_model_inputs_functions.R</em> script. This function gives us the flexibility to easily import data from other countries or years.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">print.function</span>(load_mort_data) <span class="co"># print the function</span></code></pre></div>
+<pre><code>## function (file = &quot;data/01_all_cause_mortality.csv&quot;) 
 ## {
-##     df.r.mort_by_age &lt;- read.csv(file = file)
-##     v.r.mort_by_age &lt;- df.r.mort_by_age %&gt;% dplyr::select(Total) %&gt;% 
+##     df_r_mort_by_age &lt;- read.csv(file = file)
+##     v_r_mort_by_age &lt;- df_r_mort_by_age %&gt;% dplyr::select(Total) %&gt;% 
 ##         as.matrix()
-##     return(v.r.mort_by_age)
+##     return(v_r_mort_by_age)
 ## }</code></pre>
-<p>Another function in the <em>01_model-inputs_functions.R</em> script, is the <code>f.load_all_parms</code> function. This function, which is actually using the <code>f.load_mort_data</code> function, loads all parameters for the decision model from multiple sources and creates a list that contains all parameters and their values.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">print.function</span>(f.load_all_params)  <span class="co"># print the function</span></code></pre></div>
-<pre><code>## function (file.init = &quot;data/01_init-params.csv&quot;, file.mort = &quot;data/01_all-cause-mortality.csv&quot;) 
+<p>Another function in the <em>01_model_inputs_functions.R</em> script, is the <code>load_all_parms</code> function. This function, which is actually using the <code>load_mort_data</code> function, loads all parameters for the decision model from multiple sources and creates a list that contains all parameters and their values.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">print.function</span>(load_all_params)  <span class="co"># print the function</span></code></pre></div>
+<pre><code>## function (file.init = &quot;data/01_init_params.csv&quot;, file.mort = &quot;data/01_all_cause_mortality.csv&quot;) 
 ## {
-##     df.params.init &lt;- read.csv(file = file.init)
-##     v.r.mort_by_age &lt;- f.load_mort_data(file = file.mort)
-##     l.params.all &lt;- with(as.list(df.params.init), {
-##         v.age.names &lt;- n.age.init:(n.age.init + n.t - 1)
-##         v.n &lt;- c(&quot;H&quot;, &quot;S1&quot;, &quot;S2&quot;, &quot;D&quot;)
-##         n.states &lt;- length(v.n)
-##         v.s.init &lt;- c(H = 1, S1 = 0, S2 = 0, D = 0)
-##         l.params.all &lt;- list(n.age.init = n.age.init, n.t = n.t, 
-##             v.age.names = v.age.names, v.n = v.n, n.states = n.states, 
-##             v.s.init = c(H = 1, S1 = 0, S2 = 0, D = 0), v.r.mort_by_age = v.r.mort_by_age)
-##         return(l.params.all)
+##     df_params_init &lt;- read.csv(file = file.init, stringsAsFactors = F)
+##     v_r_mort_by_age &lt;- load_mort_data(file = file.mort)
+##     l_params_all &lt;- with(as.list(df_params_init), {
+##         v_names_str &lt;- c(&quot;No Treatment&quot;, &quot;Treatment&quot;)
+##         n_str &lt;- length(v_names_str)
+##         v_age_names &lt;- n_age_init:(n_age_init + n_t - 1)
+##         v_n &lt;- c(&quot;H&quot;, &quot;S1&quot;, &quot;S2&quot;, &quot;D&quot;)
+##         n_states &lt;- length(v_n)
+##         v_s_init &lt;- c(H = 1, S1 = 0, S2 = 0, D = 0)
+##         l_params_all &lt;- list(v_names_str = v_names_str, n_str = n_str, 
+##             n_age_init = n_age_init, n_t = n_t, v_age_names = v_age_names, 
+##             v_n = v_n, n_states = n_states, v_s_init = c(H = 1, 
+##                 S1 = 0, S2 = 0, D = 0), v_r_mort_by_age = v_r_mort_by_age)
+##         return(l_params_all)
 ##     })
-##     l.params.all &lt;- c(l.params.all, df.params.init)
+##     l_params_all &lt;- c(l_params_all, df_params_init)
 ## }
-## &lt;bytecode: 0x7fe164dded40&gt;</code></pre>
-<p>The <code>f.load_all_params</code> function is informed by the arguments <code>file.init</code> and <code>file.mort</code>. The <code>file.init</code> argument is a string with the location and name of the file with initial set of parameters. The initial parameter values for our case-study are stored in the <em>01_init-params.csv</em> file located in the <em>data</em> directory. The <code>f.load_all_params</code> function read this .csv file into the function environment as a dataframe called, <code>df.params.init</code>.</p>
-<p>The <code>file.mort</code> argument is a string with the location and name of the file with mortality data. As described before, in our case-study this is the <em>01_all-cause-mortality.csv</em> file. Within the <code>f.load_all_parms</code> function, the <code>f.load_mort_data</code> function is used to create a vector with mortality rates from the .csv data.</p>
-<p>After loading all the information, the <code>f.load_all_params</code> generates a list called,<code>l.params.all</code>, including all parameters for the model including the general setup parameters and the vector of mortality rates. The function also stores the dataframe <code>df.params.init</code> with the initial set of parameters in the list. This is all executed in the in the <em>01_model-inputs.R</em> script by running the code below.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">l.params.all &lt;-<span class="st"> </span><span class="kw">f.load_all_params</span>(<span class="dt">file.init =</span> <span class="st">&quot;data/01_init-params.csv&quot;</span>,
-                                  <span class="dt">file.mort =</span> <span class="st">&quot;data/01_all-cause-mortality.csv&quot;</span>)</code></pre></div>
-<p>For the Sick-Sicker model we do not have to estimated parameters, but we do have three parameters that need to be estimated via model calibration. In this stage of the framework, we simply set these parameters to valid “dummy” values that are compatible with the next phase of the analysis, model implementation, but are ultimately just placeholder values until we conduct the calibration phase. This means that these values will be replaced by the best-fitted calibrated values after we performed the calibration in component 3.</p>
+## &lt;bytecode: 0x7f8aba89dee0&gt;</code></pre>
+<p>The <code>load_all_params</code> function is informed by the arguments <code>file.init</code> and <code>file.mort</code>. The <code>file.init</code> argument is a string with the location and name of the file with initial set of parameters. The initial parameter values for our case-study are stored in the <em>01_init_params.csv</em> file located in the <em>data</em> directory. The <code>load_all_params</code> function read this .csv file into the function environment as a dataframe called, <code>df_params_init</code>.</p>
+<p>The <code>file.mort</code> argument is a string with the location and name of the file with mortality data. As described before, in our case-study this is the <em>01_all_cause_mortality.csv</em> file. Within the <code>load_all_parms</code> function, the <code>load_mort_data</code> function is used to create a vector with mortality rates from the .csv data.</p>
+<p>After loading all the information, the <code>load_all_params</code> generates a list called,<code>l_params_all</code>, including all parameters for the model including the general setup parameters and the vector of mortality rates. The function also stores the dataframe <code>df_params_init</code> with the initial set of parameters in the list. This is all executed in the in the <em>01_model_inputs.R</em> script by running the code below.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">l_params_all &lt;-<span class="st"> </span><span class="kw">load_all_params</span>(<span class="dt">file.init =</span> <span class="st">&quot;data/01_init_params.csv&quot;</span>,
+                                  <span class="dt">file.mort =</span> <span class="st">&quot;data/01_all_cause_mortality.csv&quot;</span>)</code></pre></div>
+<p>For the Sick-Sicker model we do not have to estimate parameters, but we do have three parameters that need to be estimated via model calibration. In this stage of the framework, we simply set these parameters to valid “dummy” values that are compatible with the next phase of the analysis, model implementation, but are ultimately just placeholder values until we conduct the calibration phase. This means that these values will be replaced by the best-fitted calibrated values after we performed the calibration in component 3.</p>
 <p>Using a function to create a list of base-case parameters to have all model parameters in a single object is very useful, because this object will have to be updated for the calibration and the different sensitivity analyses in components 3 and 5 of the framework, respectively. Below, we guide you through the components of the function.</p>
 
 </div>

@@ -1,5 +1,5 @@
 bookdown::gitbook:
-  css: "darth.css"
+  css: "default.css"
   config:
     toc:
       before: |
