@@ -6,12 +6,10 @@ library(dplyr)
 library(reshape2)
 library(ggplot2)
 library(scales)   # for dollar signs and commas
-library(tensorA)  # to use tensor algebra
 library(png)
-library(jpeg)
 ```
 
-```{r setup, include=FALSE}
+```{r setup calibration, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 # Set working directory via relative path to root from Rmd
 # to avoid issue with the Markdown 
@@ -49,14 +47,16 @@ knitr::kable(df_posterior_summ[, -1], caption = "Summary statistics of the poste
 ``` 
 
 
-In section _03.4.2 Visualization of posterior distribution_, we generate a pairwise scatter plot of the calibrated parameters (Figure \@ref(fig:03_posterior_distribution_marginal) and a 3D scatter plot of the joint posterior distribution (Figure \@ref(fig:Posterior_distribution_joint). These figures are saved in the *figs* directory.
+In section _03.4.2 Visualization of posterior distribution_, we generate a pairwise scatter plot of the calibrated parameters (Figure \@ref(fig:03-posterior-distribution-marginal)) and a 3D scatter plot of the joint posterior distribution (Figure \@ref(fig:Posterior-distribution-joint)). These figures are saved in the *figs* directory.
 
-```{r Posterior_distribution_joint, fig.cap='Joint posterior distribution', echo=FALSE}
+```{r Posterior-distribution-joint, fig.cap='Joint posterior distribution', echo=FALSE}
+knitr::opts_knit$set(root.dir = '..')
 knitr::include_graphics("figs/03_posterior_distribution_joint.png")
 ```
 
 
-```{r 03_posterior_distribution_marginal, fig.cap="Pairwise posterior distribution of calibrated parameters", echo = FALSE}
+```{r 03-posterior-distribution-marginal, fig.cap="Pairwise posterior distribution of calibrated parameters", echo = FALSE}
+knitr::opts_knit$set(root.dir = '..')
 knitr::include_graphics("figs/03_posterior_distribution_marginal.png")
 ```
 

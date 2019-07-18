@@ -32,7 +32,7 @@ The input to inform the values is divided in three categories: external, estimat
 
 In this component, we start with the general setup of the model, specifying among others the time horizon, name and number of health states, proportion of the cohort in each of the different health states at the start of the simulation and discount rates. The next step is to specify the external parameters. The initial model parameter values and `R` variable names are presented in Table \@ref(tab:parameters). 
 
-Table: \label(tab:parameters) Description of the initial parameters with their `R` name and value of the Sick-Sicker model.
+Table: \label(#tab:parameters) Description of the initial parameters with their `R` name and value of the Sick-Sicker model.
 
 |           **Parameter**            |  **R name** |   **Value**   |
 |:-----------------------------------|:-----------:|:-------------:|

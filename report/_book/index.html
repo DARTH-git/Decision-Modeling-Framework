@@ -5,26 +5,26 @@
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>Sick-Sicker case study</title>
-  <meta name="description" content="Sick-Sicker case study" />
-  <meta name="generator" content="bookdown 0.11 and GitBook 2.6.7" />
+  <meta name="description" content="Supplementary Material to, A need for change! A coding framework for improving transparency in decision modeling." />
+  <meta name="generator" content="bookdown 0.12 and GitBook 2.6.7" />
 
   <meta property="og:title" content="Sick-Sicker case study" />
   <meta property="og:type" content="book" />
   
   
-  
-  
+  <meta property="og:description" content="Supplementary Material to, A need for change! A coding framework for improving transparency in decision modeling." />
+  <meta name="github-repo" content="rstudio/bookdown-demo" />
 
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:title" content="Sick-Sicker case study" />
   
-  
+  <meta name="twitter:description" content="Supplementary Material to, A need for change! A coding framework for improving transparency in decision modeling." />
   
 
 <meta name="author" content="DARTH workgroup" />
 
 
-<meta name="date" content="2019-07-17" />
+<meta name="date" content="2019-07-18" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -135,17 +135,16 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
             <section class="normal" id="section-">
 <div id="header">
 <h1 class="title">Sick-Sicker case study</h1>
-<h2 class="subtitle"><em>Supplementary Material to, A need for change! A coding framework for improving transparency in decision modeling</em></h2>
 <p class="author"><em>DARTH workgroup</em></p>
-<p class="date"><em>2019-07-17</em></p>
+<p class="date"><em>2019-07-18</em></p>
 </div>
 <div id="the-sick-sicker-model" class="section level1 unnumbered">
 <h1>The Sick-Sicker model</h1>
-<p>In this case-study, we perform a cost-effectiveness analysis (CEA) using a previously published 4-state model called the Sick-Sicker model <span class="citation">(E. A. Enns et al. <a href="#ref-Enns2015">2015</a>)</span>. In the Sick-Sicker model, a hypothetical disease affects individuals with an average age of years and results in increased mortality, increased treatment costs and reduced quality of life (QoL). We simulate this hypothetical cohort of 25-year-old individuals over a lifetime (i.e., reaching an age of 100 years old) using 75 annual cycles, represented with <code>n_t</code>. The cohort starts in the “Healthy” health state (denoted “H”). Healthy individuals are at risk of developing the illness, at which point they would transition to the first stage of the disease (the “Sick” health state, denoted “S1”). Sick individuals are at risk of further progressing to a more severe stage (the “Sicker” health state, denoted “S2”), which is a constant probability in this case-study. There is a chance that individuals in the Sick state eventually recover and return back to the Healthy state. However, once an individual reaches the Sicker state, they cannot recover; that is, the probability of transitioning to the Sick or Healthy states from the Sicker state is zero. Individuals in the Healthy state face background mortality that is age-specific (i.e., time-dependent). Sick and Sicker individuals face an increased mortality expressed as a hazard rate ratio (HRR) of 3 and 10, respectively, on the background mortality rate. Sick and Sicker individuals also experience increased health care costs and reduced QoL compared to healthy individuals. Once simulated individuals die, they transition to the “Dead” state (denoted “D”), where they remain. Figure @ref(fig:STM_Sick_Sicker) shows the state-transition diagram of the Sick-Sicker model. The evolution of the cohort is simulated in one-year discrete-time cycles. Both costs and quality-adjusted life years (QALYs) are discounted at an annual rate of 3%.</p>
-<div class="figure">
-<img src="figs/Sick_Sicker_STM.png" alt="State-transition diagram of the Sick-Sicker model. Healthy individuals can get Sick, die or stay healthy. Sick individuals can recover, transitioning back to healthy, can die, or stay sick. Once individuals are Sicker, they stay Sicker until they die."  />
+<p>In this case-study, we perform a cost-effectiveness analysis (CEA) using a previously published 4-state model called the Sick-Sicker model <span class="citation">(E. A. Enns et al. <a href="#ref-Enns2015">2015</a>)</span>. In the Sick-Sicker model, a hypothetical disease affects individuals with an average age of years and results in increased mortality, increased treatment costs and reduced quality of life (QoL). We simulate this hypothetical cohort of 25-year-old individuals over a lifetime (i.e., reaching an age of 100 years old) using 75 annual cycles, represented with <code>n_t</code>. The cohort starts in the “Healthy” health state (denoted “H”). Healthy individuals are at risk of developing the illness, at which point they would transition to the first stage of the disease (the “Sick” health state, denoted “S1”). Sick individuals are at risk of further progressing to a more severe stage (the “Sicker” health state, denoted “S2”), which is a constant probability in this case-study. There is a chance that individuals in the Sick state eventually recover and return back to the Healthy state. However, once an individual reaches the Sicker state, they cannot recover; that is, the probability of transitioning to the Sick or Healthy states from the Sicker state is zero. Individuals in the Healthy state face background mortality that is age-specific (i.e., time-dependent). Sick and Sicker individuals face an increased mortality expressed as a hazard rate ratio (HRR) of 3 and 10, respectively, on the background mortality rate. Sick and Sicker individuals also experience increased health care costs and reduced QoL compared to healthy individuals. Once simulated individuals die, they transition to the “Dead” state (denoted “D”), where they remain. Figure <a href="index.html#fig:STM-Sick-Sicker">0.1</a> shows the state-transition diagram of the Sick-Sicker model. The evolution of the cohort is simulated in one-year discrete-time cycles. Both costs and quality-adjusted life years (QALYs) are discounted at an annual rate of 3%.</p>
+<div class="figure"><span id="fig:STM-Sick-Sicker"></span>
+<img src="figs/Sick_Sicker_STM.png" alt="State-transition diagram of the Sick-Sicker model. Healthy individuals can get Sick, die or stay healthy. Sick individuals can recover, transitioning back to healthy, can die, or stay sick. Once individuals are Sicker, they stay Sicker until they die." width="374" />
 <p class="caption">
-(#fig:STM_Sick_Sicker)State-transition diagram of the Sick-Sicker model. Healthy individuals can get Sick, die or stay healthy. Sick individuals can recover, transitioning back to healthy, can die, or stay sick. Once individuals are Sicker, they stay Sicker until they die.
+Figure 0.1: State-transition diagram of the Sick-Sicker model. Healthy individuals can get Sick, die or stay healthy. Sick individuals can recover, transitioning back to healthy, can die, or stay sick. Once individuals are Sicker, they stay Sicker until they die.
 </p>
 </div>
 <p>Two alternative strategies exist for this hypothetical disease: a no-treatment and a treatment strategy. Under the treatment strategy, Sick and Sicker individuals receive treatment and continue doing so until they recover or die. The cost of the treatment is additional to the cost of being Sick or Sicker for one year. The treatment improves QoL for those individuals who are Sick but has no effect on the QoL of those who are sicker. To evaluate these two alternative strategies, we perform a CEA.</p>

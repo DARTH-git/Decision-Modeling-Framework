@@ -6,10 +6,9 @@ library(dplyr)
 library(reshape2)
 library(ggplot2)
 library(scales)   # for dollar signs and commas
-library(tensorA)  # to use tensor algebra
 ```
 
-```{r setup, include=FALSE}
+```{r setup validation, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 # Set working directory via relative path to root from Rmd
 # to avoid issue with the Markdown 
@@ -36,18 +35,20 @@ This function is informed by three arguments, `data`, `varname` and `groupnames`
 
 The computation of the model-predicted outputs using the MAP estimate is done by inserting the `v_calib_post_map` data into the previously described `calibration_out` function. This function creates a list including the estimated values for survival, prevalence and the proportion of sicker individuals at cycles 10, 20 and 30. 
 
-In sections _04.6 Internal validation: Model-predicted outputs vs. targets_, we check the internal validation by plotting the model-predicted outputs against the calibration targets (Figure \@ref(fig:04_surv)-\@ref(fig:04_proportion). The generated plots are saved as .png files, which could be used in reports later on without the need of re-running the code. 
+In sections _04.6 Internal validation: Model-predicted outputs vs. targets_, we check the internal validation by plotting the model-predicted outputs against the calibration targets (Figure \@ref(fig:04-surv)-\@ref(fig:04-proportion)). The generated plots are saved as .png files, which could be used in reports later on without the need of re-running the code. 
 
-```{r 04_surv, fig.cap="Survival data: Model-predicted outputs vs targets.", echo = FALSE }
+```{r 04-surv, fig.cap="Survival data: Model-predicted outputs vs targets.", echo = FALSE }
+knitr::opts_knit$set(root.dir = '..')
 knitr::include_graphics("figs/04_posterior_vs_targets_survival.png")
 ```
 
-```{r 04_prevalence, fig.cap = "Prevalence data of sick individuals: Model-predicted output vs targets.", echo=FALSE}
+```{r 04-prevalence, fig.cap = "Prevalence data of sick individuals: Model-predicted output vs targets.", echo=FALSE}
+knitr::opts_knit$set(root.dir = '..')
 knitr::include_graphics("figs/04_posterior_vs_targets_prevalence.png")
 ```
 
-```{r 04_proportion, fig.cap="Proportion who are Sicker, among all those afflicted (Sick + Sicker): Model-predicted output.", eval = FALSE}
-
+```{r 04-proportion, fig.cap="Proportion who are Sicker, among all those afflicted (Sick + Sicker): Model-predicted output.", eval = FALSE}
+knitr::opts_knit$set(root.dir = '..')
 knitr::include_graphics("figs/04_posterior_vs_targets_proportion_sicker.png")
 ```
 

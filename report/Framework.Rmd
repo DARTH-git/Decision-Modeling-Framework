@@ -86,3 +86,57 @@ knitr::write_bib(c(
 ), 'packages.bib')
 ```
 
+
+<!--chapter:end:index.Rmd-->
+
+
+# Define model inputs {#model}
+
+Placeholder
+
+
+
+<!--chapter:end:01-model.Rmd-->
+
+
+# Simulation {#simulation}
+
+Placeholder
+
+
+
+<!--chapter:end:02-simulation.Rmd-->
+
+
+# Model calibration {#calibration}
+
+Placeholder
+
+
+
+<!--chapter:end:03-calibration.Rmd-->
+
+
+# Validation  {#validation}
+
+Placeholder
+
+
+
+<!--chapter:end:04-validation.Rmd-->
+
+
+# Analysis  {#analysis}
+
+Placeholder
+
+
+
+<!--chapter:end:05-analysis.Rmd-->
+
+`r if (knitr::is_html_output()) '
+# References {-}
+'`
+
+<!--chapter:end:06-references.Rmd-->
+

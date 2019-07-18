@@ -6,10 +6,9 @@ library(dplyr)
 library(reshape2)
 library(ggplot2)
 library(scales)   # for dollar signs and commas
-library(tensorA)  # to use tensor algebra
 ```
 
-```{r setup, include=FALSE}
+```{r setup simulation, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 # Set working directory via relative path to root from Rmd
 # to avoid issue with the Markdown 
@@ -49,16 +48,16 @@ l_out_stm$a_P[, , l_params_all$n_t] # show it for the last cycle
 ```
 By comparing these probability matrices, we observe an increase in the probabilities of transitioning to death from all health states. 
 
-After the array is filled, the cohort trace matrix, `m_M`, of dimensions `n_t` x `n_states` is initialized. This matrix will store the state occupation at each point in time. The first row of the matrix is informed by the initial state vector `v.s.init`. For the remaining points in time, we iteratively multiply the cohort trace with the age-specific transition probability matrix corresponding to the specific cycle obtained by indexing the array `a_P` appropriately. All the outputs and relevant elements of the decision model are stored in a list, called `l_out_stm`. This list contains the array of the transition probability matrix for all cycles `t` and the cohort trace `m_M`. 
+After the array is filled, the cohort trace matrix, `m_M`, of dimensions `n_t` x `n_states` is initialized. This matrix will store the state occupation at each point in time. The first row of the matrix is informed by the initial state vector `v_s_init`. For the remaining points in time, we iteratively multiply the cohort trace with the age-specific transition probability matrix corresponding to the specific cycle obtained by indexing the array `a_P` appropriately. All the outputs and relevant elements of the decision model are stored in a list, called `l_out_stm`. This list contains the array of the transition probability matrix for all cycles `t` and the cohort trace `m_M`. 
 
 ```{r, eval = TRUE, echo = TRUE}
 head(l_out_stm$m_M)    # show the top part of the cohort trace
 tail(l_out_stm$m_M)    # show the bottom part of the cohort trace
 ```
 
-Using the code below, we can graphically show the model dynamics by plotting the cohort trace. Figure \@ref(fig:Sick_Sicker_Trace) shows the distribution of the cohort among the different health states at each time point. 
+Using the code below, we can graphically show the model dynamics by plotting the cohort trace. Figure \@ref(fig:Sick-Sicker-Trace) shows the distribution of the cohort among the different health states at each time point. 
 
-```{r Sick_Sicker_Trace, echo = FALSE, fig.cap = 'Cohort trace of the Sick-Sicker cohort model', message = FALSE, warning = FALSE, fig.pos = "H"} 
+```{r Sick-Sicker-Trace, echo = FALSE, fig.cap = 'Cohort trace of the Sick-Sicker cohort model', message = FALSE, warning = FALSE, fig.pos = "H"} 
 ggplot(melt(l_out_stm$m_M), aes(x = Var1, y = value, color = Var2, linetype = Var2)) +
   geom_line(size = 1.3) +
   scale_color_discrete(l = 50, name = "Health state") +
