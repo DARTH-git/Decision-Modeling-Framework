@@ -1,8 +1,4 @@
----
-output:
-  pdf_document: default
-  html_document: default
----
+
 ```{r, include = FALSE, warning = FALSE}
 library(knitr)
 # https://haozhu233.github.io/kableExtra/awesome_table_in_html.html
@@ -24,7 +20,6 @@ knitr::opts_knit$set(root.dir = '..')
 ```{r, include = FALSE}
 source("analysis/01_model_inputs.R")
 source("analysis/02_simulation_model.R")
-#source("analysis/03_calibration.R")
 source("analysis/04_validation.R")
 ```
 
@@ -36,11 +31,11 @@ In section _04.2 Compute model-predicted outputs_, we compute the model-predicte
 ```{r}
 print.function(data_summary)
 ```
-This function is informed by three arguments, `data`, `varname` and `groupnames`. 
+This function is informed by three arguments, `data`, `varname` and `groupnames`.
 
 The computation of the model-predicted outputs using the MAP estimate is done by inserting the `v_calib_post_map` data into the previously described `calibration_out` function. This function creates a list including the estimated values for survival, prevalence and the proportion of sicker individuals at cycles 10, 20 and 30. 
 
-In sections _04.6 Internal validation: Model-predicted outputs vs. targets_, we check the internal validation by plotting the model-predicted outputs against the calibration targets (Figure \@ref(fig:04-surv)-\@ref(fig:04-proportion)). The generated plots are saved as .png files, which could be used in reports later on without the need of re-running the code. 
+In sections _04.6 Internal validation: Model-predicted outputs vs. targets_, we check the internal validation by plotting the model-predicted outputs against the calibration targets (Figure \@ref(fig:04-surv)-\@ref(fig:04-proportion)). The generated plots are saved as .png files in the *fig* folder. These files can be used in reports without the need of re-running the code. 
 
 ```{r 04-surv, fig.cap="Survival data: Model-predicted outputs vs targets.", echo = FALSE }
 knitr::opts_knit$set(root.dir = '..')

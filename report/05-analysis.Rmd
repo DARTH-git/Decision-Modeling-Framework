@@ -6,6 +6,7 @@ library(dplyr)
 library(reshape2)
 library(ggplot2)
 library(scales)   # for dollar signs and commas
+library(dampack)
 ```
 
 ```{r setup analysis, include=FALSE}
@@ -25,11 +26,11 @@ source("analysis/05a_deterministic_analysis.R")
 source("analysis/05b_probabilistic_analysis.R")
 ```
 
-# Analysis  {#analysis}
-The analysis component is where the elements in components 1-4 are combined to answer the question(s) of interest given current information and to quantify the value of potential further research. Our framework separates the analysis in three subcomponents: _05a Deterministic analysis_, _05b Uncertainty analysis_ and _05c Value of information analysis_. For the Sick-Sicker case-study, we use all three subcomponents to conduct the CEA and to quantify the uncertainty of our decision. For procedures in the CEA, we rely on the `R` package `dampack`, which is available here: <https://github.com/DARTH-git/dampack>. Instructions for installing `dampack` are described in Appendix 0 provided in the *app0_packages_setup.R* script.
+# Analysis{#analysis}
+The analysis component is where the elements in components 1-4 are combined to answer the question(s) of interest given current information and to quantify the value of potential further research. Our framework separates the analysis in three subcomponents: _05a Deterministic analysis_, _05b Uncertainty analysis_ and _05c Value of information analysis_. For the Sick-Sicker case-study, we use all three subcomponents to conduct the CEA and to quantify the uncertainty of our decision. For procedures in the CEA, we rely on the `R` package `dampack`, which is available here: <https://github.com/DARTH-git/dampack>. Instructions for installing `dampack` are described in Appendix 0 provided in the *app0_packages_setup.R* script of the *analysis* folder.
 
-##05a Deterministic analysis
-In this subcomponent, we perform a deterministic CEA, followed by some deterministic sensitivity analysis, including one-way, two-way and tornado sensitivity analyses. The function script of this subcomponent, *05a_deterministic_analysis_function.R*, contains the function `calculate_ce_out`. This function calculates costs and effects for a given vector of parameters using a simulation model. We need to run our simulation model using the calibrated parameter values, but the list we created in component 01 still contain the placeholder values for the calibrated parameters. This means we need to update these values by the calibrated values stored in the vector `v_calib_post_map`. The *00_general_functions.R* script in the *functions* folder creates the `update_param_list` function that is able to update a list of parameters with new values for some specific parameters. 
+##05a Deterministic analysis{#05a-Deterministic-analysis}
+In this subcomponent, we perform a deterministic CEA, followed by some deterministic sensitivity analysis, including one-way, two-way and tornado sensitivity analyses. The function script of this subcomponent, *05a_deterministic_analysis_function.R*, contains the function `calculate_ce_out`. This function calculates costs and effects for a given vector of parameters using a simulation model. We need to run our simulation model using the calibrated parameter values, but the list we created in component 01 \@ref(model) still contain the placeholder values for the calibrated parameters. This means we need to update these values by the calibrated values stored in the vector `v_calib_post_map`. The *00_general_functions.R* script in the *functions* folder creates the `update_param_list` function that is able to update a list of parameters with new values for some specific parameters. 
 
 ```{r}
 print.function(update_param_list)
@@ -42,7 +43,7 @@ In the *05a_deterministic_analysis.R* script we execute the `update_param_list` 
 ```{r, eval = FALSE, echo = TRUE}
 l_params_basecase <- update_param_list(l_params_all, v_calib_post_map) 
 ```
-We use this new list as an argument in the `calculate_ce_out` function. In addition, we specify the willingness-to-pay (WTP) threshold value using the `n.wtp` argument of this function. This WTP value is used to compute a net monetary benefit (NMB) value. If the user does not specify the WTP, a default value of $100,000/QALY will be used by the function. 
+We use this new list as an argument in the `calculate_ce_out` function. In addition, we specify the willingness-to-pay (WTP) threshold value using the `n_wtp` argument of this function. This WTP value is used to compute a net monetary benefit (NMB) value. If the user does not specify the WTP, a default value of $100,000/QALY will be used by the function. 
 
 ```{r}
 df_out_ce <- calculate_ce_out(l_params_all = l_params_basecase, 
@@ -101,7 +102,7 @@ knitr::opts_knit$set(root.dir = '..')
 knitr::include_graphics("figs/05a_twsa_uS1_uTrt_nmb.png")
 ```
 
-##05b Probabilistic analysis 
+##05b Probabilistic analysis{05b-Probabilistic-analysis} 
 In this subcomponent, we evaluate decision uncertainty by propagating the uncertainty through the CEA using probabilistic sensitivity analysis (PSA). Until now we used the parameter values as described in Table \@ref(tab:parameters). However, we are uncertain about these values. Most of these input parameters are defined by probability distribution as described in Table \@ref(tab:parameters PSA). 
 
 Table: \label(#tab:parameters PSA) Description of parameters with their R name and distribution.
@@ -123,13 +124,13 @@ Table: \label(#tab:parameters PSA) Description of parameters with their R name a
   | Intervention effect             |             |               |
   | - Utility for treated individuals in S1 | `u_Trt` |`truncnorm(mean = 0.95, sd = 0.02, b = 1)`        |
   
-In a PSA we sample the input parameter values from these distributions and we then run the model at each sample. In the file *05b_uncertainty_analysis_functions.R* we created a single function, called `f.generate_psa_params`, that generates a PSA dataset for all the CEA input parameters. We specify the number of PSA samples via the `n.sim` argument. The function also accepts specifying a seed to allow reproducibility of the results.
+In a PSA we sample the input parameter values from these distributions and we then run the model at each sample. In the file *05b_uncertainty_analysis_functions.R* we created a single function, called `generate_psa_params`. This function generates a PSA dataset for all the CEA input parameters. We specify the number of PSA samples via the `n_sim` argument. The function also accepts specifying a seed to allow reproducibility of the results.
 
 ```{r, eval = TRUE, echo = TRUE}
 print.function(generate_psa_params) # print the function 
 ```
 
-The function returns the `df_psa_input` dataframe with a PSA dataset of the input parameters. With this dataframe we can run the PSA to produce distributions of costs, effectiveness and NMB. The PSA is performed by the  *05b_probabilistic_analysis.R* script. As shown in the code below, the `df.psa.input` dataframe is used by the `update_param_list` function to generate the corresponding list of parameters for the PSA. For each simulation, we perfrom three steps. First, the list of parameters is updated by the `update_param_list` function. Second, the model is executed by the `calculate_ce_out` function using the updated parameter list and third, the dataframes `df_c` and `df_e` store the estimated cost and effects, respectively. The final part of this loop is to satisfy the modeler when waiting on the results, by displaying the simulation progress.  
+The function returns the `df_psa_input` dataframe with a PSA dataset of the input parameters. With this dataframe we can run the PSA to produce distributions of costs, effectiveness and NMB. The PSA is performed by the  *05b_probabilistic_analysis.R* script. As shown in the code below, the `df_psa_input` dataframe is used by the `update_param_list` function to generate the corresponding list of parameters for the PSA. For each simulation, we perfrom three steps. First, the list of parameters is updated by the `update_param_list` function. Second, the model is executed by the `calculate_ce_out` function using the updated parameter list and third, the dataframes `df_c` and `df_e` store the estimated cost and effects, respectively. The final part of this loop is to satisfy the modeler when waiting on the results, by displaying the simulation progress.  
 
 ```{r, eval = FALSE, echo = TRUE}
 for(i in 1:n_sim){ 
@@ -154,7 +155,7 @@ knitr::include_graphics("05b_cea_plane_scatter.png")
 load("tables/05b_probabilistic_cea_results.RData")
 knitr::kable(df_cea_psa[, -7], caption = "Probabilistic cost-effectiveness analysis results of the Sick-Sicker model comparing no treatment with treatment. \\label{tab:df_cea_prob}") # create a table 
 ``` 
-Next, we perform a CEA using the previously used `calculate_icers` functions from `dampack`. Table \@ref(tab:df-cea-prob) shows the results of the probabilistic CEA. In addition, we plot a cost-effectiveness plane with the frontier, the cost-effectiveness acceptability curves (CEACs) and frontier (CEAF), expected Loss curves (ELCs) (Figure \@ref(fig:05b_cea_frontier_psa) - \@ref(fig:05b-elc)) [@Alarid-Escudero2019]. Followed by creating linear regression metamodeling sensitivity analysis graphs (Figure \@ref(fig:05b-owsa-lrm-nmb) - \@ref(fig:05b-twsa-lrm-uS1-uTrt_nmb)). All generated figures are shown below and stored to the *figs* folder [@Jalal2013]. 
+Next, we perform a CEA using the previously used `calculate_icers` functions from `dampack`. Table \@ref(tab:df-cea-prob) shows the results of the probabilistic CEA. In addition, we plot a cost-effectiveness plane with the frontier, the cost-effectiveness acceptability curves (CEACs) and frontier (CEAF), expected Loss curves (ELCs) (Figure \@ref(fig:05b_cea_frontier_psa) - \@ref(fig:05b-elc)) [@Alarid-Escudero2019]. Followed by creating linear regression metamodeling sensitivity analysis graphs (Figure \@ref(fig:05b-owsa-lrm-nmb) - \@ref(fig:05b-twsa-lrm-uS1-uTrt_nmb))[@Jalal2013]. All generated figures are shown below and stored to the *figs* folder . 
 
 ```{r 05b-cea-frontier-psa, fig.cap = "Cost-effectiveness frontier", echo = FALSE }
 knitr::opts_knit$set(root.dir = '..')
