@@ -5,26 +5,26 @@
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>Chapter 1 Define model inputs | Sick-Sicker case study</title>
-  <meta name="description" content="Chapter 1 Define model inputs | Sick-Sicker case study" />
-  <meta name="generator" content="bookdown 0.11 and GitBook 2.6.7" />
+  <meta name="description" content="Supplementary Material to, A need for change! A coding framework for improving transparency in decision modeling." />
+  <meta name="generator" content="bookdown 0.12 and GitBook 2.6.7" />
 
   <meta property="og:title" content="Chapter 1 Define model inputs | Sick-Sicker case study" />
   <meta property="og:type" content="book" />
   
   
-  
-  
+  <meta property="og:description" content="Supplementary Material to, A need for change! A coding framework for improving transparency in decision modeling." />
+  <meta name="github-repo" content="rstudio/bookdown-demo" />
 
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:title" content="Chapter 1 Define model inputs | Sick-Sicker case study" />
   
-  
+  <meta name="twitter:description" content="Supplementary Material to, A need for change! A coding framework for improving transparency in decision modeling." />
   
 
 <meta name="author" content="DARTH workgroup" />
 
 
-<meta name="date" content="2019-07-17" />
+<meta name="date" content="2019-07-19" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -136,9 +136,9 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <h1><span class="header-section-number">Chapter 1</span> Define model inputs</h1>
 <p>As described in the main manuscript, in this first component we declare all model input variables and set their values. The <code>R</code> script running the analysis of this component is the <em>01_model_inputs.R</em> file in the <code>R</code> directory.</p>
 <p>The input to inform the values is divided in three categories: external, estimated, and calibrated. The majority of the Sick-Sicker model parameters are informed by external data. Only three parameter values need to be estimated using model calibration.</p>
-<p>In this component, we start with the general setup of the model, specifying among others the time horizon, name and number of health states, proportion of the cohort in each of the different health states at the start of the simulation and discount rates. The next step is to specify the external parameters. The initial model parameter values and <code>R</code> variable names are presented in Table <a href="#tab:parameters"><strong>??</strong></a>.</p>
+<p>In this component, we start with the general setup of the model, specifying among others the time horizon, name and number of health states, proportion of the cohort in each of the different health states at the start of the simulation and discount rates. The next step is to specify the external parameters. The initial model parameter values and <code>R</code> variable names are presented in Table <a href="model.html#tab:parameters">1.1</a>.</p>
 <table>
-<caption>(tab:parameters) Description of the initial parameters with their <code>R</code> name and value of the Sick-Sicker model.</caption>
+<caption><span id="tab:parameters">Table 1.1: </span> Description of the initial parameters with their <code>R</code> name and value of the Sick-Sicker model.</caption>
 <thead>
 <tr class="header">
 <th align="left"><strong>Parameter</strong></th>
@@ -299,7 +299,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 ##     })
 ##     l_params_all &lt;- c(l_params_all, df_params_init)
 ## }
-## &lt;bytecode: 0x7f8aba89dee0&gt;</code></pre>
+## &lt;bytecode: 0x7fdd10c3fe90&gt;</code></pre>
 <p>The <code>load_all_params</code> function is informed by the arguments <code>file.init</code> and <code>file.mort</code>. The <code>file.init</code> argument is a string with the location and name of the file with initial set of parameters. The initial parameter values for our case-study are stored in the <em>01_init_params.csv</em> file located in the <em>data</em> directory. The <code>load_all_params</code> function read this .csv file into the function environment as a dataframe called, <code>df_params_init</code>.</p>
 <p>The <code>file.mort</code> argument is a string with the location and name of the file with mortality data. As described before, in our case-study this is the <em>01_all_cause_mortality.csv</em> file. Within the <code>load_all_parms</code> function, the <code>load_mort_data</code> function is used to create a vector with mortality rates from the .csv data.</p>
 <p>After loading all the information, the <code>load_all_params</code> generates a list called,<code>l_params_all</code>, including all parameters for the model including the general setup parameters and the vector of mortality rates. The function also stores the dataframe <code>df_params_init</code> with the initial set of parameters in the list. This is all executed in the in the <em>01_model_inputs.R</em> script by running the code below.</p>

@@ -3,3 +3,4 @@ delete_merged_file: true
 language:
   ui:
     chapter_name: "Chapter "
+script_before_chapter: ["../analysis/01_model_inputs.R"]

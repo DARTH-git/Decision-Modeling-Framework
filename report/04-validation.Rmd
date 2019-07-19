@@ -1,3 +1,8 @@
+---
+output:
+  pdf_document: default
+  html_document: default
+---
 ```{r, include = FALSE, warning = FALSE}
 library(knitr)
 # https://haozhu233.github.io/kableExtra/awesome_table_in_html.html
@@ -47,7 +52,7 @@ knitr::opts_knit$set(root.dir = '..')
 knitr::include_graphics("figs/04_posterior_vs_targets_prevalence.png")
 ```
 
-```{r 04-proportion, fig.cap="Proportion who are Sicker, among all those afflicted (Sick + Sicker): Model-predicted output.", eval = FALSE}
+```{r 04-proportion, fig.cap="Proportion who are Sicker, among all those afflicted (Sick + Sicker): Model-predicted output.", echo = FALSE}
 knitr::opts_knit$set(root.dir = '..')
 knitr::include_graphics("figs/04_posterior_vs_targets_proportion_sicker.png")
 ```

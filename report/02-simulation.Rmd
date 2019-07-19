@@ -26,7 +26,7 @@ source("analysis/02_simulation_model.R")
 
 In this second component, we build the backbone of the decision analysis: the implementation of the model. This component is performed by the *02_simulation_model.R* script. This file itself is not very large. It simply loads some packages, sources the input from component 01, sources the function `decision_model` that is used the capture the dynamic process of the Sick-Sicker example, runs this function and stores the output. The output of the model is the traditional cohort trace, describing how the cohort is distributed among the different health states over time, which is plotted at the end of this script. This trace will be used in many of the other components.
 
-The function `decision_model` is defined in the *02_simulation_model_functions.R file*. As described in the paper, constructing a model as a function at this stage facilitates subsequent stages of the model development and analysis, as these processes will all call the same model function, but pass different parameter values and/or calculate different final outcomes based on the model outputs. In the next part, we will describe the code within the function.
+The function `decision_model` is defined in the *02_simulation_model_functions.R* file. As described in the paper, constructing a model as a function at this stage facilitates subsequent stages of the model development and analysis, as these processes will all call the same model function, but pass different parameter values and/or calculate different final outcomes based on the model outputs. In the next part, we will describe the code within the function.
 
 ```{r}
 print.function(decision_model) # print the code of the function
